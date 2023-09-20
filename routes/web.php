@@ -356,5 +356,15 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::post('/produccioncarro/crearfactura', 'crearfactura');
             Route::get('/produccioncarro/traercarros/{id_produccion}', 'traercarros');
         });
+        //---------------------------------------------------------rutas de tiendita --------------------------------------------
+        Route::controller(App\Http\Controllers\Admin\RedController::class)->group(function () {
+            Route::get('/uniformes', 'index')->name('uniforme.index');
+            Route::get('/uniformes/create', 'create');
+            Route::post('/uniformes', 'store');
+            Route::get('/uniformes/{uniforme_id}/edit', 'edit');
+            Route::put('/uniformes/{uniforme_id}', 'update');
+            Route::get('/uniformes/{uniforme_id}/delete', 'destroy'); 
+            Route::get('/uniformes/show/{id}', 'show'); //ver   
+        });
     });
 });
