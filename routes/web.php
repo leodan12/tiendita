@@ -357,7 +357,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/produccioncarro/traercarros/{id_produccion}', 'traercarros');
         });
         //---------------------------------------------------------rutas de tiendita --------------------------------------------
-        Route::controller(App\Http\Controllers\Admin\RedController::class)->group(function () {
+        Route::controller(App\Http\Controllers\Admin\UniformeController::class)->group(function () {
             Route::get('/uniformes', 'index')->name('uniforme.index');
             Route::get('/uniformes/create', 'create');
             Route::post('/uniformes', 'store');

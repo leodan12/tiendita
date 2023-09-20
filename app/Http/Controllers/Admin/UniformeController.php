@@ -4,62 +4,120 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Uniforme;
+use App\Models\Talla;
+use App\Models\Tipotela;
+use App\Models\Color;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
+use App\Traits\HistorialTrait;
 
 class UniformeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use HistorialTrait;
+    //vista index datos para (datatables-yajra)
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $uniformes = DB::table('uniformes as u')
+                ->join('tallas as t', 'u.talla_id', '=', 't.id')
+                ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+                ->join('colors as c', 'u.color_id', '=', 'c.id')
+                ->select(
+                    'u.id',
+                    'u.nombre',
+                    't.talla',
+                    'tt.tela',
+                    'c.color',
+                    'u.precio',
+                    'u.genero',
+                )->where('u.status', '=', 0);
+            return DataTables::of($uniformes)
+                ->addColumn('acciones', 'Acciones')
+                ->editColumn('acciones', function ($uniformes) {
+                    return view('admin.uniformes.botones', compact('uniformes'));
+                })
+                ->rawColumns(['acciones'])
+                ->make(true);
+        }
+        return view('admin.uniformes.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $tallas = Talla::all()->where('status', '=', 0);
+        $tipotelas = Tipotela::all()->where('status', '=', 0);
+        $colores = Color::all()->where('status', '=', 0);
+        return view('admin.uniformes.create', compact('tallas', 'tipotelas', 'colores'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $uniforme = new Uniforme;
+        $uniforme->nombre = $request->nombre;
+        $uniforme->genero = $request->genero;
+        $uniforme->precio = $request->precio;
+        $uniforme->talla_id = $request->talla;
+        $uniforme->tipotela_id = $request->tipotela;
+        $uniforme->color_id = $request->color;
+        $uniforme->save();
+        $this->crearhistorial('crear', $uniforme->id, $uniforme->nombre, '', 'uniformes');
+        return redirect('admin/uniformes')->with('message', 'Uniforme Agregado Satisfactoriamente');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $uniformes = DB::table('uniformes as u')
+            ->join('tallas as t', 'u.talla_id', '=', 't.id')
+            ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+            ->join('colors as c', 'u.color_id', '=', 'c.id')
+            ->select(
+                'u.id',
+                'u.nombre',
+                't.talla',
+                'tt.tela',
+                'c.color',
+                'u.precio',
+                'u.genero',
+            )->where('u.id', '=', $id)
+            ->get();
+        return $uniformes;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        $uniforme = Uniforme::find($id);
+        $tallas = Talla::all()->where('status', '=', 0);
+        $tipotelas = Tipotela::all()->where('status', '=', 0);
+        $colores = Color::all()->where('status', '=', 0);
+        return view('admin.uniformes.edit', compact('tallas', 'tipotelas', 'colores', 'uniforme'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $uniforme = Uniforme::find($id);
+        $uniforme->nombre = $request->nombre;
+        $uniforme->genero = $request->genero;
+        $uniforme->precio = $request->precio;
+        $uniforme->talla_id = $request->talla;
+        $uniforme->tipotela_id = $request->tipotela;
+        $uniforme->color_id = $request->color;
+        $uniforme->update();
+        $this->crearhistorial('editar', $uniforme->id, $uniforme->nombre, '', 'uniformes');
+        return redirect('admin/uniformes')->with('message', 'Uniforme Actualizado Satisfactoriamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        try {
+            $uniforme = Uniforme::find($id);
+            if (!$uniforme) {
+                return "2";
+            }
+            $uniforme->delete();
+            return "1";
+        } catch (\Throwable $th) {
+            return "0";
+        }
     }
 }

@@ -16,122 +16,74 @@
             @endif
             <div class="card">
                 <div class="card-header">
-                    <h4>EDITAR PRODUCTO
-                        <a href="{{ url('admin/products') }}" class="btn btn-danger text-white float-end">VOLVER</a>
+                    <h4>AÑADIR UNIFORME
+                        <a href="{{ url('admin/uniformes') }}" class="btn btn-danger text-white float-end">VOLVER</a>
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url('admin/products/' . $product->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url('admin/uniformes/' . $uniforme->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label is-required">CATEGORIA</label>
-                                <select name="category_id" class="form-select select2 " required>
-                                    <option value="" selected disabled>Seleccione una opción</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}"
-                                            {{ $category->id == $product->category_id ? 'selected' : '' }}>
-                                            {{ $category->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-8 mb-3">
+                            <div class="col-md-9 mb-3">
                                 <label class="form-label is-required">NOMBRE</label>
-                                <input type="text" name="nombre" value="{{ $product->nombre }}" class="form-control mayusculas"
-                                    required />
-                                @error('nombre')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
+                                <input type="text" name="nombre" id="nombre" class="form-control mayusculas" required
+                                    value="{{ $uniforme->nombre }}" />
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label ">CÓDIGO</label>
-                                <input type="text" name="codigo" value="{{ $product->codigo }}"
-                                    class="form-control mayusculas" />
-
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label is-required">PRECIO(soles)</label>
+                                <input type="number" name="precio" id="precio" min="0" step="0.0001"
+                                    class="form-control " value="{{ $uniforme->precio }}" required />
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label is-required">UNIDAD</label>
-                                <input type="text" name="unidad" value="{{ $product->unidad }}" class="form-control mayusculas"
-                                    required />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label is-required">TIPO DE MONEDA</label>
-                                <select name="moneda" class="form-select " required>
-                                    <option value="" disabled>Seleccione Tipo de Moneda</option>
-                                    <option value="dolares" {{ $product->moneda == 'dolares' ? 'selected' : '' }}>Dolares
-                                        Americanos</option>
-                                    <option value="soles" {{ $product->moneda == 'soles' ? 'selected' : '' }}>Soles
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label is-required">GENERO</label>
+                                <select name="genero" id="genero" class="form-select select2" required>
+                                    <option value="" selected disabled>Seleccion una opción</option>
+                                    <option value="MASCULINO" {{ "MASCULINO" == $uniforme->genero ? 'selected' : '' }}>
+                                        MASCULINO</option>
+                                    <option value="FEMENINO" {{ "FEMENINO" == $uniforme->genero ? 'selected' : '' }}>
+                                        FEMENINO</option>
+                                    <option value="UNISEX" {{ "UNISEX" == $uniforme->genero ? 'selected' : '' }}>UNISEX
                                     </option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label is-required">PRECIO COMPRA</label>
-                                <input type="number" name="preciocompra" id="preciocompra" min="0" step="0.0001"
-                                    class="form-control " required value="{{ $product->preciocompra }}"
-                                    value="{{ old('preciocompra') }}" />
-                                @error('preciocompra')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
+                                <label class="form-label is-required">TALLA</label>
+                                <select name="talla" id="talla" class="form-select select2" required>
+                                    <option value="" selected disabled>Seleccion una opción</option>
+                                    @foreach ($tallas as $talla)
+                                        <option value="{{ $talla->id }}"
+                                            {{ $talla->id == $uniforme->talla_id ? 'selected' : '' }}>
+                                            {{ $talla->talla }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label is-required">PRECIO VENTA SIN IGV</label>
-                                <input type="number" name="NoIGV" id="cantidad" value="{{ $product->NoIGV }}"
-                                    min="0" step="0.0001" class="form-control " required />
+                                <label class="form-label is-required">TIPO DE TELA</label>
+                                <select name="tipotela" id="tipotela" class="form-select select2" required>
+                                    <option value="" selected disabled>Seleccion una opción</option>
+                                    @foreach ($tipotelas as $tela)
+                                        <option value="{{ $tela->id }}"
+                                            {{ $tela->id == $uniforme->tipotela_id ? 'selected' : '' }}>
+                                            {{ $tela->tela }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label is-required">PRECIO CON IGV</label>
-                                <input type="number" name="SiIGV" id="SiIGV" value="{{ $product->SiIGV }}"
-                                    min="0" step="0.0001" readonly class="form-control " required />
+                                <label class="form-label is-required">COLOR</label>
+                                <select name="color" id="color" class="form-select select2" required>
+                                    <option value="" selected disabled>Seleccion una opción</option>
+                                    @foreach ($colores as $color)
+                                        <option value="{{ $color->id }}"
+                                            {{ $color->id == $uniforme->color_id ? 'selected' : '' }}>
+                                            {{ $color->color }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
-                            <div class="col-md-3 mb-3">
-                                <input class="form-check-input" type="checkbox" value="" id="precioxmayor"
-                                    @if ($product->cantidad2 != null) checked @endif>
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    ¿Agregar Precio por Mayor?
-                                </label>
-                            </div>
-                            <div class="col-md-4 mb-3" id="dcantidad2" name="dcantidad2">
-                                <label class="form-label ">CANTIDAD 2</label>
-                                <input type="number" name="cantidad2" id="cantidad2" min="1" step="1"
-                                    class="form-control " value="{{ $product->cantidad2 }}" />
-                            </div>
-                            <div class="col-md-4 mb-3" id="dprecio2" name="dprecio2">
-                                <label class="form-label">PRECIO SIN IGV 2</label>
-                                <input type="number" name="precio2" id="precio2" min="0" step="0.0001"
-                                    class="form-control " value="{{ $product->precio2 }}" />
-                            </div>
-                            <div class="col-md-4 mb-3" id="saltodelinea1"> </div>
-                            <div class="col-md-4 mb-3" id="dcantidad3" name="dcantidad3">
-                                <label class="form-label ">CANTIDAD 3</label>
-                                <input type="number" name="cantidad3" id="cantidad3" min="1" step="1"
-                                    class="form-control " value="{{ $product->cantidad3 }}" />
-                            </div>
-                            <div class="col-md-4 mb-3" id="dprecio3" name="dprecio3">
-                                <label class="form-label">PRECIO SIN IGV 3</label>
-                                <input type="number" name="precio3" id="precio3" min="0" step="0.0001"
-                                    class="form-control " value="{{ $product->precio3 }}" />
-                            </div>
-                            <div class="col-md-4 mb-3" id="saltodelinea2"> </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">PRECIO MÍNIMO</label>
-                                <input type="number" name="minimo" id="minimo" value="{{ $product->minimo }}"
-                                    min="0" step="0.0001" class="form-control " />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">PRECIO MÁXIMO</label>
-                                <input type="number" name="maximo" id="maximo" value="{{ $product->maximo }}"
-                                    min="0" step="0.0001" class="form-control " />
-                            </div>
-                            <div class="col-md-4 mb-3" id="saltodelinea3"> </div>
-                            @can('ver-preciofob')
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">PRECIO FOB</label>
-                                    <input type="number" name="preciofob" id="preciofob" min="0" step="0.0001"
-                                        class="form-control " value="{{ $product->preciofob }}" />
-                                </div>
-                            @endcan
                             <div class="col-md-12 mb-3">
                                 <button type="submit" class="btn btn-primary text-white float-end">Actualizar</button>
                             </div>
@@ -141,58 +93,13 @@
             </div>
         </div>
     </div>
+
 @endsection
+
 @push('script')
     <script type="text/javascript">
-        var micantidad2 = @json($product->cantidad2);
-        var micantidad3 = @json($product->cantidad3);
-        var miprecio2 = @json($product->precio2);
-        var miprecio3 = @json($product->precio3);
         $(document).ready(function() {
-            miprecioxmayor();
-            document.getElementById("cantidad").onchange = function() {
-                IGVtotal();
-            };
-            document.getElementById("precioxmayor").onchange = function() {
-                miprecioxmayor();
-            };
             $('.select2').select2({});
         });
-
-        function miprecioxmayor() {
-            if ($('#precioxmayor').prop('checked')) {
-                document.getElementById('dcantidad2').style.display = 'inline';
-                document.getElementById('dcantidad3').style.display = 'inline';
-                document.getElementById('dprecio2').style.display = 'inline';
-                document.getElementById('dprecio3').style.display = 'inline';
-                document.getElementById('cantidad2').value = micantidad2;
-                document.getElementById('cantidad3').value = micantidad3;
-                document.getElementById('precio2').value = miprecio2;
-                document.getElementById('precio3').value = miprecio3;
-                document.getElementById('saltodelinea1').style.display = 'inline';
-                document.getElementById('saltodelinea2').style.display = 'inline';
-            } else {
-                document.getElementById('dcantidad2').style.display = 'none';
-                document.getElementById('dcantidad3').style.display = 'none';
-                document.getElementById('dprecio2').style.display = 'none';
-                document.getElementById('dprecio3').style.display = 'none';
-                document.getElementById('cantidad2').value = "";
-                document.getElementById('cantidad3').value = "";
-                document.getElementById('precio2').value = "";
-                document.getElementById('precio3').value = "";
-                document.getElementById('saltodelinea1').style.display = 'none';
-                document.getElementById('saltodelinea2').style.display = 'none';
-            }
-        }
-
-        function IGVtotal() {
-            preciototal = 0;
-            var cantidad = $('[name="NoIGV"]').val();
-            if (cantidad.length != 0) {
-                //alert("final");
-                preciototal = parseFloat(cantidad) + (parseFloat(cantidad) * 0.18);
-                document.getElementById('SiIGV').value = parseFloat(preciototal.toFixed(4));
-            }
-        }
     </script>
 @endpush

@@ -22,8 +22,7 @@ use App\Models\Detalleventa;
 use App\Models\Redcarro;
 use App\Traits\ActualizarStockTrait;
 use App\Models\Enviored;
-use App\Models\Venta;
-use Sabberworm\CSS\Value\ValueList;
+use App\Models\Venta; 
 use App\Models\DetalleKitventa;
 
 class ProduccioncarroController extends Controller
