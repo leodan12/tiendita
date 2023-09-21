@@ -356,6 +356,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::post('/produccioncarro/crearfactura', 'crearfactura');
             Route::get('/produccioncarro/traercarros/{id_produccion}', 'traercarros');
         });
+
+
         //---------------------------------------------------------rutas de tiendita --------------------------------------------
         Route::controller(App\Http\Controllers\Admin\UniformeController::class)->group(function () {
             Route::get('/uniformes', 'index')->name('uniforme.index');
@@ -365,6 +367,10 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::put('/uniformes/{uniforme_id}', 'update');
             Route::get('/uniformes/{uniforme_id}/delete', 'destroy'); 
             Route::get('/uniformes/show/{id}', 'show'); //ver   
+            //ruta PARA AÑADIR TELA,TALLA Y COLOR EXTRA
+            Route::get('/uniformes/addtalla/{talla}', 'addtalla');
+            Route::get('/uniformes/addtipotela/{tipotela}', 'addtipotela');
+            Route::get('/uniformes/addcolor/{color}', 'addcolor');
         });
     });
 });

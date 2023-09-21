@@ -120,4 +120,38 @@ class UniformeController extends Controller
             return "0";
         }
     }
+    //funcion para añadir dato extra
+    public function addtalla($talla)
+    {
+        $registro =   Talla::find($talla);
+        $registro1 =   Talla::where('talla','=',$talla)->first();
+        if(!$registro && !$registro1){
+            $reg = new Talla;
+            $reg->talla = $talla;
+            $reg->save();
+            return "1";
+        } 
+    }
+    public function addtipotela($tipotela)
+    {
+        $tela =   Tipotela::find($tipotela);
+        $tela1 =   Tipotela::where('tela','=',$tipotela)->first();
+        if(!$tela && !$tela1){
+            $reg = new Tipotela;
+            $reg->tela = $tipotela;
+            $reg->save();
+            return "1";
+        } 
+    }
+    public function addcolor($color)
+    {
+        $micolor =   Color::find($color);
+        $micolor1  =   Color::where('color','=',$color)->first();
+        if(!$micolor && !$micolor1){
+            $reg = new Color;
+            $reg->color = $color;
+            $reg->save();
+            return "1";
+        } 
+    }
 }
