@@ -118,91 +118,14 @@
         var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         //para select2 responsive
         document.querySelectorAll(".select2").forEach(elemento => elemento.style.width = "100%");
-        var hoy = new Date();
-        var iddato = -1;
-        var fechaActual = hoy.getFullYear() + '-' + (String(hoy.getMonth() + 1).padStart(2, '0')) + '-' +
-            String(hoy.getDate()).padStart(2, '0');
+      
+    function mensaje(texto,icono){
+        Swal.fire({
+            text: texto,
+            icon:icono
+        });
+    }  
 
-        function mostrardatos(data1) {
-            iddato = data1['id'];
-            document.getElementById('labeltipocambioayer').innerHTML = "TIPO CAMBIO AL " + data1[
-                'fecha'];
-            document.getElementById('tasacambioayer').value = data1['valor'];
-            //TRAEMOS LA TASA DE CAMBIO DE SUNAT
-            var urlvertasasunat = "{{ url('admin/dato/traertasasunat') }}";
-            $.ajax({
-                type: "GET",
-                url: urlvertasasunat,
-                success: function(data) {
-                    if (data != "-1") {
-                        document.getElementById('tasacambiom').value = data[2];
-                        document.getElementById('labeltipocambiohoy').innerHTML = "TIPO CAMBIO HOY " + data[0];
-                        document.getElementById('labeltipocambiocompra').innerHTML = "TIPO CAMBIO COMPRA: " +
-                            data[1];
-                    }
-                }
-            });
-        }
-
-        function vertasacambio(mostrar) {
-            var myModal = new bootstrap.Modal(document.getElementById('modaltasacambio'), {
-                keyboard: false
-            })
-            var urlvertasacambio = "{{ url('admin/dato/vertasacambio') }}";
-            $.ajax({
-                type: "GET",
-                url: urlvertasacambio,
-                success: function(data1) {
-                    if (fechaActual > data1['fechatasa']) {
-                        myModal.show();
-                        mostrardatos(data1);
-                    } else if (mostrar == 1) {
-                        myModal.show();
-                        mostrardatos(data1);
-                    }
-                }
-            });
-        }
-
-        function actualizartasa() {
-            var urlupdate = "{{ url('admin/dato/actualizartasacambio') }}";
-            var mitasacambio = document.getElementById('tasacambiom').value;
-            $.ajax({
-                type: "GET",
-                url: urlupdate + '/' + mitasacambio + '/' + fechaActual + '/' + iddato,
-                success: function(data) {
-                    if (data == "1") {
-                        $('#modaltasacambio').modal('hide');
-                        Swal.fire({
-                            icon: "success",
-                            text: "Tasa de cambio Actualizada",
-                        });
-                    } else if (data == "0") {
-                        Swal.fire({
-                            icon: "error",
-                            text: "No se Actualizó la tasa de cambio",
-                        });
-                    } else if (data == "2") {
-                        Swal.fire({
-                            icon: "error",
-                            text: "No se Encontró la tasa de cambio",
-                        });
-                    }
-                }
-            });
-        }
-
-        function traertasacambio() {
-            var urlvertasacambio = "{{ url('admin/dato/vertasacambio') }}";
-            $.ajax({
-                type: "GET",
-                url: urlvertasacambio,
-                async: false,
-                success: function(data) {
-                    document.getElementById('tasacambio').value = data['valor'];
-                }
-            });
-        }
     </script>
 
     @livewireScripts

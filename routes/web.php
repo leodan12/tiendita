@@ -372,5 +372,21 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/uniformes/addtipotela/{tipotela}', 'addtipotela');
             Route::get('/uniformes/addcolor/{color}', 'addcolor');
         });
+
+        Route::controller(App\Http\Controllers\Admin\LibroController::class)->group(function () {
+            Route::get('/libros', 'index')->name('libro.index');
+            Route::get('/libros/create', 'create');
+            Route::post('/libros', 'store');
+            Route::get('/libros/{libro_id}/edit', 'edit');
+            Route::put('/libros/{libro_id}', 'update');
+            Route::get('/libros/{libro_id}/delete', 'destroy'); 
+            Route::get('/libros/show/{id}', 'show'); //ver   
+            //ruta PARA AÑADIR formato,tipopapel,tipopasta,edicion y especializacion
+            Route::get('/libros/addformato/{formato}', 'addformato');
+            Route::get('/libros/addtipopapel/{tipopapel}', 'addtipopapel');
+            Route::get('/libros/addtipopasta/{tipopasta}', 'addtipopasta');
+            Route::get('/libros/addedicion/{edicion}', 'addedicion');
+            Route::get('/libros/addespecializacion/{especializacion}', 'addespecializacion');
+        });
     });
 });

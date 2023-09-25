@@ -31,9 +31,9 @@
                             auth()->user()->can('editar-categoria') ||
                             auth()->user()->can('eliminar-categoria'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/uniformes') }}">
+                            <a class="nav-link" href="{{ url('admin/libros') }}">
                                 <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
-                                <span class="menu-title">UNIFORMES</span>
+                                <span class="menu-title">LIBROS</span>
                             </a>
                         </li>
                     @endif

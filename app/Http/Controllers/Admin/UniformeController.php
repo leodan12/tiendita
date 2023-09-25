@@ -57,9 +57,21 @@ class UniformeController extends Controller
         $uniforme->nombre = $request->nombre;
         $uniforme->genero = $request->genero;
         $uniforme->precio = $request->precio;
-        $uniforme->talla_id = $request->talla;
-        $uniforme->tipotela_id = $request->tipotela;
-        $uniforme->color_id = $request->color;
+        $talla = Talla::find($request->talla); 
+        if(!$talla){
+            $talla = Talla::where('talla','=',$request->talla)->first(); 
+        }
+        $tipotela = Tipotela::find($request->tipotela); 
+        if(!$tipotela){
+            $tipotela = Tipotela::where('tela','=',$request->tipotela)->first(); 
+        }
+        $color = Color::find($request->color); 
+        if(!$color){
+            $color = Color::where('color','=',$request->color)->first(); 
+        }
+        $uniforme->talla_id = $talla->id;
+        $uniforme->tipotela_id = $tipotela->id;
+        $uniforme->color_id = $color->id;
         $uniforme->save();
         $this->crearhistorial('crear', $uniforme->id, $uniforme->nombre, '', 'uniformes');
         return redirect('admin/uniformes')->with('message', 'Uniforme Agregado Satisfactoriamente');
