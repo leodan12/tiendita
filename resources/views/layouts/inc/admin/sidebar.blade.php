@@ -74,6 +74,40 @@
             </div>
         </li>
         <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inventarios" aria-expanded="false"
+                aria-controls="inventarios">
+                <i class="mdi mdi-home-modern menu-icon"></i>
+                <span class="menu-title">INVENTARIOS</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="inventarios">
+                <ul class="flex-column sub-menu" style="list-style: none;">
+                    @if (auth()->user()->can('ver-empresa') ||
+                            auth()->user()->can('crear-empresa') ||
+                            auth()->user()->can('editar-empresa') ||
+                            auth()->user()->can('eliminar-empresa'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/inventariouniformes') }}">
+                                <i class="mdi mdi-store menu-icon"></i>
+                                <span class="menu-title">I. UNIFORMES</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-cliente') ||
+                            auth()->user()->can('crear-cliente') ||
+                            auth()->user()->can('editar-cliente') ||
+                            auth()->user()->can('eliminar-cliente'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/inventariolibros') }}">
+                                <i class="mdi mdi-hospital-building menu-icon"></i>
+                                <span class="menu-title">I. LIBROS</span>
+                            </a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#companies" aria-expanded="false"
                 aria-controls="companies">
                 <i class="mdi mdi-home-modern menu-icon"></i>

@@ -28,7 +28,6 @@
                         <table class="table table-bordered table-striped" id="mitabla" name="mitabla">
                             <thead class="fw-bold text-primary">
                                 <tr>
-                                    <th>ID</th>
                                     <th>TITULO</th>
                                     <th>AUTOR</th>
                                     <th>ESPECIALIZACION</th>
@@ -123,10 +122,6 @@
             var tabla = "#mitabla";
             var ruta = "{{ route('libro.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
-                    data: 'id',
-                    name: 'id'
-                },
-                {
                     data: 'titulo',
                     name: 'titulo'
                 },

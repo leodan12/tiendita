@@ -91,6 +91,9 @@ class UniformeController extends Controller
                 'c.color',
                 'u.precio',
                 'u.genero',
+                'u.stock1',
+                'u.stock2',
+                'u.stockmin',
             )->where('u.id', '=', $id)
             ->get();
         return $uniformes;
@@ -166,4 +169,51 @@ class UniformeController extends Controller
             return "1";
         } 
     }
+    //inventario
+    public function inventariouniformes(Request $request)
+    {
+        if ($request->ajax()) {
+            $registros = DB::table('uniformes as u')
+                ->join('tallas as t', 'u.talla_id', '=', 't.id')
+                ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+                ->join('colors as c', 'u.color_id', '=', 'c.id')
+                ->select(
+                    'u.id',
+                    'u.nombre',
+                    't.talla',
+                    'tt.tela',
+                    'c.color',
+                    'u.precio',
+                    'u.genero',
+                    'u.stock1',
+                    'u.stock2',
+                    'u.stockmin', 
+                )->where('u.status', '=', 0);
+            return DataTables::of($registros)
+                ->addColumn('acciones', 'Acciones')
+                ->editColumn('acciones', function ($registros) {
+                    return view('admin.inventarios.botones', compact('registros'));
+                })
+                ->rawColumns(['acciones'])
+                ->make(true);
+        }
+        return view('admin.inventarios.uniformes');
+    }
+
+    public function updatestock(Request $request)
+    {
+        try {
+            $uniforme =   Uniforme::find($request->idproducto);
+            $uniforme->stock1 = $request->stock1;
+            $uniforme->stock2 = $request->stock2;
+            $uniforme->stockmin = $request->stockmin;
+            $uniforme->update();
+            return "1";
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        
+        
+    }
+
 }

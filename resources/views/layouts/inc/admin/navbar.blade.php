@@ -13,7 +13,7 @@
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <ul class="navbar-nav navbar-nav-right nav">
-            <li class="nav-item dropdown me-4">
+            {{-- <li class="nav-item dropdown me-4">
 
                 <button style="border: solid 0px white; background-color: white;"
                     class=" nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center
@@ -21,7 +21,7 @@
                      >
                     <i class="mdi mdi-cash-usd menu-icon mx-0"></i>TASA CAMBIO</button>
 
-            </li>
+            </li> --}}
             {{-- <li class="nav-item dropdown me-4">
                 <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center notification-dropdown"
                     id="notificationDropdown" href="#" data-bs-toggle="dropdown">

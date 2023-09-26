@@ -371,6 +371,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/uniformes/addtalla/{talla}', 'addtalla');
             Route::get('/uniformes/addtipotela/{tipotela}', 'addtipotela');
             Route::get('/uniformes/addcolor/{color}', 'addcolor');
+            //ruta para ver el inventario
+            Route::get('/inventariouniformes', 'inventariouniformes')->name('inventariouniforme.index');
+            Route::post('/uniformes/updatestock', 'updatestock');
         });
 
         Route::controller(App\Http\Controllers\Admin\LibroController::class)->group(function () {
