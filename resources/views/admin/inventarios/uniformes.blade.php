@@ -20,12 +20,15 @@
                         <table class="table table-bordered table-striped" id="mitabla" name="mitabla">
                             <thead class="fw-bold text-primary">
                                 <tr>
+                                    <th>ID</th>
                                     <th>NOMBRE</th>
                                     <th>TALLA</th>
                                     <th>GENERO</th>
                                     <th>TELA</th>
                                     <th>COLOR</th>
                                     <th>PRECIO(soles)</th>
+                                    <th>STOCK TIENDA 1</th>
+                                    <th>STOCK TIENDA 2</th>
                                     <th>ACCIONES</th>
                                 </tr>
                             </thead>
@@ -113,6 +116,10 @@
             var tabla = "#mitabla";
             var ruta = "{{ route('inventariouniforme.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
                     data: 'nombre',
                     name: 'nombre'
                 },
@@ -136,6 +143,13 @@
                 {
                     data: 'precio',
                     name: 'precio'
+                },{
+                    data: 'stock1',
+                    name: 'stock1'
+                },
+                {
+                    data: 'stock2',
+                    name: 'stock2'
                 },
                 {
                     data: 'acciones',

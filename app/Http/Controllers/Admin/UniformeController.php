@@ -72,6 +72,9 @@ class UniformeController extends Controller
         $uniforme->talla_id = $talla->id;
         $uniforme->tipotela_id = $tipotela->id;
         $uniforme->color_id = $color->id;
+        $uniforme->stock1 = 0;
+        $uniforme->stock2 = 0;
+        $uniforme->stockmin = 5;
         $uniforme->save();
         $this->crearhistorial('crear', $uniforme->id, $uniforme->nombre, '', 'uniformes');
         return redirect('admin/uniformes')->with('message', 'Uniforme Agregado Satisfactoriamente');

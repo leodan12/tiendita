@@ -28,6 +28,7 @@
                         <table class="table table-bordered table-striped" id="mitabla" name="mitabla">
                             <thead class="fw-bold text-primary">
                                 <tr>
+                                    <th>ID</th>
                                     <th>TITULO</th>
                                     <th>AUTOR</th>
                                     <th>ESPECIALIZACION</th>
@@ -65,7 +66,7 @@
                                             <div class="col-sm-3 mb-3">
                                                 <label for="verprecio" class="col-form-label">PRECIO:</label>
                                                 <input type="number" class="form-control" id="verprecio" readonly>
-                                            </div> 
+                                            </div>
                                             <div class="col-sm-3 mb-3">
                                                 <label for="veranio" class="col-form-label">AÑO:</label>
                                                 <input type="text" class="form-control" id="veranio" readonly>
@@ -122,6 +123,10 @@
             var tabla = "#mitabla";
             var ruta = "{{ route('libro.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
                     data: 'titulo',
                     name: 'titulo'
                 },
