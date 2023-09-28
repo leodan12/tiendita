@@ -18,6 +18,9 @@ return new class extends Migration
             $table->integer('anio');
             $table->string('original');
             $table->double('precio');
+            $table->integer('stock1')->nullable();
+            $table->integer('stock2')->nullable();
+            $table->integer('stockmin')->nullable();
             $table->unsignedBigInteger('formato_id'); 
             $table->unsignedBigInteger('tipopapel_id'); 
             $table->unsignedBigInteger('tipopasta_id'); 

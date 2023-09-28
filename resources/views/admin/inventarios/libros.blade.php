@@ -11,7 +11,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <h4 id="mititulo">INVENTARIO DE UNIFORMES:
+                                <h4 id="mititulo">INVENTARIO DE LIBROS:
                                 </h4>
                             </div>
                         </div>
@@ -21,11 +21,15 @@
                             <thead class="fw-bold text-primary">
                                 <tr>
                                     <th>ID</th>
-                                    <th>NOMBRE</th>
-                                    <th>TALLA</th>
-                                    <th>GENERO</th>
-                                    <th>TELA</th>
-                                    <th>COLOR</th>
+                                    <th>TITULO</th>
+                                    <th>AUTOR</th>
+                                    <th>AÑO</th> 
+                                    <th>FORMATO</th>
+                                    <th>TIPO PAPEL</th>
+                                    <th>TIPO PASTA</th>
+                                    <th>EDICION</th>
+                                    <th>ESPECIALIZACION</th>
+                                    <th>ORIGINAL?</th>
                                     <th>PRECIO(soles)</th>
                                     <th>STOCK TIENDA 1</th>
                                     <th>STOCK TIENDA 2</th>
@@ -52,33 +56,47 @@
                                 <div class="modal-body">
                                     <form>
                                         <div class="row">
-                                            <div class="col-sm-9 mb-3">
-                                                <label for="vernombre" class="col-form-label">NOMBRE:</label>
-                                                <input type="text" class="form-control" id="vernombre" readonly>
+                                            <div class="col-sm-6 mb-3">
+                                                <label for="vertitulo" class="col-form-label">TITULO:</label>
+                                                <input type="text" class="form-control" id="vertitulo" readonly>
+                                            </div>
+                                            <div class="col-sm-3   mb-3">
+                                                <label for="veranio" class="col-form-label">AÑO:</label>
+                                                <input type="number" class="form-control" id="veranio" readonly>
                                             </div>
                                             <div class="col-sm-3   mb-3">
                                                 <label for="verprecio" class="col-form-label">PRECIO:</label>
-                                                <input type="number" class="form-control" id="verprecio" readonly>
+                                                <input type="number" class="form-control" id="verprecio" step="0.0001" readonly>
                                             </div>
-                                            <div class="col-sm-3   mb-3">
-                                                <label for="vergenero" class="col-form-label">GENERO:</label>
-                                                <input type="text" class="form-control" id="vergenero" readonly>
-                                            </div>
-                                            <div class="col-sm-3   mb-3">
-                                                <label for="vertalla" class="col-form-label">TALLA:</label>
-                                                <input type="text" class="form-control" id="vertalla" readonly>
+                                            <div class="col-sm-6   mb-3">
+                                                <label for="verautor" class="col-form-label">AUTOR:</label>
+                                                <input type="text" class="form-control" id="verautor" readonly>
                                             </div>
                                             <div class="col-sm-3 mb-3">
-                                                <label for="vertela" class="col-form-label">TIPO DE TELA:</label>
-                                                <input type="text" class="form-control" id="vertela" readonly>
+                                                <label for="veredicion" class="col-form-label">EDICION:</label>
+                                                <input type="text" class="form-control" id="veredicion" readonly>
+                                            </div> 
+                                            <div class="col-sm-3 mb-3">
+                                                <label for="vertipopapel" class="col-form-label">TIPO PAPEL:</label>
+                                                <input type="text" class="form-control" id="vertipopapel" readonly>
                                             </div>
                                             <div class="col-sm-3 mb-3">
-                                                <label for="vercolor" class="col-form-label">COLOR:</label>
-                                                <input type="text" class="form-control" id="vercolor" readonly>
+                                                <label for="vertipopasta" class="col-form-label">TIPO PASTA:</label>
+                                                <input type="text" class="form-control" id="vertipopasta" readonly>
                                             </div>
-
-                                            <hr>
-
+                                            <div class="col-sm-3 mb-3">
+                                                <label for="verformato" class="col-form-label">FORMATO:</label>
+                                                <input type="text" class="form-control" id="verformato" readonly>
+                                            </div>
+                                            <div class="col-sm-3 mb-3">
+                                                <label for="verespecializacion" class="col-form-label">ESPECIALIZACIOn:</label>
+                                                <input type="text" class="form-control" id="verespecializacion" readonly>
+                                            </div>
+                                            <div class="col-sm-3   mb-3">
+                                                <label for="veroriginal" class="col-form-label">ORIGINAL?:</label>
+                                                <input type="text" class="form-control" id="veroriginal" readonly>
+                                            </div>
+                                            <hr> 
                                             <div class="col-sm-3   mb-3" id="colstock1">
                                                 <label for="verstock1" class="col-form-label">STOCK 1:</label>
                                                 <input type="number" class="form-control" id="verstock1">
@@ -114,36 +132,53 @@
         var numeroeliminados = 0;
         $(document).ready(function() {
             var tabla = "#mitabla";
-            var ruta = "{{ route('inventariouniforme.index') }}"; //darle un nombre a la ruta index
+            var ruta = "{{ route('inventariolibro.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
                     data: 'id',
                     name: 'id'
                 },
                 {
-                    data: 'nombre',
-                    name: 'nombre'
+                    data: 'titulo',
+                    name: 'titulo'
                 },
 
                 {
-                    data: 'talla',
-                    name: 't.talla'
+                    data: 'autor',
+                    name: 'autor'
                 },
                 {
-                    data: 'genero',
-                    name: 'genero'
+                    data: 'anio',
+                    name: 'anio'
                 },
                 {
-                    data: 'tela',
-                    name: 'tt.tela'
+                    data: 'formato',
+                    name: 'f.formato'
                 },
                 {
-                    data: 'color',
-                    name: 'c.color'
+                    data: 'tipopapel',
+                    name: 'tp.tipopapel'
+                },
+                {
+                    data: 'tipopasta',
+                    name: 'tt.tipopasta'
+                },
+                {
+                    data: 'edicion',
+                    name: 'e.edicion'
+                },
+                {
+                    data: 'especializacion',
+                    name: 'es.especializacion'
+                },
+                {
+                    data: 'original',
+                    name: 'original'
                 },
                 {
                     data: 'precio',
                     name: 'precio'
-                },{
+                },
+                {
                     data: 'stock1',
                     name: 'stock1'
                 },
@@ -170,18 +205,21 @@
             const id = button.getAttribute('data-id');
             idproducto = id;
             const accion = button.getAttribute('data-accion');
-            var urlregistro = "{{ url('admin/uniformes/show') }}";
+            var urlregistro = "{{ url('admin/libros/show') }}";
             $.get(urlregistro + '/' + id, function(data) {
                 console.log(data);
                 const modalTitle = mimodal.querySelector('.modal-title');
-                modalTitle.textContent = `Ver Inventario del uniforme ${id}`;
+                modalTitle.textContent = `Ver Inventario del Libro ${id}`;
                 console.log(accion);
-                document.getElementById("vernombre").value = data[0].nombre;
-                document.getElementById("vergenero").value = data[0].genero;
-                document.getElementById("vertalla").value = data[0].talla;
-                document.getElementById("vertela").value = data[0].tela;
+                document.getElementById("vertitulo").value = data[0].titulo;
+                document.getElementById("verautor").value = data[0].autor;
+                document.getElementById("veranio").value = data[0].anio;
+                document.getElementById("vertipopapel").value = data[0].tipopapel;
                 document.getElementById("verprecio").value = data[0].precio;
-                document.getElementById("vercolor").value = data[0].color;
+                document.getElementById("vertipopasta").value = data[0].tipopasta;
+                document.getElementById("veredicion").value = data[0].edicion;
+                document.getElementById("verespecializacion").value = data[0].especializacion;
+                document.getElementById("veroriginal").value = data[0].original;
                 var stock1 = document.getElementById("verstock1");
                 var stock2 = document.getElementById("verstock2");
                 var stockmin = document.getElementById("verstockmin");
@@ -206,7 +244,7 @@
         });
 
         function actualizarstock() {
-            var urlstock = "{{ url('admin/uniformes/updatestock') }}";
+            var urlstock = "{{ url('admin/libros/updatestock') }}";
             var stock1 = document.getElementById("verstock1").value;
             var stock2 = document.getElementById("verstock2").value;
             var stockmin = document.getElementById("verstockmin").value;

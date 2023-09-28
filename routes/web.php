@@ -390,6 +390,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/libros/addtipopasta/{tipopasta}', 'addtipopasta');
             Route::get('/libros/addedicion/{edicion}', 'addedicion');
             Route::get('/libros/addespecializacion/{especializacion}', 'addespecializacion');
+            //ruta para ver el inventario
+            Route::get('/inventariolibros', 'inventariolibros')->name('inventariolibro.index');
+            Route::post('/libros/updatestock', 'updatestock');
         });
     });
 });

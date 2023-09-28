@@ -37,43 +37,29 @@ class HomeController extends Controller
     }
     public function inicio()
     {  
-        $sinstock = $this->productossinstock();
-        $ventasxcobrar = $this->numeroventas('credito', 'NO', '2010-01-01');
-        $ingresosxpagar = $this->numeroingresos('credito', 'NO', '2010-01-01');
-        return view('admin.dashboard', compact('sinstock', 'ingresosxpagar', 'ventasxcobrar'));
+        $uniformessinstock = $this->uniformesinstock();
+        $librossinstock = $this->librossinstock();
+        $ventasxcobrar = $this->numeroingresos('credito', 'NO', '2010-01-01');
+
+        return view('admin.dashboard', compact('uniformessinstock', 'librossinstock', 'ventasxcobrar'));
     }
 
-    public function productossinstock()
+    public function uniformesinstock()
     {
-        $numerosinstock = 0;
-        $prod  = DB::table('inventarios as i')
-            ->where('i.status', '=', 0)
-            ->select('i.id', 'i.product_id', 'i.stockminimo', 'i.stocktotal')
-            ->get();
-        for ($i = 0; $i < count($prod); $i++) {
-            $p  = DB::table('inventarios as i')
-                ->where('i.status', '=', 0)
-                ->where('i.product_id', '=', $prod[$i]->product_id)
-                ->select('i.id', 'i.product_id', 'i.stockminimo', 'i.stocktotal')
-                ->first();
-            if ($p->stockminimo >= $prod[$i]->stocktotal) {
-                $numerosinstock++;
-            }
-        }
+        $numerosinstock = DB::table('uniformes as u')
+        ->whereRaw('u.stock1 + u.stock2 < u.stockmin')
+        ->count();
+
         return $numerosinstock;
     }
 
-    public function numeroventas($formapago, $pagado, $inicio)
+    public function librossinstock()
     {
-        $ventas = "";
+        $numerosinstock = DB::table('libros as l')
+        ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+        ->count();
 
-        $ventas = DB::table('ventas as v')
-            ->where('v.formapago', '=', $formapago)
-            ->where('v.fecha', '>', $inicio)
-            ->where('v.pagada', '=', $pagado)
-            ->count();
-
-        return   $ventas;
+        return   $numerosinstock;
     }
     public function numeroingresos($formapago, $pagado, $inicio)
     {

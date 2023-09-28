@@ -123,6 +123,9 @@ class LibroController extends Controller
                 'tpa.tipopasta',
                 'e.edicion',
                 'es.especializacion',
+                'l.stock1',
+                'l.stock2',
+                'l.stockmin',
             )->where('l.id', '=', $id)
             ->get();
         return $libros;
@@ -225,4 +228,58 @@ class LibroController extends Controller
             return "1";
         }
     }
+
+    //inventario
+    public function inventariolibros(Request $request)
+    {
+        if ($request->ajax()) {
+            $registros = DB::table('libros as l')
+                ->join('formatos as f', 'l.formato_id', '=', 'f.id')
+                ->join('tipopapels as tp', 'l.tipopapel_id', '=', 'tp.id')
+                ->join('tipopastas as tt', 'l.tipopasta_id', '=', 'tt.id')
+                ->join('edicions as e', 'l.edicion_id', '=', 'e.id')
+                ->join('especializacions as es', 'l.especializacion_id', '=', 'es.id')
+                ->select(
+                    'l.id',
+                    'l.titulo',
+                    'f.formato',
+                    'tp.tipopapel',
+                    'tt.tipopasta',
+                    'e.edicion',
+                    'es.especializacion',
+                    'l.original',
+                    'l.anio',
+                    'l.precio',
+                    'l.autor',
+                    'l.stock1',
+                    'l.stock2',
+                    'l.stockmin', 
+                )->where('l.status', '=', 0);
+            return DataTables::of($registros)
+                ->addColumn('acciones', 'Acciones')
+                ->editColumn('acciones', function ($registros) {
+                    return view('admin.inventarios.botones', compact('registros'));
+                })
+                ->rawColumns(['acciones'])
+                ->make(true);
+        }
+        return view('admin.inventarios.libros');
+    }
+
+    public function updatestock(Request $request)
+    {
+        try {
+            $libro =   Libro::find($request->idproducto);
+            $libro->stock1 = $request->stock1;
+            $libro->stock2 = $request->stock2;
+            $libro->stockmin = $request->stockmin;
+            $libro->update();
+            return "1";
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        
+        
+    }
+    
 }
