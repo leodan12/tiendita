@@ -1,11 +1,24 @@
 @extends('layouts.admin')
+@push('css')
+    <script>
+        var mostrar = "NO";
 
+        function mostrarstocks() {
+            mostrar = "SI";
+        }
+    </script>
+@endpush
 @section('content')
     <div>
         <div class="row">
             <div class="col-md-12">
                 @if (session('message'))
                     <div class="alert alert-success">{{ session('message') }}</div>
+                @endif
+                @if (session('verstock'))
+                    <script>
+                        mostrarstocks();
+                    </script>
                 @endif
                 <div class="card">
                     <div class="card-header">

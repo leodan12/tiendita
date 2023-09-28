@@ -1,11 +1,24 @@
 @extends('layouts.admin')
+@push('css')
+    <script>
+        var mostrar = "NO";
 
+        function mostrarstocks() {
+            mostrar = "SI";
+        }
+    </script>
+@endpush
 @section('content')
     <div>
         <div class="row">
             <div class="col-md-12">
                 @if (session('message'))
                     <div class="alert alert-success">{{ session('message') }}</div>
+                @endif
+                @if (session('verstock'))
+                    <script>
+                        mostrarstocks();
+                    </script>
                 @endif
                 <div class="card">
                     <div class="card-header">
@@ -104,6 +117,45 @@
                     </div>
 
                 </div>
+                {{-- mis modales para ver los creditos vencidos --}}
+                <div class="modal fade" id="modalSinStock" aria-hidden="true" aria-labelledby="modalSinStockLabel"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modalSinStockLabel1">
+                                    TIENES: &nbsp;
+                                </h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-striped table-bordered table-striped " style="width: 100%"
+                                    id="mitabla1" name="mitabla1">
+                                    <thead class="fw-bold text-primary">
+                                        <tr style="text-align: center;">
+                                            <th>ID</th>
+                                            <th>NOMBRE</th>
+                                            <th>TALLA</th>
+                                            <th>GENERO</th>
+                                            <th>TELA</th>
+                                            <th>COLOR</th>
+                                            <th>PRECIO(soles)</th>
+                                            <th>STOCK 1</th>
+                                            <th>STOCK 2</th>
+                                            <th>ACCIONES</th>
+                                        </tr>
+                                    </thead>
+                                    <Tbody>
+                                        <tr></tr>
+                                    </Tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -113,6 +165,9 @@
     <script>
         var numeroeliminados = 0;
         $(document).ready(function() {
+            if (mostrar == "SI") {
+                $('#modalSinStock').modal('show');
+            }
             var tabla = "#mitabla";
             var ruta = "{{ route('inventariouniforme.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
@@ -143,7 +198,7 @@
                 {
                     data: 'precio',
                     name: 'precio'
-                },{
+                }, {
                     data: 'stock1',
                     name: 'stock1'
                 },
@@ -161,6 +216,12 @@
             var btns = 'lfrtip';
             var idproducto = 0;
             iniciarTablaIndex(tabla, ruta, columnas, btns);
+            var nroeliminados = "{{ url('admin/uniformes/numerosinstock') }}";
+
+            $.get(nroeliminados, function(data) {
+                numerosinstock = data;
+                mostrarmensajetitulo(numerosinstock);
+            });
         });
 
         //modal para ver el producto
@@ -231,6 +292,72 @@
                     }
                 }
             });
+        }
+
+        //mostrar el modal de la lista de los sin stock---------------------------
+
+        var inicializartablasinstock = 0;
+        const modalsinstock = document.getElementById('modalSinStock');
+        modalsinstock.addEventListener('show.bs.modal', event => {
+            var nrosinstock = 0;
+            var nrostockminimo = 0;
+            var urldatos = "{{ url('admin/uniformes/showsinstock') }}";
+
+            $.get(urldatos, function(data) {
+                var miurl = "{{ url('/admin/inventario/') }}";
+                var btns = 'lfrtip';
+                var tabla = '#mitabla1';
+                if (inicializartablasinstock > 0) {
+                    $("#mitabla1").dataTable().fnDestroy(); //eliminar las filas de la tabla  
+                }
+                $('#mitabla1 tbody tr').slice().remove();
+                for (var i = 0; i < data.length; i++) {
+                    var colorfondo = '<tr id="fila' + i + '">';
+                    if (data[i].stock1 + data[i].stock2 <= 0) {
+                        colorfondo = '<tr style="background-color:  #f89f9f" id="fila' + i + '">';
+                        nrosinstock++;
+                    } else {
+                        nrostockminimo++;
+                    }
+                    const modalTitle = modalsinstock.querySelector('.modal-title');
+                    modalTitle.textContent =
+                        `Tienes ${nrosinstock} Uniformes sin stock y ${nrostockminimo} con stock minimo`;
+
+                    filaDetalle = colorfondo +
+                        '<td>' + data[i].id +
+                        '</td><td>' + data[i].nombre +
+                        '</td><td>' + data[i].talla +
+                        '</td><td>' + data[i].genero +
+                        '</td><td>' + data[i].tela +
+                        '</td><td>' + data[i].color +
+                        '</td><td>' + data[i].precio +
+                        '</td><td>' + data[i].stock1 +
+                        '</td><td>' + data[i].stock2 +
+                        '</td> <td> <button type="button" class="btn btn-success" data-id="' + data[i].id +
+                        '" data-accion="editar" data-bs-toggle="modal" data-bs-target="#mimodal">Editar</button>  ' +
+                        '<button type="button" class="btn btn-secondary" data-id="'+data[i].id+
+                        '" data-accion="ver" data-bs-toggle="modal" data-bs-target="#mimodal">Ver</button>' +
+                        '</td> ' +
+                        '</tr>';
+                    $("#mitabla1>tbody").append(filaDetalle);
+                }
+                inicializartabladatos(btns, tabla, "");
+                inicializartablasinstock++;
+            });
+        });
+
+        function mostrarmensajetitulo(numsinstock) {
+            var registro = "INVENTARIO DE UNIFORMES: ";
+            var tienes = "";
+            var stock = " uniformes en stock minimo";
+            var boton =
+                '<button id="btnsinstock" class="btn btn-info btn-sm " data-bs-toggle="modal"  data-bs-target="#modalSinStock"> Ver </button> ';
+            if (numsinstock > 0) {
+                tienes = "Tienes ";
+                document.getElementById('mititulo').innerHTML = registro + tienes + numsinstock + stock + boton;
+            } else {
+                document.getElementById('mititulo').innerHTML = registro;
+            }
         }
     </script>
 @endpush

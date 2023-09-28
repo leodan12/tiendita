@@ -374,6 +374,10 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             //ruta para ver el inventario
             Route::get('/inventariouniformes', 'inventariouniformes')->name('inventariouniforme.index');
             Route::post('/uniformes/updatestock', 'updatestock');
+            //ver sin stock
+            Route::get('/uniformes/numerosinstock', 'numerosinstock');
+            Route::get('/inventariouniformes2', 'inventariouniformes2')->name('inventariouniformes2.index');
+            Route::get('/uniformes/showsinstock', 'showsinstock');
         });
 
         Route::controller(App\Http\Controllers\Admin\LibroController::class)->group(function () {
@@ -392,6 +396,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/libros/addespecializacion/{especializacion}', 'addespecializacion');
             //ruta para ver el inventario
             Route::get('/inventariolibros', 'inventariolibros')->name('inventariolibro.index');
+            //Route::get('/libros/numerosinstock', 'numerosinstock');
             Route::post('/libros/updatestock', 'updatestock');
         });
     });

@@ -57,17 +57,17 @@ class UniformeController extends Controller
         $uniforme->nombre = $request->nombre;
         $uniforme->genero = $request->genero;
         $uniforme->precio = $request->precio;
-        $talla = Talla::find($request->talla); 
-        if(!$talla){
-            $talla = Talla::where('talla','=',$request->talla)->first(); 
+        $talla = Talla::find($request->talla);
+        if (!$talla) {
+            $talla = Talla::where('talla', '=', $request->talla)->first();
         }
-        $tipotela = Tipotela::find($request->tipotela); 
-        if(!$tipotela){
-            $tipotela = Tipotela::where('tela','=',$request->tipotela)->first(); 
+        $tipotela = Tipotela::find($request->tipotela);
+        if (!$tipotela) {
+            $tipotela = Tipotela::where('tela', '=', $request->tipotela)->first();
         }
-        $color = Color::find($request->color); 
-        if(!$color){
-            $color = Color::where('color','=',$request->color)->first(); 
+        $color = Color::find($request->color);
+        if (!$color) {
+            $color = Color::where('color', '=', $request->color)->first();
         }
         $uniforme->talla_id = $talla->id;
         $uniforme->tipotela_id = $tipotela->id;
@@ -142,35 +142,35 @@ class UniformeController extends Controller
     public function addtalla($talla)
     {
         $registro =   Talla::find($talla);
-        $registro1 =   Talla::where('talla','=',$talla)->first();
-        if(!$registro && !$registro1){
+        $registro1 =   Talla::where('talla', '=', $talla)->first();
+        if (!$registro && !$registro1) {
             $reg = new Talla;
             $reg->talla = $talla;
             $reg->save();
             return "1";
-        } 
+        }
     }
     public function addtipotela($tipotela)
     {
         $tela =   Tipotela::find($tipotela);
-        $tela1 =   Tipotela::where('tela','=',$tipotela)->first();
-        if(!$tela && !$tela1){
+        $tela1 =   Tipotela::where('tela', '=', $tipotela)->first();
+        if (!$tela && !$tela1) {
             $reg = new Tipotela;
             $reg->tela = $tipotela;
             $reg->save();
             return "1";
-        } 
+        }
     }
     public function addcolor($color)
     {
         $micolor =   Color::find($color);
-        $micolor1  =   Color::where('color','=',$color)->first();
-        if(!$micolor && !$micolor1){
+        $micolor1  =   Color::where('color', '=', $color)->first();
+        if (!$micolor && !$micolor1) {
             $reg = new Color;
             $reg->color = $color;
             $reg->save();
             return "1";
-        } 
+        }
     }
     //inventario
     public function inventariouniformes(Request $request)
@@ -190,7 +190,7 @@ class UniformeController extends Controller
                     'u.genero',
                     'u.stock1',
                     'u.stock2',
-                    'u.stockmin', 
+                    'u.stockmin',
                 )->where('u.status', '=', 0);
             return DataTables::of($registros)
                 ->addColumn('acciones', 'Acciones')
@@ -215,8 +215,42 @@ class UniformeController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         }
-        
-        
     }
+    public function numerosinstock()
+    {
+        $productossinstock = 0;
 
+        $productossinstock = DB::table('uniformes')
+            ->whereRaw('stock1 + stock2 < stockmin')
+            ->where('status', '=', '0')
+            ->count();
+        return $productossinstock;
+    }
+    public function inventariouniformes2()
+    {
+        return redirect('admin/inventariouniformes')->with('verstock', 'Ver');
+    }
+    public function showsinstock()
+    {
+
+        $uniformes = DB::table('uniformes as u')
+            ->join('tallas as t', 'u.talla_id', '=', 't.id')
+            ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+            ->join('colors as c', 'u.color_id', '=', 'c.id')
+            ->select(
+                'u.id',
+                'u.nombre',
+                't.talla',
+                'tt.tela',
+                'c.color',
+                'u.precio',
+                'u.genero',
+                'u.stock1',
+                'u.stock2',
+                'u.stockmin',
+            )->whereRaw('u.stock1 + u.stock2 < u.stockmin')
+            ->where('status', '=', '0')
+            ->get();
+        return $uniformes;
+    }
 }

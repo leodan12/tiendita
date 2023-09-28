@@ -234,7 +234,7 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $uniformessinstock }} Uniformes Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventario2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariouniformes2') }}" style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER UNIFORMES</i>
                             </a>
                         </div>
@@ -316,7 +316,7 @@
                 document.getElementById('verProductosin').innerHTML = (data.productosin);
             });
 
-            vertasacambio(0);
+             
         });
     </script>
 @endpush
