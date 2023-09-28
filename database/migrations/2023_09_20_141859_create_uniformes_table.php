@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('genero');
             $table->double('precio');
+            $table->integer('stock1')->nullable();
+            $table->integer('stock2')->nullable();
+            $table->integer('stockmin')->nullable();
             $table->unsignedBigInteger('talla_id');
             $table->unsignedBigInteger('tipotela_id'); 
             $table->unsignedBigInteger('color_id'); 
