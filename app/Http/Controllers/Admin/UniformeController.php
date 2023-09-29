@@ -249,7 +249,7 @@ class UniformeController extends Controller
                 'u.stock2',
                 'u.stockmin',
             )->whereRaw('u.stock1 + u.stock2 < u.stockmin')
-            ->where('status', '=', '0')
+            ->where('u.status', '=', '0')
             ->get();
         return $uniformes;
     }

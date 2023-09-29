@@ -58,7 +58,7 @@
                         <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="mimodalLabel">Ver Producto</h1>
+                                    <h1 class="modal-title fs-5" id="mimodalLabel">Ver Uniforme</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -88,10 +88,8 @@
                                             <div class="col-sm-3 mb-3">
                                                 <label for="vercolor" class="col-form-label">COLOR:</label>
                                                 <input type="text" class="form-control" id="vercolor" readonly>
-                                            </div>
-
-                                            <hr>
-
+                                            </div> 
+                                            <hr> 
                                             <div class="col-sm-3   mb-3" id="colstock1">
                                                 <label for="verstock1" class="col-form-label">STOCK 1:</label>
                                                 <input type="number" class="form-control" id="verstock1">
@@ -109,15 +107,15 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-success" id="btnactualizar"
-                                        onclick="actualizarstock();">Actualizar Inventario</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        onclick="actualizarstock();">Actualizar Inventario</button> 
+                                    <button type="button" class="btn btn-secondary" onclick="volver()">Cerrar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                {{-- mis modales para ver los creditos vencidos --}}
+                {{-- mis modales para ver los sin stock --}}
                 <div class="modal fade" id="modalSinStock" aria-hidden="true" aria-labelledby="modalSinStockLabel"
                     tabindex="-1">
                     <div class="modal-dialog modal-xl">
@@ -163,7 +161,7 @@
 @push('script')
     <script src="{{ asset('admin/jsusados/midatatable.js') }}"></script>
     <script>
-        var numeroeliminados = 0;
+        var numerosinstock = 0;
         $(document).ready(function() {
             if (mostrar == "SI") {
                 $('#modalSinStock').modal('show');
@@ -216,27 +214,25 @@
             var btns = 'lfrtip';
             var idproducto = 0;
             iniciarTablaIndex(tabla, ruta, columnas, btns);
-            var nroeliminados = "{{ url('admin/uniformes/numerosinstock') }}";
-
-            $.get(nroeliminados, function(data) {
+            
+            var rutasinstock = "{{ url('admin/uniformes/numerosinstock') }}";
+            $.get(rutasinstock, function(data) {
                 numerosinstock = data;
                 mostrarmensajetitulo(numerosinstock);
             });
         });
 
         //modal para ver el producto
-        const mimodal = document.getElementById('mimodal')
+        const mimodal = document.getElementById('mimodal');
         mimodal.addEventListener('show.bs.modal', event => {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
             idproducto = id;
             const accion = button.getAttribute('data-accion');
             var urlregistro = "{{ url('admin/uniformes/show') }}";
-            $.get(urlregistro + '/' + id, function(data) {
-                console.log(data);
+            $.get(urlregistro + '/' + id, function(data) { 
                 const modalTitle = mimodal.querySelector('.modal-title');
-                modalTitle.textContent = `Ver Inventario del uniforme ${id}`;
-                console.log(accion);
+                modalTitle.textContent = `Ver Inventario del uniforme ${id}`; 
                 document.getElementById("vernombre").value = data[0].nombre;
                 document.getElementById("vergenero").value = data[0].genero;
                 document.getElementById("vertalla").value = data[0].talla;
@@ -288,6 +284,7 @@
                     if (data1 == "1") {
                         mensaje("Stock Actualizado", "success");
                         recargartabla();
+                        volver();
                         $("#mimodal").modal("hide");
                     }
                 }
@@ -303,8 +300,7 @@
             var nrostockminimo = 0;
             var urldatos = "{{ url('admin/uniformes/showsinstock') }}";
 
-            $.get(urldatos, function(data) {
-                var miurl = "{{ url('/admin/inventario/') }}";
+            $.get(urldatos, function(data) { 
                 var btns = 'lfrtip';
                 var tabla = '#mitabla1';
                 if (inicializartablasinstock > 0) {
@@ -357,6 +353,13 @@
                 document.getElementById('mititulo').innerHTML = registro + tienes + numsinstock + stock + boton;
             } else {
                 document.getElementById('mititulo').innerHTML = registro;
+            }
+        }
+
+        function volver(){
+            $('#mimodal').modal('hide');
+            if (numerosinstock > 0 && mostrar == "SI") {
+                $('#modalSinStock').modal('show');
             }
         }
     </script>

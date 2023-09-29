@@ -277,9 +277,49 @@ class LibroController extends Controller
             return "1";
         } catch (\Throwable $th) {
             //throw $th;
-        }
-        
-        
+        } 
+    }
+    public function numerosinstock()
+    {
+        $productossinstock = 0;
+
+        $productossinstock = DB::table('libros')
+            ->whereRaw('stock1 + stock2 < stockmin')
+            ->where('status', '=', '0')
+            ->count();
+        return $productossinstock;
+    }
+    public function inventariolibros2()
+    {
+        return redirect('admin/inventariolibros')->with('verstock', 'Ver');
+    }
+    public function showsinstock()
+    {
+        $libros = DB::table('libros as l')
+            ->join('formatos as f', 'l.formato_id', '=', 'f.id')
+            ->join('tipopapels as tp', 'l.tipopapel_id', '=', 'tp.id')
+            ->join('tipopastas as tpa', 'l.tipopasta_id', '=', 'tpa.id')
+            ->join('edicions as e', 'l.edicion_id', '=', 'e.id')
+            ->join('especializacions as es', 'l.especializacion_id', '=', 'es.id')
+            ->select(
+                'l.id',
+                'l.titulo',
+                'l.autor',
+                'l.precio',
+                'l.anio',
+                'l.original',
+                'f.formato',
+                'tp.tipopapel',
+                'tpa.tipopasta',
+                'e.edicion',
+                'es.especializacion',
+                'l.stock1',
+                'l.stock2',
+                'l.stockmin',
+            )->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+            ->where('l.status', '=', '0')
+            ->get();
+        return $libros; 
     }
 
     

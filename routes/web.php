@@ -396,8 +396,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/libros/addespecializacion/{especializacion}', 'addespecializacion');
             //ruta para ver el inventario
             Route::get('/inventariolibros', 'inventariolibros')->name('inventariolibro.index');
-            //Route::get('/libros/numerosinstock', 'numerosinstock');
             Route::post('/libros/updatestock', 'updatestock');
+            //ver sin stock
+            Route::get('/libros/numerosinstock', 'numerosinstock');
+            Route::get('/inventariolibros2', 'inventariolibros2')->name('inventariolibros2.index');
+            Route::get('/libros/showsinstock', 'showsinstock');
         });
     });
 });

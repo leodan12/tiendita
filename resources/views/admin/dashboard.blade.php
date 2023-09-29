@@ -256,7 +256,7 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $librossinstock }} Libros Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/ingreso2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariolibros2') }}" style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER LIBROS</i>
                             </a>
                         </div>
