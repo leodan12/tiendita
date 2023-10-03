@@ -69,7 +69,7 @@
                                 <span class="menu-title">PRODUCTOS</span>
                             </a>
                         </li>
-                    @endif 
+                    @endif
                     @if (auth()->user()->can('ver-inventario') ||
                             auth()->user()->can('crear-inventario') ||
                             auth()->user()->can('editar-inventario') ||
@@ -80,7 +80,7 @@
                                 <span class="menu-title">INVENTARIO</span>
                             </a>
                         </li>
-                    @endif 
+                    @endif
                 </ul>
             </div>
         </li>
@@ -143,9 +143,9 @@
                             auth()->user()->can('editar-empresa') ||
                             auth()->user()->can('eliminar-empresa'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/company') }}">
+                            <a class="nav-link" href="{{ url('admin/tienda') }}">
                                 <i class="mdi mdi-store menu-icon"></i>
-                                <span class="menu-title">MIS EMPRESAS</span>
+                                <span class="menu-title">MIS TIENDAS</span>
                             </a>
                         </li>
                     @endif
@@ -156,7 +156,18 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/cliente') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
-                                <span class="menu-title">CLIENTES/PROVEEDORES</span>
+                                <span class="menu-title">CLIENTES</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-cliente') ||
+                            auth()->user()->can('crear-cliente') ||
+                            auth()->user()->can('editar-cliente') ||
+                            auth()->user()->can('eliminar-cliente'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/proveedor') }}">
+                                <i class="mdi mdi-hospital-building menu-icon"></i>
+                                <span class="menu-title">PROVEEDORES</span>
                             </a>
                         </li>
                     @endif
@@ -164,7 +175,8 @@
             </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#ventas" aria-expanded="false" aria-controls="ventas">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ventas" aria-expanded="false"
+                aria-controls="ventas">
                 <i class="mdi mdi-cart menu-icon"></i>
                 <span class="menu-title">FACTURACIÓN</span>
                 <i class="menu-arrow"></i>
@@ -177,8 +189,8 @@
                             auth()->user()->can('eliminar-ingreso'))
                         <li class="nav-item"> <a class="nav-link" href="{{ url('admin/ingreso') }}">
                                 <i class="menu-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 122.43 122.88"
-                                        style="enable-background:new 0 0 122.43 122.88">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                                        viewBox="0 0 122.43 122.88" style="enable-background:new 0 0 122.43 122.88">
                                         <style type="text/css">
                                             .st0 {
                                                 fill-rule: evenodd;
@@ -216,7 +228,7 @@
                                 <span class="menu-title">COTIZACIÓN</span>
                             </a>
                         </li>
-                    @endif  
+                    @endif
                 </ul>
             </div>
         </li>
@@ -236,12 +248,12 @@
                                     class="mdi mdi-file-excel menu-icon"></i>DATOS VENTAS</a></li>
                         <li class="nav-item"> <a class="nav-link" href="{{ url('admin/reporte/rotacionstock') }}"><i
                                     class="mdi mdi-timetable menu-icon"></i>ROTACIÓN STOCK</a></li>
-                        
+
                     </ul>
                 </div>
             </li>
         @endif
-        
+
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#auth" aria-expanded="false"
                 aria-controls="auth">
