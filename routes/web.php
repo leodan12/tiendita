@@ -402,5 +402,44 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/inventariolibros2', 'inventariolibros2')->name('inventariolibros2.index');
             Route::get('/libros/showsinstock', 'showsinstock');
         });
+
+        Route::controller(App\Http\Controllers\Admin\InstrumentoController::class)->group(function () {
+            Route::get('/instrumentos', 'index')->name('instrumento.index');
+            Route::get('/instrumentos/create', 'create');
+            Route::post('/instrumentos', 'store');
+            Route::get('/instrumentos/{instrumento_id}/edit', 'edit');
+            Route::put('/instrumentos/{instrumento_id}', 'update');
+            Route::get('/instrumentos/{instrumento_id}/delete', 'destroy'); 
+            Route::get('/instrumentos/show/{id}', 'show'); //ver   
+            //ruta PARA AÑADIR MARCA Y MODELO
+            Route::get('/instrumentos/addmarca/{marca}', 'addmarca');
+            Route::get('/instrumentos/addmodelo/{modelo}', 'addmodelo');
+            //ruta para ver el inventario
+            Route::get('/inventarioinstrumentos', 'inventarioinstrumentos')->name('inventarioinstrumento.index');
+            Route::post('/instrumentos/updatestock', 'updatestock');
+            //ver sin stock
+            Route::get('/instrumentos/numerosinstock', 'numerosinstock');
+            Route::get('/inventarioinstrumentos2', 'inventarioinstrumentos2')->name('inventarioinstrumentos2.index');
+            Route::get('/instrumentos/showsinstock', 'showsinstock');
+        });
+        Route::controller(App\Http\Controllers\Admin\UtilController::class)->group(function () {
+            Route::get('/utiles', 'index')->name('utiles.index');
+            Route::get('/utiles/create', 'create');
+            Route::post('/utiles', 'store');
+            Route::get('/utiles/{utile_id}/edit', 'edit');
+            Route::put('/utiles/{utile_id}', 'update');
+            Route::get('/utiles/{utile_id}/delete', 'destroy'); 
+            Route::get('/utiles/show/{id}', 'show'); //ver   
+            //ruta PARA AÑADIR MARCA Y MODELO
+            Route::get('/utiles/addmarca/{marcautil}', 'addmarcautil');
+            Route::get('/utiles/addmodelo/{coloutil}', 'addcolorutil');
+            //ruta para ver el inventario
+            Route::get('/inventarioutiles', 'inventarioutiles')->name('inventarioutile.index');
+            Route::post('/utiles/updatestock', 'updatestock');
+            //ver sin stock
+            Route::get('/utiles/numerosinstock', 'numerosinstock');
+            Route::get('/inventarioutiles2', 'inventarioutiles2')->name('inventarioutiles2.index');
+            Route::get('/utiles/showsinstock', 'showsinstock');
+        });
     });
 });

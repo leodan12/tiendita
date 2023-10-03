@@ -42,6 +42,17 @@
                             auth()->user()->can('editar-categoria') ||
                             auth()->user()->can('eliminar-categoria'))
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/instrumentos') }}">
+                                <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
+                                <span class="menu-title">INSTRUMENTOS</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-categoria') ||
+                            auth()->user()->can('crear-categoria') ||
+                            auth()->user()->can('editar-categoria') ||
+                            auth()->user()->can('eliminar-categoria'))
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/category') }}">
                                 <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
                                 <span class="menu-title">CATEGORÍAS</span>
@@ -101,6 +112,17 @@
                             <a class="nav-link" href="{{ url('admin/inventariolibros') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. LIBROS</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-cliente') ||
+                            auth()->user()->can('crear-cliente') ||
+                            auth()->user()->can('editar-cliente') ||
+                            auth()->user()->can('eliminar-cliente'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/inventarioinstrumentos') }}">
+                                <i class="mdi mdi-hospital-building menu-icon"></i>
+                                <span class="menu-title">I. INSTRUMENTOS</span>
                             </a>
                         </li>
                     @endif
