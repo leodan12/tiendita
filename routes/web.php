@@ -99,15 +99,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/kits/traermaterialyredes/{carroceria_id}/{modelo_id}', 'traermaterialyredes'); //ver   
 
             });
-            //Ruta de los Usuarios
-            Route::controller(App\Http\Controllers\Admin\UserController::class)->group(function () {
-                Route::get('/users', 'index')->name('usuario.index');
-                Route::get('/users/create', 'create');
-                Route::post('/users', 'store');
-                Route::get('/users/{user_id}/edit', 'edit');
-                Route::put('/users/{user_id}', 'update');
-                Route::get('/users/{user_id}/delete', 'destroy');
-            });
+
             //Ruta del inventario
             Route::controller(App\Http\Controllers\Admin\InventarioController::class)->group(function () {
                 Route::get('/inventario', 'index')->name('inventario.index');
@@ -127,118 +119,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/inventario/nroeliminados', 'nroeliminados');
                 Route::get('/inventario/numerosinstock', 'numerosinstock');
             });
-            //Ruta de la venta
-            Route::controller(App\Http\Controllers\Admin\VentaController::class)->group(function () {
-                Route::get('/venta', 'index')->name('venta.index');
-                Route::get('/venta2', 'index2')->name('venta2.index');
-                Route::get('/venta/create', 'create');
-                Route::post('/venta', 'store');
-                Route::get('/venta/{venta_id}/edit', 'edit');
-                Route::get('/venta/create2/{idcotizacion}', 'create2');
-                Route::put('/venta/{venta_id}', 'update');
-                Route::get('venta/{venta_id}/delete', 'destroy');
-                Route::get('/deletedetalleventa/{id}',  'destroydetalleventa');
-                Route::get('/venta/show/{id}', 'show'); //ver  
-                Route::get('/venta/showcreditos', 'showcreditos'); //ver   creditos
-                Route::get('/venta/comboempresacliente/{id}', 'comboempresacliente'); //para no seleccionar en una venta la misma empresa y cliente  
-                Route::get('/venta/productosxempresa/{id}', 'productosxempresa'); //devuelve los productos con stock de una empresa
-                Route::post('/venta/guardardatospago',  'guardardatospago');
-                Route::get('/venta/generarfacturapdf/{id}',  'generarfacturapdf');
-                Route::get('/venta/productosxkit/{id}', 'productosxkit'); //ver  
-                Route::get('/venta/stockkitxempresa/{id}', 'stockkitxempresa'); //ver  
-                Route::get('/venta/stockxprodxempresa/{idproducto}/{idempresa}', 'stockxprodxempresa'); //ver  
-                Route::get('/venta/comboempresaclientevi/{id}', 'comboempresaclientevi');
-                Route::get('/venta/facturadisponible/{empresa}/{factura}', 'facturadisponible');
-                Route::get('/venta/misdetallesventa/{idventa}', 'misdetallesventa'); //ver  
-                Route::get('/venta/stocktotalxkit/{id}', 'stocktotalxkit'); //ver  
-                Route::get('/venta/sinnumero', 'sinnumero');
-                Route::get('/venta/creditosxvencer', 'creditosxvencer');
-                Route::get('/venta/precioespecial/{idcliente}/{idproducto}', 'precioespecial');
-                Route::get('/venta/listaprecioscompra/{idproducto}/{idempresa}', 'listaprecioscompra');
-                Route::post('/venta/verstock', 'verstock');
-                Route::get('/venta/productosxdetallexkit/{iddetallekit}', 'productosxdetallexkit'); //ver 
-            });
-            //Ruta de ingresos
-            Route::controller(App\Http\Controllers\Admin\IngresoController::class)->group(function () {
-                Route::get('/ingreso', 'index')->name('ingreso.index');
-                Route::get('/ingreso2', 'index2')->name('ingreso2.index');
-                Route::get('/ingreso/create', 'create');
-                Route::post('/ingreso', 'store');
-                Route::get('/ingreso/{ingreso_id}/edit', 'edit');
-                Route::put('/ingreso/{ingreso_id}', 'update');
-                Route::get('ingreso/{ingreso_id}/delete', 'destroy');
-                Route::get('/deletedetalleingreso/{id}', 'destroydetalleingreso');
-                Route::get('/ingreso/show/{id}', 'show'); //ver  
-                Route::get('/ingreso/showcreditos', 'showcreditos'); //ver   creditos
-                Route::get('/ingreso/pagarfactura/{id}',  'pagarfactura');
-                Route::get('/ingreso/sinnumero', 'sinnumero');
-                Route::get('/ingreso/creditosxvencer', 'creditosxvencer');
-                Route::get('/ingreso/productosxdetallexkitingreso/{iddetallekit}', 'productosxdetallexkitingreso'); //ver 
-                Route::post('/ingreso/guardardatospago',  'guardardatospago');
-            });
-            //Ruta de la cotizacion
-            Route::controller(App\Http\Controllers\Admin\CotizacionesController::class)->group(function () {
-                Route::get('/cotizacion', 'index')->name('cotizacion.index');
-                Route::get('/cotizacion/create', 'create');
-                Route::post('/cotizacion', 'store');
-                Route::get('/cotizacion/{cotizacion_id}/edit', 'edit');
-                Route::put('/cotizacion/{cotizacion_id}', 'update');
-                Route::get('cotizacion/{cotizacion_id}/delete', 'destroy');
-                Route::get('/deletedetallecotizacion/{id}',  'destroydetallecotizacion');
-                Route::get('/deletecondicion/{id}',  'destroycondicion');
-                Route::get('/cotizacion/show/{id}', 'show'); //ver  
-                Route::get('/cotizacion/showcondiciones/{id}', 'showcondiciones'); //ver  
-                Route::get('/cotizacion/vendercotizacion/{id}',  'vendercotizacion');
-                Route::get('/cotizacion/generarcotizacionpdf/{id}',  'generarcotizacionpdf');
-                Route::get('/venta/productosxdetallexkitcotizacion/{iddetallekit}', 'productosxdetallexkitcotizacion'); //ver 
-            });
-            //Ruta de los reportes
-            Route::controller(App\Http\Controllers\Admin\ReportesController::class)->group(function () {
-                Route::get('/reporte', 'index');
-                Route::get('/reporte/obtenerbalance/{idempresa}', 'obtenerbalance');
-                Route::get('/reporte/balancemensualinicio', 'balancemensual');
-                Route::get('/reporte/obtenerdatosgrafico/{idempresa}/{fechainicio}/{fechafin}', 'obtenerdatosgrafico');
-                Route::get('/reporte/obtenerproductosmasv/{idempresa}/{traer}/{fechainicio}/{fechafin}', 'obtenerproductosmasv');
-                Route::get('/reporte/obtenerclientesmasc/{idempresa}/{tipo}/{traer}/{fechainicio}/{fechafin}', 'obtenerclientesmasc');
 
-                Route::get('/reporte/tabladatos', 'infoproductos');
-                Route::get('/reporte/datosproductos/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosproductos');
+            
 
-                Route::get('/reporte/rotacionstock', 'rotacionstock');
-                Route::get('/reporte/datosrotacionstock/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosrotacionstock');
-                Route::get('/reporte/detallecompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detallecompras');
-                Route::get('/reporte/detalleventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detalleventas');
-
-                Route::get('/reporte/cobrovent', 'cobroventas');
-                Route::get('/reporte/datoscobroventas/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datoscobroventas');
-                Route::get('/reporte/pagocompras', 'pagocompras');
-                Route::get('/reporte/datospagocompras/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datospagocompras');
-
-                Route::get('/reporte/precioscompra', 'precioscompra');
-                Route::get('/reporte/datoslistaprecioscompra/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datoslistaprecioscompra');
-
-                //ruta para los graficos de las ventas
-                Route::get('/reporte/datosgraficoventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficoventas');
-                Route::get('/reporte/datosgraficocompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficocompras');
-                //rutapara los precios especiales
-                Route::get('/reporte/precioespecial', 'precioespecial');
-                Route::get('/reporte/listapreciosespeciales/{cliente}/{producto}', 'listapreciosespeciales');
-            });
-            //rutas de los roles
-            Route::controller(App\Http\Controllers\Admin\RolController::class)->group(function () {
-                Route::get('/rol', 'index')->name('rol.index');
-                Route::get('/rol/create', 'create');
-                Route::post('/rol', 'store');
-                Route::get('/rol/{cliente}/edit', 'edit');
-                Route::put('/rol/{cliente}', 'update');
-                Route::get('/rol/{product_id}/delete', 'destroy');
-            });
-            //rutas de los historiales
-            Route::controller(App\Http\Controllers\Admin\HistorialController::class)->group(function () {
-                Route::get('/historial', 'index')->name('historial.index');
-                Route::get('/historial/{historial_id}/delete', 'destroy');
-                Route::get('/historial/limpiartabla', 'limpiartabla');
-            });
             //Ruta de las ventas antiguas
             Route::controller(App\Http\Controllers\Admin\VentasantiguasController::class)->group(function () {
                 Route::get('/ventasantiguas', 'index')->name('ventasantiguas.index');
@@ -356,7 +239,129 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::post('/produccioncarro/crearfactura', 'crearfactura');
                 Route::get('/produccioncarro/traercarros/{id_produccion}', 'traercarros');
             });
+            //--------------------------------------------------------------------
 
+            //rutas de los roles
+            Route::controller(App\Http\Controllers\Admin\RolController::class)->group(function () {
+                Route::get('/rol', 'index')->name('rol.index');
+                Route::get('/rol/create', 'create');
+                Route::post('/rol', 'store');
+                Route::get('/rol/{cliente}/edit', 'edit');
+                Route::put('/rol/{cliente}', 'update');
+                Route::get('/rol/{product_id}/delete', 'destroy');
+            });
+            //Ruta de los Usuarios
+            Route::controller(App\Http\Controllers\Admin\UserController::class)->group(function () {
+                Route::get('/users', 'index')->name('usuario.index');
+                Route::get('/users/create', 'create');
+                Route::post('/users', 'store');
+                Route::get('/users/{user_id}/edit', 'edit');
+                Route::put('/users/{user_id}', 'update');
+                Route::get('/users/{user_id}/delete', 'destroy');
+            });
+            //rutas de los historiales
+            Route::controller(App\Http\Controllers\Admin\HistorialController::class)->group(function () {
+                Route::get('/historial', 'index')->name('historial.index');
+                Route::get('/historial/{historial_id}/delete', 'destroy');
+                Route::get('/historial/limpiartabla', 'limpiartabla');
+            });
+            //Ruta de la venta
+            Route::controller(App\Http\Controllers\Admin\VentaController::class)->group(function () {
+                Route::get('/venta', 'index')->name('venta.index');
+                Route::get('/venta2', 'index2')->name('venta2.index');
+                Route::get('/venta/create', 'create');
+                Route::post('/venta', 'store');
+                Route::get('/venta/{venta_id}/edit', 'edit');
+                Route::get('/venta/create2/{idcotizacion}', 'create2');
+                Route::put('/venta/{venta_id}', 'update');
+                Route::get('venta/{venta_id}/delete', 'destroy');
+                Route::get('/deletedetalleventa/{id}',  'destroydetalleventa');
+                Route::get('/venta/show/{id}', 'show'); //ver  
+                Route::get('/venta/showcreditos', 'showcreditos'); //ver   creditos
+                Route::get('/venta/comboempresacliente/{id}', 'comboempresacliente'); //para no seleccionar en una venta la misma empresa y cliente  
+                Route::get('/venta/productosxtipo/{tipo}', 'productosxtipo'); //devuelve los productos con stock de una empresa
+                Route::post('/venta/guardardatospago',  'guardardatospago');
+                Route::get('/venta/generarfacturapdf/{id}',  'generarfacturapdf');
+                Route::get('/venta/productosxkit/{id}', 'productosxkit'); //ver  
+                Route::get('/venta/stockkitxempresa/{id}', 'stockkitxempresa'); //ver  
+                Route::get('/venta/stockxprodxempresa/{idproducto}/{idempresa}', 'stockxprodxempresa'); //ver  
+                Route::get('/venta/comboempresaclientevi/{id}', 'comboempresaclientevi');
+                Route::get('/venta/facturadisponible/{empresa}/{factura}', 'facturadisponible');
+                Route::get('/venta/misdetallesventa/{idventa}', 'misdetallesventa'); //ver  
+                Route::get('/venta/stocktotalxkit/{id}', 'stocktotalxkit'); //ver  
+                Route::get('/venta/sinnumero', 'sinnumero');
+                Route::get('/venta/creditosxvencer', 'creditosxvencer');
+                Route::get('/venta/precioespecial/{idcliente}/{idproducto}', 'precioespecial');
+                Route::get('/venta/listaprecioscompra/{idproducto}/{idempresa}', 'listaprecioscompra');
+                Route::post('/venta/verstock', 'verstock');
+                Route::get('/venta/productosxdetallexkit/{iddetallekit}', 'productosxdetallexkit'); //ver 
+            });
+            //Ruta de ingresos
+            Route::controller(App\Http\Controllers\Admin\IngresoController::class)->group(function () {
+                Route::get('/ingreso', 'index')->name('ingreso.index');
+                Route::get('/ingreso2', 'index2')->name('ingreso2.index');
+                Route::get('/ingreso/create', 'create');
+                Route::post('/ingreso', 'store');
+                Route::get('/ingreso/{ingreso_id}/edit', 'edit');
+                Route::put('/ingreso/{ingreso_id}', 'update');
+                Route::get('ingreso/{ingreso_id}/delete', 'destroy');
+                Route::get('/deletedetalleingreso/{id}', 'destroydetalleingreso');
+                Route::get('/ingreso/show/{id}', 'show'); //ver  
+                Route::get('/ingreso/showcreditos', 'showcreditos'); //ver   creditos
+                Route::get('/ingreso/pagarfactura/{id}',  'pagarfactura');
+                Route::get('/ingreso/sinnumero', 'sinnumero');
+                Route::get('/ingreso/creditosxvencer', 'creditosxvencer');
+                Route::get('/ingreso/productosxdetallexkitingreso/{iddetallekit}', 'productosxdetallexkitingreso'); //ver 
+                Route::post('/ingreso/guardardatospago',  'guardardatospago');
+            });
+            //Ruta de la cotizacion
+            Route::controller(App\Http\Controllers\Admin\CotizacionesController::class)->group(function () {
+                Route::get('/cotizacion', 'index')->name('cotizacion.index');
+                Route::get('/cotizacion/create', 'create');
+                Route::post('/cotizacion', 'store');
+                Route::get('/cotizacion/{cotizacion_id}/edit', 'edit');
+                Route::put('/cotizacion/{cotizacion_id}', 'update');
+                Route::get('cotizacion/{cotizacion_id}/delete', 'destroy');
+                Route::get('/deletedetallecotizacion/{id}',  'destroydetallecotizacion');
+                Route::get('/deletecondicion/{id}',  'destroycondicion');
+                Route::get('/cotizacion/show/{id}', 'show'); //ver  
+                Route::get('/cotizacion/showcondiciones/{id}', 'showcondiciones'); //ver  
+                Route::get('/cotizacion/vendercotizacion/{id}',  'vendercotizacion');
+                Route::get('/cotizacion/generarcotizacionpdf/{id}',  'generarcotizacionpdf');
+                Route::get('/venta/productosxdetallexkitcotizacion/{iddetallekit}', 'productosxdetallexkitcotizacion'); //ver 
+            });
+            //Ruta de los reportes
+            Route::controller(App\Http\Controllers\Admin\ReportesController::class)->group(function () {
+                Route::get('/reporte', 'index');
+                Route::get('/reporte/obtenerbalance/{idempresa}', 'obtenerbalance');
+                Route::get('/reporte/balancemensualinicio', 'balancemensual');
+                Route::get('/reporte/obtenerdatosgrafico/{idempresa}/{fechainicio}/{fechafin}', 'obtenerdatosgrafico');
+                Route::get('/reporte/obtenerproductosmasv/{idempresa}/{traer}/{fechainicio}/{fechafin}', 'obtenerproductosmasv');
+                Route::get('/reporte/obtenerclientesmasc/{idempresa}/{tipo}/{traer}/{fechainicio}/{fechafin}', 'obtenerclientesmasc');
+
+                Route::get('/reporte/tabladatos', 'infoproductos');
+                Route::get('/reporte/datosproductos/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosproductos');
+
+                Route::get('/reporte/rotacionstock', 'rotacionstock');
+                Route::get('/reporte/datosrotacionstock/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosrotacionstock');
+                Route::get('/reporte/detallecompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detallecompras');
+                Route::get('/reporte/detalleventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detalleventas');
+
+                Route::get('/reporte/cobrovent', 'cobroventas');
+                Route::get('/reporte/datoscobroventas/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datoscobroventas');
+                Route::get('/reporte/pagocompras', 'pagocompras');
+                Route::get('/reporte/datospagocompras/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datospagocompras');
+
+                Route::get('/reporte/precioscompra', 'precioscompra');
+                Route::get('/reporte/datoslistaprecioscompra/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datoslistaprecioscompra');
+
+                //ruta para los graficos de las ventas
+                Route::get('/reporte/datosgraficoventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficoventas');
+                Route::get('/reporte/datosgraficocompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficocompras');
+                //rutapara los precios especiales
+                Route::get('/reporte/precioespecial', 'precioespecial');
+                Route::get('/reporte/listapreciosespeciales/{cliente}/{producto}', 'listapreciosespeciales');
+            });
 
             //---------------------------------------------------------rutas de tiendita --------------------------------------------
             Route::controller(App\Http\Controllers\Admin\UniformeController::class)->group(function () {
@@ -379,7 +384,6 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/inventariouniformes2', 'inventariouniformes2')->name('inventariouniformes2.index');
                 Route::get('/uniformes/showsinstock', 'showsinstock');
             });
-
             Route::controller(App\Http\Controllers\Admin\LibroController::class)->group(function () {
                 Route::get('/libros', 'index')->name('libro.index');
                 Route::get('/libros/create', 'create');
@@ -402,7 +406,6 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/inventariolibros2', 'inventariolibros2')->name('inventariolibros2.index');
                 Route::get('/libros/showsinstock', 'showsinstock');
             });
-
             Route::controller(App\Http\Controllers\Admin\InstrumentoController::class)->group(function () {
                 Route::get('/instrumentos', 'index')->name('instrumento.index');
                 Route::get('/instrumentos/create', 'create');
@@ -459,6 +462,25 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/golosinas/numerosinstock', 'numerosinstock');
                 Route::get('/inventariogolosinas2', 'inventariogolosinas2')->name('inventariogolosinas2.index');
                 Route::get('/golosinas/showsinstock', 'showsinstock');
+            });
+            Route::controller(App\Http\Controllers\Admin\GolosinaController::class)->group(function () {
+                Route::get('/snaks', 'index')->name('snaks.index');
+                Route::get('/snaks/create', 'create');
+                Route::post('/snaks', 'store');
+                Route::get('/snaks/{snack_id}/edit', 'edit');
+                Route::put('/snaks/{snack_id}', 'update');
+                Route::get('/snaks/{snack_id}/delete', 'destroy');
+                Route::get('/snaks/show/{id}', 'show'); //ver   
+                //ruta PARA AÑADIR MARCA Y MODELO
+                Route::get('/snaks/addmarcasnack/{marcasnack}', 'addmarcasnack');
+                Route::get('/snaks/addsaborsnack/{saborsnack}', 'addsaborsnack');
+                //ruta para ver el inventario
+                Route::get('/inventariosnaks', 'inventariosnaks')->name('inventariosnaks.index');
+                Route::post('/snaks/updatestock', 'updatestock');
+                //ver sin stock
+                Route::get('/snaks/numerosinstock', 'numerosinstock');
+                Route::get('/inventariosnaks2', 'inventariosnaks2')->name('inventariosnaks2.index');
+                Route::get('/snaks/showsinstock', 'showsinstock');
             });
             //Rutas de las empresas
             Route::controller(App\Http\Controllers\Admin\TiendaController::class)->group(function () {

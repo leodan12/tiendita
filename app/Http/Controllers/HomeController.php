@@ -41,12 +41,8 @@ class HomeController extends Controller
         $librossinstock = $this->librossinstock();
         $instrumentossinstock = $this->librossinstock();
         $utilessinstock = $this->librossinstock();
-        $golosinassinstock = $this->librossinstock();
-        dump($uniformessinstock);
-        dump($librossinstock);
-        dump($instrumentossinstock);
-        dump($utilessinstock);
-        dump($golosinassinstock);
+        $golosinassinstock = $this->librossinstock(); 
+        $snackssinstock = $this->librossinstock(); 
         return view(
             'admin.dashboard',
             compact(
@@ -54,7 +50,8 @@ class HomeController extends Controller
                 'librossinstock',
                 'instrumentossinstock',
                 'utilessinstock',
-                'golosinassinstock'
+                'golosinassinstock',
+                'snackssinstock'
             )
         );
     }
@@ -67,7 +64,6 @@ class HomeController extends Controller
 
         return $numerosinstock;
     }
-
     public function librossinstock()
     {
         $numerosinstock = DB::table('libros as l')
@@ -95,6 +91,14 @@ class HomeController extends Controller
     public function golosinassinstock()
     {
         $numerosinstock = DB::table('golosinas as l')
+            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+            ->count();
+
+        return   $numerosinstock;
+    }
+    public function snackssinstock()
+    {
+        $numerosinstock = DB::table('snacks as l')
             ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
             ->count();
 

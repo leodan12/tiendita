@@ -16,7 +16,7 @@
             @endif
             <div class="card">
                 <div class="card-header">
-                    <h4>AÑADIR LIBRO
+                    <h4>EDITAR LIBRO
                         <a href="{{ url('admin/libros') }}" class="btn btn-danger text-white float-end">VOLVER</a>
                     </h4>
                 </div>

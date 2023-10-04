@@ -70,6 +70,17 @@
                             </a>
                         </li>
                     @endif 
+                    @if (auth()->user()->can('ver-categoria') ||
+                            auth()->user()->can('crear-categoria') ||
+                            auth()->user()->can('editar-categoria') ||
+                            auth()->user()->can('eliminar-categoria'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/snacks') }}">
+                                <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
+                                <span class="menu-title">SNACKS</span>
+                            </a>
+                        </li>
+                    @endif 
                 </ul>
             </div>
         </li>
@@ -134,6 +145,17 @@
                             <a class="nav-link" href="{{ url('admin/inventariogolosinas') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. GOLOSINAS</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-cliente') ||
+                            auth()->user()->can('crear-cliente') ||
+                            auth()->user()->can('editar-cliente') ||
+                            auth()->user()->can('eliminar-cliente'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/inventariosnacks') }}">
+                                <i class="mdi mdi-hospital-building menu-icon"></i>
+                                <span class="menu-title">I. SNACKS</span>
                             </a>
                         </li>
                     @endif

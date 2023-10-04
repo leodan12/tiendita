@@ -25,6 +25,8 @@ use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
 use App\Traits\ActualizarStockTrait;
 use Spatie\Backup\Tasks\Backup\Zip;
+use App\Models\Tienda;
+
 
 class VentaController extends Controller
 {   //para asignar los permisos a las funciones
@@ -75,52 +77,12 @@ class VentaController extends Controller
         }
         return view('admin.venta.index');
     }
-    //funcion para que reaccione al index principal
-    public function index2()
-    {
-        return redirect('admin/venta')->with('verstock', 'Ver');
-    }
-    //funcion para  obtener las ventas de los creditos 
-    public function creditosxvencer()
-    {
-        $fechahoy = date('Y-m-d');
-        $fechalimite =  date("Y-m-d", strtotime($fechahoy . "+ 7 days"));
-        $creditosxvencer = DB::table('ventas as v')
-            ->join('companies as e', 'v.company_id', '=', 'e.id')
-            ->join('clientes as cl', 'v.cliente_id', '=', 'cl.id')
-            ->where('v.fechav', '!=', null)
-            ->where('v.pagada', '=', 'NO')
-            ->select(
-                'v.id',
-                'v.fecha',
-                'e.nombre as nombreempresa',
-                'cl.nombre as nombrecliente',
-                'v.moneda',
-                'v.costoventa',
-                'v.pagada',
-                'v.fechav',
-                'v.factura',
-                'v.formapago'
-            )
-            ->count();
-        return $creditosxvencer;
-    }
-    //funcion para obtener las ventas sin numero de factura
-    public function sinnumero()
-    {
-        $sinnumero = DB::table('ventas as v')
-            ->where('v.factura', '=', null)
-            ->select('v.id')
-            ->count();
-        return $sinnumero;
-    }
     //vista crear
     public function create()
     {
-        $companies = Company::all();
-        $clientes = Cliente::all();
-        $products = Product::all();
-        return view('admin.venta.create', compact('companies', 'products', 'clientes'));
+        $tiendas = Tienda::where('status', '=', '0')->get();
+        $clientes = Cliente::where('status', '=', '0')->get();
+        return view('admin.venta.create', compact('tiendas', 'clientes'));
     }
     //funcion para registrar una venta
     public function store(VentaFormRequest $request)
@@ -232,124 +194,71 @@ class VentaController extends Controller
                     }
                 }
             }
-            //registrar tambien el ingreso al hacer una venta entre nuestras empresas
-            if ($request->ingreso == "SI") {
-                $empresa = DB::table('companies as c')
-                    ->where('c.ruc', '=', $cliente->ruc)
-                    ->select('c.id', 'c.ruc', 'c.nombre')
-                    ->first();
-                $client = DB::table('clientes as c')
-                    ->where('c.ruc', '=', $company->ruc)
-                    ->select('c.id', 'c.ruc', 'c.nombre')
-                    ->first();
-                $ingreso = new Ingreso;
-                $ingreso->company_id = $empresa->id;
-                $ingreso->cliente_id = $client->id;
-                $ingreso->fecha = $fecha;
-                $ingreso->costoventa = $costoventa;
-                $ingreso->formapago = $formapago;
-                $ingreso->moneda = $moneda;
-                $ingreso->factura = $request->factura;
-                $ingreso->pagada = $pagada;
-                $ingreso->observacion = $observacion;
-                if ($formapago == 'credito') {
-                    $ingreso->fechav = $fechav;
-                }
-                $ingreso->tasacambio = $tasacambio;
-                //guardamos la venta y los detalles
-                if ($ingreso->save()) {
-                    $this->crearhistorial('crear', $venta->id, $empresa->nombre, $client->nombre, 'ingresos');
-                    //obtenemos los detalles
-                    $product = $request->Lproduct;
-                    $observacionproducto = $request->Lobservacionproducto;
-                    $cantidad = $request->Lcantidad;
-                    $preciounitario = $request->Lpreciounitario;
-                    $servicio = $request->Lservicio;
-                    $preciofinal = $request->Lpreciofinal;
-                    $preciounitariomo = $request->Lpreciounitariomo;
-                    //arrays de los productos vendidos de un kit
-                    $idkits = $request->Lidkit;
-                    $cantidadproductokit = $request->Lcantidadproductokit;
-                    $idproductokit = $request->Lidproductokit;
-                    if ($product !== null) {
-                        //guardamos los detalles
-                        for ($i = 0; $i < count($product); $i++) {
-                            $Detalleingreso = new Detalleingreso;
-                            $Detalleingreso->ingreso_id = $ingreso->id;
-                            $Detalleingreso->product_id = $product[$i];
-                            $Detalleingreso->observacionproducto = $observacionproducto[$i];
-                            $Detalleingreso->cantidad = $cantidad[$i];
-                            $Detalleingreso->preciounitario = $preciounitario[$i];
-                            $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
-                            $Detalleingreso->servicio = $servicio[$i];
-                            $Detalleingreso->preciofinal = $preciofinal[$i];
-                            if ($Detalleingreso->save()) {
-                                if ($idkits !== null) {
-                                    for ($x = 0; $x < count($idkits); $x++) {
-                                        if ($idkits[$x] == $product[$i]) {
-                                            $venta_kit = new DetalleKitingreso;
-                                            $venta_kit->detalleingreso_id = $Detalleingreso->id;
-                                            $venta_kit->kitproduct_id = $idproductokit[$x];
-                                            $venta_kit->cantidad = $cantidadproductokit[$x];
-                                            $venta_kit->save();
-                                        }
-                                    }
-                                }
-                                $productb = Product::find($product[$i]);
-                                $micliente = DB::table('clientes as c')
-                                    ->where('c.id', '=', $cliente->id)
-                                    ->select('c.id', 'c.ruc')
-                                    ->first();
-                                $miempresa = DB::table('companies as c')
-                                    ->where('c.ruc', '=', $micliente->ruc)
-                                    ->select('c.id', 'c.ruc')
-                                    ->first();
-                                //pacar cuanto el producto es un kit
-                                if ($productb && $productb->tipo == "kit") { //buscamos los productos del kit
-                                    $milistaproductos = $this->productosxdetallexkitingreso($Detalleingreso->id);
-                                    for ($j = 0; $j < count($milistaproductos); $j++) {
-                                        $this->actualizarstock($milistaproductos[$j]->id, $miempresa->id, ($milistaproductos[$j]->cantidad) * $cantidad[$i], "SUMA");
-                                    }
-                                }
-                                //para cuando el producto es estandar
-                                else if ($productb && $productb->tipo == "estandar") {
-                                    $this->actualizarstock($product[$i], $miempresa->id, $cantidad[$i], "SUMA");
-                                }
-                                //para actualizar el precio maximo y minimo del producto
-                                if ($productb) {
-                                    if ($moneda == $productb->moneda) {
-                                        if ($preciounitariomo[$i] > $productb->NoIGV) {
-                                            $productb->maximo = $preciounitariomo[$i];
-                                        } else  if ($preciounitariomo[$i] < $productb->NoIGV) {
-                                            $productb->minimo = $preciounitariomo[$i];
-                                        }
-                                    } else if ($moneda == "dolares" && $productb->moneda == "soles") {
-                                        if ($preciounitariomo[$i] > round(($productb->NoIGV) / $tasacambio, 2)) {
-                                            $productb->maximo = round($preciounitariomo[$i] * $tasacambio, 2);
-                                        } else  if ($preciounitariomo[$i] < round(($productb->NoIGV) / $tasacambio, 2)) {
-                                            $productb->minimo = round($preciounitariomo[$i] * $tasacambio, 2);
-                                        }
-                                    } else if ($moneda == "soles" && $productb->moneda == "dolares") {
-                                        if ($preciounitariomo[$i] > round(($productb->NoIGV) * $tasacambio, 2)) {
-                                            $productb->maximo = round($preciounitariomo[$i] / $tasacambio, 2);
-                                        } else  if ($preciounitariomo[$i] < round(($productb->NoIGV) * $tasacambio, 2)) {
-                                            $productb->minimo = round($preciounitariomo[$i] / $tasacambio, 2);
-                                        }
-                                    }
-                                    $productb->save();
-                                }
-                                //fin del guardar detalle
-                            }
-                        }
-                    }
-                }
-            }
+            
             //termino de registrar la venta
             $this->crearhistorial('crear', $venta->id, $company->nombre, $cliente->nombre, 'ventas');
             return redirect('admin/venta')->with('message', 'Venta Agregada Satisfactoriamente');
         }
         return redirect('admin/venta')->with('message', 'No se Pudo Agregar la Venta');
     }
+
+    public function productosxtipo($tipo){
+        if($tipo="UTILES"){
+
+        }else if($tipo="UNIFORMES"){
+
+        }else if($tipo="LIBROS"){
+
+        }else if($tipo="INSTRUMENTOS"){
+
+        }else if($tipo="GOLOSINAS"){
+
+        }else if($tipo="SNACKS"){
+
+        } 
+    }
+
+    //funcion para que reaccione al index principal
+    public function index2()
+    {
+        return redirect('admin/venta')->with('verstock', 'Ver');
+    }
+    //funcion para  obtener las ventas de los creditos 
+    public function creditosxvencer()
+    {
+        $fechahoy = date('Y-m-d');
+        $fechalimite =  date("Y-m-d", strtotime($fechahoy . "+ 7 days"));
+        $creditosxvencer = DB::table('ventas as v')
+            ->join('companies as e', 'v.company_id', '=', 'e.id')
+            ->join('clientes as cl', 'v.cliente_id', '=', 'cl.id')
+            ->where('v.fechav', '!=', null)
+            ->where('v.pagada', '=', 'NO')
+            ->select(
+                'v.id',
+                'v.fecha',
+                'e.nombre as nombreempresa',
+                'cl.nombre as nombrecliente',
+                'v.moneda',
+                'v.costoventa',
+                'v.pagada',
+                'v.fechav',
+                'v.factura',
+                'v.formapago'
+            )
+            ->count();
+        return $creditosxvencer;
+    }
+    //funcion para obtener las ventas sin numero de factura
+    public function sinnumero()
+    {
+        $sinnumero = DB::table('ventas as v')
+            ->where('v.factura', '=', null)
+            ->select('v.id')
+            ->count();
+        return $sinnumero;
+    }
+
+
     //para buscar los productos vendidos en un detalle kit
     public function productosxdetallexkit($detalleventa_id)
     {

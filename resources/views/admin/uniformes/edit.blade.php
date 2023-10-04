@@ -16,7 +16,7 @@
             @endif
             <div class="card">
                 <div class="card-header">
-                    <h4>AÑADIR UNIFORME
+                    <h4>EDITAR UNIFORME
                         <a href="{{ url('admin/uniformes') }}" class="btn btn-danger text-white float-end">VOLVER</a>
                     </h4>
                 </div>

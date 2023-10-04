@@ -16,55 +16,59 @@
             @endif
             <div class="card">
                 <div class="card-header">
-                    <h4>EDITAR INSTRUMENTO
-                        <a href="{{ url('admin/instrumentos') }}" class="btn btn-danger text-white float-end">VOLVER</a>
+                    <h4>EDITAR SNACK
+                        <a href="{{ url('admin/utiles') }}" class="btn btn-danger text-white float-end">VOLVER</a>
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url('admin/instrumentos/' . $instrumento->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url('admin/utiles/' . $snack->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
-                            <div class="col-md-9 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label is-required">NOMBRE</label>
                                 <input type="text" name="nombre" id="nombre" class="form-control mayusculas" required
-                                    value="{{ $instrumento->nombre }}" />
+                                    value="{{ $snack->nombre }}" />
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label is-required">TAMAÑO</label>
+                                <input type="text" name="tamanio" id="tamanio"  
+                                    class="form-control " value="{{ $snack->tamanio }}" required />
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label is-required">PRECIO(soles)</label>
                                 <input type="number" name="precio" id="precio" min="0" step="0.0001"
-                                    class="form-control " value="{{ $instrumento->precio }}" required />
+                                    class="form-control " value="{{ $snack->precio }}" required />
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label is-required">MARCA</label>
-                                <select name="marca" id="marca" class="form-select select2" required>
+                                <select name="marcasnack" id="marcasnack" class="form-select select2" required>
                                     <option value="" selected disabled>Seleccion una opción</option>
-                                    @foreach ($marcas as $marca)
-                                        <option value="{{ $marca->id }}"
-                                            {{ $marca->id == $instrumento->marca_id ? 'selected' : '' }}>
-                                            {{ $marca->marca }}
+                                    @foreach ($marcasnacks as $marcasnack)
+                                        <option value="{{ $marcasnack->id }}"
+                                            {{ $marcasnack->id == $snack->marcasnack_id ? 'selected' : '' }}>
+                                            {{ $marcasnack->marcasnack }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label is-required">MODELO</label>
-                                <select name="modelo" id="modelo" class="form-select select2" required>
+                                <label class="form-label is-required">COLOR</label>
+                                <select name="saborsnack" id="saborsnack" class="form-select select2" required>
                                     <option value="" selected disabled>Seleccion una opción</option>
-                                    @foreach ($modelos as $modelo)
-                                        <option value="{{ $modelo->id }}"
-                                            {{ $modelo->id == $instrumento->modelo_id ? 'selected' : '' }}>
-                                            {{ $modelo->modelo }}
+                                    @foreach ($saborsnacks as $saborsnack)
+                                        <option value="{{ $saborsnack->id }}"
+                                            {{ $saborsnack->id == $snack->saborsnack_id ? 'selected' : '' }}>
+                                            {{ $saborsnack->saborsnack }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label is-required">GARANTIA</label>
-                                <input type="number" name="garantia" id="garantia" min="0"  
-                                    class="form-control " value="{{ $instrumento->garantia }}" required />
+                                <label class="form-label is-required">FECHA VENCIMIENTO</label>
+                                <input type="text" name="fechavencimiento" id="fechavencimiento"  
+                                    class="form-control " value="{{ $snack->tamanio }}" required />
                             </div>
-
                             <div class="col-md-12 mb-3">
                                 <button type="submit" class="btn btn-primary text-white float-end">Actualizar</button>
                             </div>
