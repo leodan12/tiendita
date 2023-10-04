@@ -58,7 +58,7 @@ class TiendaController extends Controller
         $tienda->save();
  
         $this->crearhistorial('crear', $tienda->id, $tienda->nombre, null, 'empresas');
-        return redirect('admin/tiendas')->with('message', 'Tienda Agregada Satisfactoriamente');
+        return redirect('admin/tienda')->with('message', 'Tienda Agregada Satisfactoriamente');
     }
 
     

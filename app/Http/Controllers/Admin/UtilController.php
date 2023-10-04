@@ -141,7 +141,7 @@ class UtilController extends Controller
         $micolor1  =   Colorutil::where('colorutil', '=', $colorutil)->first();
         if (!$micolor && !$micolor1) {
             $reg = new Colorutil();
-            $reg->color = $colorutil;
+            $reg->colorutil = $colorutil;
             $reg->save();
             return "1";
         }
@@ -206,7 +206,7 @@ class UtilController extends Controller
     public function showsinstock()
     {
 
-        $utiles = DB::table('utiles as u')
+        $utiles = DB::table('utiles as ut')
             ->join('marcautils as mu', 'ut.marcautil_id', '=', 'mu.id')
             ->join('colorutils as cu', 'ut.colorutil_id', '=', 'cu.id')
             ->select(

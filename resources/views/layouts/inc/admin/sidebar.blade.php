@@ -53,34 +53,23 @@
                             auth()->user()->can('editar-categoria') ||
                             auth()->user()->can('eliminar-categoria'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/category') }}">
+                            <a class="nav-link" href="{{ url('admin/utiles') }}">
                                 <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
-                                <span class="menu-title">CATEGORÍAS</span>
+                                <span class="menu-title">UTILES</span>
                             </a>
                         </li>
-                    @endif
-                    @if (auth()->user()->can('ver-producto') ||
-                            auth()->user()->can('crear-producto') ||
-                            auth()->user()->can('editar-producto') ||
-                            auth()->user()->can('eliminar-producto'))
+                    @endif 
+                    @if (auth()->user()->can('ver-categoria') ||
+                            auth()->user()->can('crear-categoria') ||
+                            auth()->user()->can('editar-categoria') ||
+                            auth()->user()->can('eliminar-categoria'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/products') }}">
-                                <i class="mdi mdi-book menu-icon"></i>
-                                <span class="menu-title">PRODUCTOS</span>
+                            <a class="nav-link" href="{{ url('admin/golosinas') }}">
+                                <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
+                                <span class="menu-title">GOLOSINAS</span>
                             </a>
                         </li>
-                    @endif
-                    @if (auth()->user()->can('ver-inventario') ||
-                            auth()->user()->can('crear-inventario') ||
-                            auth()->user()->can('editar-inventario') ||
-                            auth()->user()->can('eliminar-inventario'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventorystock') }}">
-                                <i class="mdi mdi-playlist-check menu-icon"></i>
-                                <span class="menu-title">INVENTARIO</span>
-                            </a>
-                        </li>
-                    @endif
+                    @endif 
                 </ul>
             </div>
         </li>
@@ -123,6 +112,28 @@
                             <a class="nav-link" href="{{ url('admin/inventarioinstrumentos') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. INSTRUMENTOS</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-cliente') ||
+                            auth()->user()->can('crear-cliente') ||
+                            auth()->user()->can('editar-cliente') ||
+                            auth()->user()->can('eliminar-cliente'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/inventarioutiles') }}">
+                                <i class="mdi mdi-hospital-building menu-icon"></i>
+                                <span class="menu-title">I. UTILES</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (auth()->user()->can('ver-cliente') ||
+                            auth()->user()->can('crear-cliente') ||
+                            auth()->user()->can('editar-cliente') ||
+                            auth()->user()->can('eliminar-cliente'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('admin/inventariogolosinas') }}">
+                                <i class="mdi mdi-hospital-building menu-icon"></i>
+                                <span class="menu-title">I. GOLOSINAS</span>
                             </a>
                         </li>
                     @endif

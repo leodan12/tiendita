@@ -100,8 +100,7 @@
 @endsection
 @push('script')
     <script src="{{ asset('admin/jsusados/midatatable.js') }}"></script>
-    <script>
-         var numeroeliminados = 0;
+    <script> 
         //para inicializar el datatable
         $(document).ready(function() {
             var tabla = "#mitabla";
@@ -137,9 +136,7 @@
                     orderable: false,
                 },
             ];
-            var btns = 'lfrtip';
-            numeroeliminados = @json($datoseliminados);
-            mostrarmensaje(numeroeliminados);
+            var btns = 'lfrtip';  
             iniciarTablaIndex(tabla, ruta, columnas, btns);
 
         });

@@ -232,7 +232,7 @@ class InstrumentoController extends Controller
 
         $instrumentos = DB::table('instrumentos as i')
             ->join('marcas as m', 'i.marca_id', '=', 'm.id')
-            ->join('modelo as mo', 'i.modelo_id', '=', 'mo.id')
+            ->join('modelos as mo', 'i.modelo_id', '=', 'mo.id')
             ->select(
                 'i.id',
                 'i.nombre',
@@ -243,8 +243,8 @@ class InstrumentoController extends Controller
                 'i.stock1',
                 'i.stock2',
                 'i.stockmin',
-            )->whereRaw('u.stock1 + u.stock2 < u.stockmin')
-            ->where('status', '=', '0')
+            )->whereRaw('i.stock1 + i.stock2 < i.stockmin')
+            ->where('i.status', '=', '0')
             ->get();
         return $instrumentos;
     }

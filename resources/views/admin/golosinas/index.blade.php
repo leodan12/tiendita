@@ -11,14 +11,14 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <h4 id="mititulo">UTILES:
+                                <h4 id="mititulo">GOLOSINAS:
                                 </h4>
                             </div>
                             <div class="col">
                                 <h4>
                                     @can('crear-producto')
-                                        <a href="{{ url('admin/utiles/create') }}" class="btn btn-primary float-end">Añadir
-                                            Utiles</a>
+                                        <a href="{{ url('admin/golosinas/create') }}" class="btn btn-primary float-end">Añadir
+                                            Golosina</a>
                                     @endcan
                                 </h4>
                             </div>
@@ -30,8 +30,7 @@
                                 <tr>
                                     <th>ID</th> 
                                     <th>NOMBRE</th>
-                                    <th>MARCA</th>
-                                    <th>COLOR</th> 
+                                    <th>PESO</th> 
                                     <th>PRECIO(soles)</th> 
                                     <th>ACCIONES</th>
                                 </tr>
@@ -56,7 +55,7 @@
                                 <div class="modal-body">
                                     <form>
                                         <div class="row"> 
-                                            <div class="col-sm-9 mb-3">
+                                            <div class="col-sm-6 mb-3">
                                                 <label for="vernombre" class="col-form-label">NOMBRE:</label>
                                                 <input type="text" class="form-control" id="vernombre" readonly>
                                             </div>
@@ -65,14 +64,10 @@
                                                 <input type="number" class="form-control" id="verprecio" readonly>
                                             </div>
                                             <div class="col-sm-3   mb-3">
-                                                <label for="vermarcautil" class="col-form-label">MARCA:</label>
-                                                <input type="text" class="form-control" id="vermarcautil" readonly>
+                                                <label for="verpeso" class="col-form-label">PESO:</label>
+                                                <input type="text" class="form-control" id="verpeso" readonly>
                                             </div>
-                                            <div class="col-sm-3   mb-3">
-                                                <label for="vercolorutil" class="col-form-label">COLOR:</label>
-                                                <input type="text" class="form-control" id="vercolorutil" readonly>
-                                            </div>
-                                              
+                                            
                                         </div>
                                     </form>
                                 </div>
@@ -96,7 +91,7 @@
         var numeroeliminados = 0;
         $(document).ready(function() {
             var tabla = "#mitabla";
-            var ruta = "{{ route('utiles.index') }}"; //darle un nombre a la ruta index
+            var ruta = "{{ route('golosinas.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
                     data: 'id',
                     name: 'id'
@@ -104,15 +99,10 @@
                 {
                     data: 'nombre',
                     name: 'nombre'
-                },
-
+                }, 
                 {
-                    data: 'marcautil',
-                    name: 'mu.marcautil'
-                },
-                {
-                    data: 'colorutil',
-                    name: 'cu.colorutil'
+                    data: 'peso',
+                    name: 'peso'
                 },
                 {
                     data: 'precio',
@@ -134,7 +124,7 @@
         //para borrar un registro de la tabla
         $(document).on('click', '.btnborrar', function(event) {
             const idregistro = event.target.dataset.idregistro;
-            var urlregistro = "{{ url('admin/utiles') }}";
+            var urlregistro = "{{ url('admin/golosinas') }}";
             Swal.fire({
                 title: '¿Esta seguro de Eliminar?',
                 text: "No lo podra revertir!",
@@ -178,21 +168,15 @@
         mimodal.addEventListener('show.bs.modal', event => {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
-            var urlregistro = "{{ url('admin/utiles/show') }}";
+            var urlregistro = "{{ url('admin/golosinas/show') }}";
             $.get(urlregistro + '/' + id, function(data) {
                 console.log(data);
                 const modalTitle = mimodal.querySelector('.modal-title');
-                modalTitle.textContent = `Ver Util ${id}`;
- 
+                modalTitle.textContent = `Ver Uniforme ${id}`; 
                 document.getElementById("vernombre").value = data[0].nombre;
-                document.getElementById("vermarcautil").value = data[0].marcautil;
-                document.getElementById("vercolorutil").value = data[0].colorutil;
-                document.getElementById("verprecio").value = data[0].precio;
-
-            });
-
-        })
-        
- 
+                document.getElementById("verpeso").value = data[0].peso; 
+                document.getElementById("verprecio").value = data[0].precio;  
+            }); 
+        }) 
     </script>
 @endpush

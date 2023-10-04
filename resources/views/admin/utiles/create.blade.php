@@ -43,8 +43,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
-                            </div>
+                            </div> 
                             <div class="col-md-3 mb-3">
                                 <label class="form-label is-required">COLOR</label>
                                 <select name="colorutil" id="colorutil" class="form-select select22" onchange="agregarcolorutil();" required>

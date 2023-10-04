@@ -24,7 +24,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <h4 id="mititulo">INVENTARIO DE UTILES:
+                                <h4 id="mititulo">INVENTARIO DE GOLASINAS:
                                 </h4>
                             </div>
                         </div>
@@ -35,8 +35,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>NOMBRE</th>
-                                    <th>MARCA</th>
-                                    <th>COLOR</th>
+                                    <th>PESO</th> 
                                     <th>PRECIO(soles)</th>
                                     <th>STOCK TIENDA 1</th>
                                     <th>STOCK TIENDA 2</th>
@@ -56,14 +55,14 @@
                         <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="mimodalLabel">Ver Util</h1>
+                                    <h1 class="modal-title fs-5" id="mimodalLabel">Ver Golosinas</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form>
                                         <div class="row">
-                                            <div class="col-sm-9 mb-3">
+                                            <div class="col-sm-6 mb-3">
                                                 <label for="vernombre" class="col-form-label">NOMBRE:</label>
                                                 <input type="text" class="form-control" id="vernombre" readonly>
                                             </div>
@@ -72,12 +71,8 @@
                                                 <input type="number" class="form-control" id="verprecio" readonly>
                                             </div>
                                             <div class="col-sm-3   mb-3">
-                                                <label for="vermarcautil" class="col-form-label">MARCA:</label>
-                                                <input type="text" class="form-control" id="vermarcautil" readonly>
-                                            </div>
-                                            <div class="col-sm-3 mb-3">
-                                                <label for="vercolorutil" class="col-form-label">COLOR:</label>
-                                                <input type="text" class="form-control" id="vercolorutil" readonly>
+                                                <label for="verpeso" class="col-form-label">PESO:</label>
+                                                <input type="text" class="form-control" id="verpeso" readonly>
                                             </div> 
                                             <hr> 
                                             <div class="col-sm-3   mb-3" id="colstock1">
@@ -124,8 +119,7 @@
                                         <tr style="text-align: center;">
                                             <th>ID</th>
                                             <th>NOMBRE</th>
-                                            <th>MARCA</th>
-                                            <th>COLOR</th>
+                                            <th>PESO</th> 
                                             <th>PRECIO(soles)</th>
                                             <th>STOCK 1</th>
                                             <th>STOCK 2</th>
@@ -155,7 +149,7 @@
                 $('#modalSinStock').modal('show');
             }
             var tabla = "#mitabla";
-            var ruta = "{{ route('inventarioutiles.index') }}"; //darle un nombre a la ruta index
+            var ruta = "{{ route('inventariogolosinas.index') }}"; //darle un nombre a la ruta index
             var columnas = [{
                     data: 'id',
                     name: 'id'
@@ -166,13 +160,9 @@
                 },
 
                 {
-                    data: 'marcautil',
-                    name: 'mu.marcautil'
-                },
-                {
-                    data: 'colorutil',
-                    name: 'cu.colorutil'
-                },
+                    data: 'peso',
+                    name: 'peso'
+                }, 
                 {
                     data: 'precio',
                     name: 'precio'
@@ -195,7 +185,7 @@
             var idproducto = 0;
             iniciarTablaIndex(tabla, ruta, columnas, btns);
             
-            var rutasinstock = "{{ url('admin/utiles/numerosinstock') }}";
+            var rutasinstock = "{{ url('admin/golosinas/numerosinstock') }}";
             $.get(rutasinstock, function(data) {
                 numerosinstock = data;
                 mostrarmensajetitulo(numerosinstock);
@@ -209,14 +199,13 @@
             const id = button.getAttribute('data-id');
             idproducto = id;
             const accion = button.getAttribute('data-accion');
-            var urlregistro = "{{ url('admin/utiles/show') }}";
+            var urlregistro = "{{ url('admin/golosinas/show') }}";
             $.get(urlregistro + '/' + id, function(data) { 
                 const modalTitle = mimodal.querySelector('.modal-title');
-                modalTitle.textContent = `Ver Inventario de los Utiles ${id}`; 
-                document.getElementById("vernombre").value = data[0].nombre;
-                document.getElementById("vermarcautil").value = data[0].marcautil;
+                modalTitle.textContent = `Ver Inventario del uniforme ${id}`; 
+                document.getElementById("vernombre").value = data[0].nombre; 
                 document.getElementById("verprecio").value = data[0].precio;
-                document.getElementById("vercolorutil").value = data[0].colorutil;
+                document.getElementById("verpeso").value = data[0].peso;
                 var stock1 = document.getElementById("verstock1");
                 var stock2 = document.getElementById("verstock2");
                 var stockmin = document.getElementById("verstockmin");
@@ -241,7 +230,7 @@
         });
 
         function actualizarstock() {
-            var urlstock = "{{ url('admin/utiles/updatestock') }}";
+            var urlstock = "{{ url('admin/golosinas/updatestock') }}";
             var stock1 = document.getElementById("verstock1").value;
             var stock2 = document.getElementById("verstock2").value;
             var stockmin = document.getElementById("verstockmin").value;
@@ -276,7 +265,7 @@
         modalsinstock.addEventListener('show.bs.modal', event => {
             var nrosinstock = 0;
             var nrostockminimo = 0;
-            var urldatos = "{{ url('admin/utiles/showsinstock') }}";
+            var urldatos = "{{ url('admin/golosinas/showsinstock') }}";
 
             $.get(urldatos, function(data) { 
                 var btns = 'lfrtip';
@@ -295,13 +284,12 @@
                     }
                     const modalTitle = modalsinstock.querySelector('.modal-title');
                     modalTitle.textContent =
-                        `Tienes ${nrosinstock} utiles sin stock y ${nrostockminimo} con stock minimo`;
+                        `Tienes ${nrosinstock} Golosinas sin stock y ${nrostockminimo} con stock minimo`;
 
                     filaDetalle = colorfondo +
                         '<td>' + data[i].id +
                         '</td><td>' + data[i].nombre +
-                        '</td><td>' + data[i].marcautil +
-                        '</td><td>' + data[i].colorutil +
+                        '</td><td>' + data[i].peso + 
                         '</td><td>' + data[i].precio +
                         '</td><td>' + data[i].stock1 +
                         '</td><td>' + data[i].stock2 +
@@ -319,9 +307,9 @@
         });
 
         function mostrarmensajetitulo(numsinstock) {
-            var registro = "INVENTARIO DE UTILES: ";
+            var registro = "INVENTARIO DE GOLOSINAS: ";
             var tienes = "";
-            var stock = " Utiles en stock minimo";
+            var stock = " golosinas en stock minimo";
             var boton =
                 '<button id="btnsinstock" class="btn btn-info btn-sm " data-bs-toggle="modal"  data-bs-target="#modalSinStock"> Ver </button> ';
             if (numsinstock > 0) {

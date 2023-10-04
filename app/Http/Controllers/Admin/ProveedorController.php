@@ -11,7 +11,7 @@ use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
 
 
-class ClienteController extends Controller
+class ProveedorController extends Controller
 {   //para asignar los permisos a las funciones
     function __construct()
     {
@@ -27,7 +27,7 @@ class ClienteController extends Controller
     public function index(Request $request)
     {  
         if ($request->ajax()) { 
-            $proveedores = DB::table('proveedores as c')
+            $proveedores = DB::table('proveedors as c')
                 ->select(
                     'c.id',
                     'c.nombre',
@@ -66,7 +66,7 @@ class ClienteController extends Controller
         $proveedor->status = '0';
         $proveedor->save();
         $this->crearhistorial('crear', $proveedor->id, $proveedor->nombre, null, 'proveedores');
-        return redirect('admin/proveedores')->with('message', 'Cliente Agregado Satisfactoriamente');
+        return redirect('admin/proveedor')->with('message', 'Cliente Agregado Satisfactoriamente');
     }
     //vista editar
     public function edit(Proveedor $proveedor)
@@ -88,13 +88,12 @@ class ClienteController extends Controller
         $proveedor->status =  '0';
         $proveedor->update();
         $this->crearhistorial('editar', $proveedor->id, $proveedor->nombre, null, 'proveedores');
-        return redirect('admin/proveedores')->with('message', 'Cliente Actualizado Satisfactoriamente');
+        return redirect('admin/proveedor')->with('message', 'Cliente Actualizado Satisfactoriamente');
     }
     //funcion para mostrar el modal ver registro
     public function show($id)
     {
-        $proveedor = DB::table('proveedores as c')
-
+        $proveedor = DB::table('proveedors as c') 
             ->select('c.nombre', 'c.ruc', 'c.direccion', 'c.telefono', 'c.email')
             ->where('c.id', '=', $id)->first();
 

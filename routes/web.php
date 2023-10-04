@@ -431,15 +431,34 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/utiles/{utile_id}/delete', 'destroy');
                 Route::get('/utiles/show/{id}', 'show'); //ver   
                 //ruta PARA AÑADIR MARCA Y MODELO
-                Route::get('/utiles/addmarca/{marcautil}', 'addmarcautil');
-                Route::get('/utiles/addmodelo/{coloutil}', 'addcolorutil');
+                Route::get('/utiles/addmarcautil/{marcautil}', 'addmarcautil');
+                Route::get('/utiles/addcolorutil/{coloutil}', 'addcolorutil');
                 //ruta para ver el inventario
-                Route::get('/inventarioutiles', 'inventarioutiles')->name('inventarioutile.index');
+                Route::get('/inventarioutiles', 'inventarioutiles')->name('inventarioutiles.index');
                 Route::post('/utiles/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/utiles/numerosinstock', 'numerosinstock');
                 Route::get('/inventarioutiles2', 'inventarioutiles2')->name('inventarioutiles2.index');
                 Route::get('/utiles/showsinstock', 'showsinstock');
+            });
+            Route::controller(App\Http\Controllers\Admin\GolosinaController::class)->group(function () {
+                Route::get('/golosinas', 'index')->name('golosinas.index');
+                Route::get('/golosinas/create', 'create');
+                Route::post('/golosinas', 'store');
+                Route::get('/golosinas/{utile_id}/edit', 'edit');
+                Route::put('/golosinas/{utile_id}', 'update');
+                Route::get('/golosinas/{utile_id}/delete', 'destroy');
+                Route::get('/golosinas/show/{id}', 'show'); //ver   
+                //ruta PARA AÑADIR MARCA Y MODELO
+                Route::get('/golosinas/addmarcautil/{marcautil}', 'addmarcautil');
+                Route::get('/golosinas/addcolorutil/{coloutil}', 'addcolorutil');
+                //ruta para ver el inventario
+                Route::get('/inventariogolosinas', 'inventariogolosinas')->name('inventariogolosinas.index');
+                Route::post('/golosinas/updatestock', 'updatestock');
+                //ver sin stock
+                Route::get('/golosinas/numerosinstock', 'numerosinstock');
+                Route::get('/inventariogolosinas2', 'inventariogolosinas2')->name('inventariogolosinas2.index');
+                Route::get('/golosinas/showsinstock', 'showsinstock');
             });
             //Rutas de las empresas
             Route::controller(App\Http\Controllers\Admin\TiendaController::class)->group(function () {

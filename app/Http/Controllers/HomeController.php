@@ -26,29 +26,44 @@ class HomeController extends Controller
      */
 
     public function index()
-    { 
+    {
         $usuario = Auth::user()->name;
-        return redirect('admin/dashboard'); 
+        return redirect('admin/dashboard');
     }
     public function home()
-    { 
+    {
         $usuario = Auth::user()->name;
-        return redirect('admin/dashboard')->with('message','Bienvenido usuario '.$usuario); 
+        return redirect('admin/dashboard')->with('message', 'Bienvenido usuario ' . $usuario);
     }
     public function inicio()
-    {  
+    {
         $uniformessinstock = $this->uniformesinstock();
         $librossinstock = $this->librossinstock();
-        $ventasxcobrar = $this->numeroingresos('credito', 'NO', '2010-01-01');
-
-        return view('admin.dashboard', compact('uniformessinstock', 'librossinstock', 'ventasxcobrar'));
+        $instrumentossinstock = $this->librossinstock();
+        $utilessinstock = $this->librossinstock();
+        $golosinassinstock = $this->librossinstock();
+        dump($uniformessinstock);
+        dump($librossinstock);
+        dump($instrumentossinstock);
+        dump($utilessinstock);
+        dump($golosinassinstock);
+        return view(
+            'admin.dashboard',
+            compact(
+                'uniformessinstock',
+                'librossinstock',
+                'instrumentossinstock',
+                'utilessinstock',
+                'golosinassinstock'
+            )
+        );
     }
 
     public function uniformesinstock()
     {
         $numerosinstock = DB::table('uniformes as u')
-        ->whereRaw('u.stock1 + u.stock2 < u.stockmin')
-        ->count();
+            ->whereRaw('u.stock1 + u.stock2 < u.stockmin')
+            ->count();
 
         return $numerosinstock;
     }
@@ -56,20 +71,33 @@ class HomeController extends Controller
     public function librossinstock()
     {
         $numerosinstock = DB::table('libros as l')
-        ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
-        ->count();
+            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+            ->count();
 
         return   $numerosinstock;
     }
-    public function numeroingresos($formapago, $pagado, $inicio)
+    public function instrumentossinstock()
     {
-        $ventas = "";
-        $ventas = DB::table('ingresos as i')
-            ->where('i.formapago', '=', $formapago)
-            ->where('i.fecha', '>', $inicio)
-            ->where('i.pagada', '=', $pagado)
+        $numerosinstock = DB::table('instrumentos as l')
+            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
             ->count();
 
-        return   $ventas;
+        return   $numerosinstock;
+    }
+    public function utilessinstock()
+    {
+        $numerosinstock = DB::table('utiles as l')
+            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+            ->count();
+
+        return   $numerosinstock;
+    }
+    public function golosinassinstock()
+    {
+        $numerosinstock = DB::table('golosinas as l')
+            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+            ->count();
+
+        return   $numerosinstock;
     }
 }
