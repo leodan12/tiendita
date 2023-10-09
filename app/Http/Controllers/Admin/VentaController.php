@@ -87,9 +87,9 @@ class VentaController extends Controller
             $product = $request->Lproduct;
             $cantidad = $request->Lcantidad;
             $preciofinal = $request->Lpreciofinal;
-            $preciounitariomo = $request->Lpreciounitariomo;
+            $preciounitariomo = $request->Lpreciounitariomo; 
+            $tienda = Tienda::find($venta->tienda_id);
             if ($tipo !== null) {
-                $tienda = Tienda::find($venta->tienda_id);
                 //recorremos los detalles
                 for ($i = 0; $i < count($tipo); $i++) {
                     //creamos los detalles de la venta
@@ -211,7 +211,7 @@ class VentaController extends Controller
             )
             ->where('v.id', '=', $venta_id)->get();
         $detalles = $this->detallesventa($detallesventa);
-        return $detalles;
+        //return $detalles;
         return view('admin.venta.edit', compact('venta', 'tiendas', 'clientes', 'detalles'));
     }
 
@@ -221,32 +221,38 @@ class VentaController extends Controller
         for ($i = 0; $i < count($detalles); $i++) {
             $detalle = collect();
             if ($detalles[$i]->tipo == "UTILES") {
-                $productos = DB::table('utiles as u')
+                $producto = DB::table('utiles as u')
                     ->join('marcautils as mu', 'u.marcautil_id', '=', 'mu.id')
-                    ->join('colorutils as cu', 'u.colorutil_id', '=', 'cu.id') 
+                    ->join('colorutils as cu', 'u.colorutil_id', '=', 'cu.id')
                     ->select(
-                        'u.id',
+                        'u.id as idproducto',
                         'u.nombre',
                         'u.precio',
                         'u.stock1',
                         'u.stock2',
                         'mu.marcautil',
-                        'cu.colorutil', 
+                        'cu.colorutil',
                     )
-                    ->where('u.status', '=', '0') 
+                    ->where('u.status', '=', '0')
                     ->where('u.id', '=', $detalles[$i]->producto_id)
                     ->first();
-                $detalle-put();
-                    $datos->push($productos);
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('marcautil', $producto->marcautil);
+                $detalle->put('colorutil', $producto->colorutil);
             } else if ($detalles[$i]->tipo == "UNIFORMES") {
-                $productos = DB::table('uniformes as u')
+                $producto = DB::table('uniformes as u')
                     ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
                     ->join('tallas as t', 'u.talla_id', '=', 't.id')
                     ->join('colors as c', 'u.color_id', '=', 'c.id')
                     ->join('detalleventas as dv', 'dv.producto_id', '=', 'u.id')
                     ->join('ventas as v', 'dv.venta_id', '=', 'v.id')
                     ->select(
-                        'u.id',
+                        'u.id as idproducto',
                         'u.nombre',
                         'u.genero',
                         'u.precio',
@@ -255,32 +261,33 @@ class VentaController extends Controller
                         't.talla',
                         'c.color',
                         'tt.tela',
-                        'dv.tipo',
-                        'dv.id as iddetalleventa',
-                        'dv.cantidad',
-                        'dv.preciounitariomo',
-                        'dv.preciofinal',
-                        'dv.producto_id',
-                        'v.id as idventa'
                     )
                     ->where('u.status', '=', '0')
-                    ->where('v.id', '=', $detalles[$i]->idventa)
                     ->where('u.id', '=', $detalles[$i]->producto_id)
                     ->first();
-                $datos->push($productos);
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('genero', $producto->genero);
+                $detalle->put('talla', $producto->talla);
+                $detalle->put('color', $producto->color);
+                $detalle->put('tela', $producto->tela);
             } else if ($detalles[$i]->tipo == "LIBROS") {
-                $productos = DB::table('libros as u')
+                $producto = DB::table('libros as u')
                     ->join('tipopastas as tt', 'u.tipopasta_id', '=', 'tt.id')
                     ->join('tipopapels as tp', 'u.tipopapel_id', '=', 'tp.id')
                     ->join('formatos as f', 'u.formato_id', '=', 'f.id')
                     ->join('edicions as e', 'u.edicion_id', '=', 'e.id')
-                    ->join('especializacions as es', 'u.especializacion_id', '=', 'es.id') 
+                    ->join('especializacions as es', 'u.especializacion_id', '=', 'es.id')
                     ->select(
                         'u.autor',
                         'u.original',
                         'tt.tipopasta',
                         'tp.tipopapel',
-                        'u.id',
+                        'u.id as idproducto',
                         'u.titulo as nombre',
                         'u.anio',
                         'u.precio',
@@ -288,178 +295,147 @@ class VentaController extends Controller
                         'u.stock2',
                         'f.formato',
                         'e.edicion',
-                        'es.especializacion', 
-                    ) 
-                    ->where('u.status', '=', '0') 
+                        'es.especializacion',
+                    )
+                    ->where('u.status', '=', '0')
                     ->where('u.id', '=', $detalles[$i]->producto_id)
                     ->first();
-                $datos->push($productos);
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('autor', $producto->autor);
+                $detalle->put('original', $producto->original);
+                $detalle->put('tipopasta', $producto->tipopasta);
+                $detalle->put('tipopapel', $producto->tipopapel);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('anio', $producto->anio);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('formato', $producto->formato);
+                $detalle->put('edicion', $producto->edicion);
+                $detalle->put('especializacion', $producto->especializacion);
             } else if ($detalles[$i]->tipo == "INSTRUMENTOS") {
-                $productos = DB::table('instrumentos as i')
+                $producto = DB::table('instrumentos as i')
                     ->join('marcas as m', 'i.marca_id', '=', 'm.id')
-                    ->join('modelos as mo', 'i.modelo_id', '=', 'mo.id') 
+                    ->join('modelos as mo', 'i.modelo_id', '=', 'mo.id')
                     ->select(
-                        'i.id',
+                        'i.id as idproducto',
                         'i.nombre',
                         'i.precio',
                         'i.stock1',
                         'i.stock2',
                         'i.garantia',
                         'm.marca',
-                        'mo.modelo', 
-                    ) 
-                    ->where('i.status', '=', '0') 
+                        'mo.modelo',
+                    )
+                    ->where('i.status', '=', '0')
                     ->where('i.id', '=', $detalles[$i]->producto_id)
                     ->first();
-                $datos->push($productos);
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('garantia', $producto->garantia);
+                $detalle->put('marca', $producto->marca);
+                $detalle->put('modelo', $producto->modelo);
             } else if ($detalles[$i]->tipo == "GOLOSINAS") {
-                $productos = DB::table('golosinas as g') 
+                $producto = DB::table('golosinas as g')
                     ->select(
                         'i.nombre',
                         'i.precio',
                         'i.peso',
                         'i.stock1',
                         'i.stock2',
-                        'dv.tipo', 
                     )
-                    ->where('g.status', '=', '0') 
+                    ->where('g.status', '=', '0')
                     ->where('g.id', '=', $detalles[$i]->producto_id)
                     ->first();
-                $datos->push($productos);
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('peso', $producto->peso);
             } else if ($detalles[$i]->tipo == "SNACKS") {
-                $productos = DB::table('snacks as s')
+                $producto = DB::table('snacks as s')
                     ->join('marcasnacks as ms', 's.marcasnack_id', '=', 'ms.id')
-                    ->join('saborsnacks as sn', 's.saborsnack_id', '=', 'sn.id') 
+                    ->join('saborsnacks as sn', 's.saborsnack_id', '=', 'sn.id')
                     ->select(
-                        's.id',
+                        's.id as idproducto',
                         's.nombre',
                         's.tamanio',
                         's.precio',
                         's.stock1',
                         's.stock2',
                         'ms.marcasnack',
-                        'sn.saborsnack', 
+                        'sn.saborsnack',
                     )
-                    ->where('s.status', '=', '0') 
+                    ->where('s.status', '=', '0')
                     ->where('s.id', '=', $detalles[$i]->producto_id)
                     ->first();
-                $datos->push($productos);
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('tamanio', $producto->tamanio);
+                $detalle->put('marcasnack', $producto->marcasnack);
+                $detalle->put('saborsnack', $producto->saborsnack);
             }
+            $detalle->put('tipo', $detalles[$i]->tipo);
+            $detalle->put('iddetalleventa', $detalles[$i]->iddetalleventa);
+            $detalle->put('cantidad', $detalles[$i]->cantidad);
+            $detalle->put('preciounitariomo', $detalles[$i]->preciounitariomo);
+            $detalle->put('preciofinal', $detalles[$i]->preciofinal);
+            $detalle->put('producto_id', $detalles[$i]->producto_id);
+            $detalle->put('idventa', $detalles[$i]->idventa);
+            $datos->push($detalle);
         }
         return $datos;
     }
     //funcion para actualizar un registro de una venta
-    public function update(VentaFormRequest $request, int $venta_id)
+    public function update(Request $request, int $venta_id)
     {   //validamos los datos
-        $validatedData = $request->validated();
-        $company = Company::findOrFail($validatedData['company_id']);
-        $cliente = Cliente::findOrFail($validatedData['cliente_id']);
-        $fecha = $validatedData['fecha'];
-        $moneda = $validatedData['moneda'];
-        $costoventa = $validatedData['costoventa'];
-        $formapago = $validatedData['formapago'];
-        $factura = $validatedData['factura'];
-        $pagada = $validatedData['pagada'];
-        //buscamos el registro y de guardamos los nuevos datos
-        $venta =  Venta::findOrFail($venta_id);
-        $ventaantigua = $venta;
-        $venta->company_id = $company->id;
-        $venta->cliente_id = $cliente->id;
-        $venta->fecha = $fecha;
-        $venta->costoventa = $costoventa;
-        $venta->formapago = $formapago;
-        $venta->moneda = $moneda;
-        $venta->factura = $factura;
-        $venta->pagada = $pagada;
-        //no obligatorios
-        $observacion = $validatedData['observacion'];
-        $tasacambio = $validatedData['tasacambio'];
-        $fechav = $validatedData['fechav'];
-        $venta->tasacambio = $tasacambio;
-        $venta->observacion = $observacion;
-        if ($formapago == 'credito') {
-            $venta->fechav = $fechav;
-        } elseif ($formapago == 'contado') {
-            $venta->fechav = null;
-        }
-        //datos del pago
-        $venta->nrooc = $request->nrooc;
-        $venta->guiaremision = $request->guiaremision;
-        $venta->fechapago = $request->fechapago;
-        $venta->constanciaretencion = $request->constanciaretencion;
-        $venta->acuenta1 = $request->acuenta1;
-        $venta->acuenta2 = $request->acuenta2;
-        $venta->acuenta3 = $request->acuenta3;
-        $venta->saldo = $request->saldo;
-        $venta->retencion = $request->retencion;
-        $venta->montopagado = $request->montopagado;
-        //guardamos la venta  
-        if ($venta->update()) {
-            if ($venta->produccion_id != null) {
-                // if (($ventaantigua->factura == null || $ventaantigua == "")
-                //     &&
-                //     ($venta->factura != null && $venta->factura != "")
-                // ) {
-                $this->actualizarnumerofactura($venta);
-                //}
-            }
-
-            //obtenemos los detalles
-            $product = $request->Lproduct;
-            $cantidad = $request->Lcantidad;
-            $observacionproducto = $request->Lobservacionproducto;
-            $preciounitario = $request->Lpreciounitario;
-            $servicio = $request->Lservicio;
-            $preciofinal = $request->Lpreciofinal;
-            $preciounitariomo = $request->Lpreciounitariomo;
-            //arrays de los productos vendidos de un kit
-            $idkits = $request->Lidkit;
-            $cantidadproductokit = $request->Lcantidadproductokit;
-            $idproductokit = $request->Lidproductokit;
-            if ($product !== null) {
-                for ($i = 0; $i < count($product); $i++) {
-                    //creamos los detalles de la venta
-                    $Detalleventa = new Detalleventa;
-                    $Detalleventa->venta_id = $venta->id;
-                    $Detalleventa->product_id = $product[$i];
-                    $Detalleventa->cantidad = $cantidad[$i];
-                    $Detalleventa->observacionproducto = $observacionproducto[$i];
-                    $Detalleventa->preciounitario = $preciounitario[$i];
-                    $Detalleventa->preciounitariomo = $preciounitariomo[$i];
-                    $Detalleventa->servicio = $servicio[$i];
-                    $Detalleventa->preciofinal = $preciofinal[$i];
-                    if ($Detalleventa->save()) {
-                        //registramos los detalles del kit vendidos
-                        if ($idkits !== null) {
-                            for ($x = 0; $x < count($idkits); $x++) {
-                                if ($idkits[$x] == $product[$i]) {
-                                    $venta_kit = new DetalleKitventa;
-                                    $venta_kit->detalleventa_id = $Detalleventa->id;
-                                    $venta_kit->kitproduct_id = $idproductokit[$x];
-                                    $venta_kit->cantidad = $cantidadproductokit[$x];
-                                    $venta_kit->save();
-                                }
-                            }
-                        }
-                        //buscamos el producto
-                        $miproductox = Product::find($product[$i]);
-                        if ($miproductox && $miproductox->tipo == "kit") { //cuando es un kit
-                            $milistaproductos = $this->productosxdetallexkit($Detalleventa->id);
-                            for ($j = 0; $j < count($milistaproductos); $j++) {
-                                $this->actualizarstock($milistaproductos[$j]->id, $company->id, ($milistaproductos[$j]->cantidad) * $cantidad[$i], "RESTA");
-                            }
-                        } else if ($miproductox && $miproductox->tipo == "estandar") {
-                            //busacamos el inventario
-                            $this->actualizarstock($product[$i], $company->id, $cantidad[$i], "RESTA");
-                        }
-                    }
-                }
-            }
-            $this->crearhistorial('editar', $venta->id, $company->nombre, $cliente->nombre, 'ventas');
-            return redirect('admin/venta')->with('message', 'Venta Actualizada Satisfactoriamente');
-        } else {
-            return redirect('admin/venta')->with('message', 'Venta NO Actualizada');
-        }
+         //cramos un registro de venta
+         $venta =  Venta::find($venta_id);
+         $venta->tienda_id = $request->tienda_id;
+         $venta->fecha = $request->fecha;
+         $venta->costoventa = $request->costoventa;
+         $venta->cliente_id = $request->cliente_id;
+         //guardamos la venta y los detalles
+         if ($venta->update()) {
+             //obtenemos los detalles 
+             $tipo = $request->Ltipo;
+             $product = $request->Lproduct;
+             $cantidad = $request->Lcantidad;
+             $preciofinal = $request->Lpreciofinal;
+             $preciounitariomo = $request->Lpreciounitariomo;
+             $tienda = Tienda::find($venta->tienda_id);
+             if ($tipo !== null) { 
+                 //recorremos los detalles
+                 for ($i = 0; $i < count($tipo); $i++) {
+                     //creamos los detalles de la venta
+                     $Detalleventa = new Detalleventa;
+                     $Detalleventa->tipo = $tipo[$i];
+                     $Detalleventa->venta_id = $venta->id;
+                     $Detalleventa->producto_id = $product[$i];
+                     $Detalleventa->cantidad = $cantidad[$i];
+                     $Detalleventa->preciounitariomo = $preciounitariomo[$i];
+                     $Detalleventa->preciofinal = $preciofinal[$i];
+                     if ($Detalleventa->save()) {
+                         //$this->actualizarstock($product[$i], $company->id, $cantidad[$i], "RESTA");
+                     }
+                 }
+             }
+             //termino de registrar la venta
+             $this->crearhistorial('editar', $venta->id, $tienda->nombre, $venta->costoventa, 'ventas');
+             return redirect('admin/venta')->with('message', 'Venta Actualizada Satisfactoriamente');
+         }
+         return redirect('admin/venta')->with('message', 'No se Pudo Actualizar la Venta');
     }
     //funcion para mostrar los datos de la venta
     public function show($id)
@@ -534,12 +510,11 @@ class VentaController extends Controller
     public function destroy(int $venta_id)
     {
         $venta = Venta::find($venta_id);
-        if ($venta) { 
-            try { 
+        if ($venta) {
+            try {
                 $venta->delete();
                 $this->crearhistorial('eliminar', $venta->id, $venta->fecha, $venta->costoventa, 'ventas');
-                return "1"; 
-                     
+                return "1";
             } catch (\Throwable $th) {
                 return "0";
             }

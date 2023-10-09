@@ -49,7 +49,7 @@
                                     <th>ID</th>
                                     <th>TIENDA</th>
                                     <th>FECHA</th> 
-                                    <th>COSTO VENTA </th> 
+                                    <th>PRECIO VENTA(soles) </th> 
                                     <th>ACCIONES</th>
                                 </tr>
                             </thead>

@@ -136,25 +136,25 @@
                                             @php  $indice =1; @endphp
                                             @foreach ($detalles as $detalle)
                                                 @php $nombre =""; @endphp
-                                                @if ($detalle->tipo == 'UTILES')
-                                                    @php $nombre=$detalle->nombre . "-" . $detalle->marcautil . "-" . $detalle->colorutil ; @endphp
-                                                @elseif($detalle->tipo == 'UNIFORMES')
-                                                    @php $nombre=$detalle->nombre . "-" . $detalle->genero . "-" . $detalle->talla+ "-" . $detalle->tela . "-" . $detalle->color ; @endphp
-                                                @elseif($detalle->tipo == 'LIBROS')
-                                                    @php $nombre=$detalle->nombre . "-" . $detalle->autor . "-" . $detalle->anio+ "-" . $detalle->edicion . "-" . $detalle->especializacion+ "-" . $detalle->formato+ "-" . $detalle->tipopapel . "-" . $detalle->tipopasta+ "-" . $detalle->original ; @endphp
-                                                @elseif($detalle->tipo == 'INSTRUMENTOS')
-                                                    @php $nombre=$detalle->nombre . "-" . $detalle->marca . "-" . $detalle->modelo ; @endphp
-                                                @elseif($detalle->tipo == 'GOLOSINAS')
-                                                    @php $nombre=$detalle->nombre . "-" . $detalle->peso ; @endphp
-                                                @elseif($detalle->tipo == 'SNACKS')
-                                                    @php $nombre=$detalle->nombre+ "-" . $detalle->tamanio  . "-" . $detalle->marcasnack . "-" . $detalle->saborsnack ; @endphp
+                                                @if ($detalle['tipo'] == 'UTILES')
+                                                    @php $nombre=$detalle['nombre']. "-" . $detalle['marcautil']."-" . $detalle['colorutil'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'UNIFORMES')
+                                                    @php $nombre=$detalle['nombre']."-" . $detalle['genero']."-" . $detalle['talla']. "-" . $detalle['tela']."-" . $detalle['color'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'LIBROS')
+                                                    @php $nombre=$detalle['nombre']."-" . $detalle['autor']."-" . $detalle['anio']. "-" . $detalle['edicion']."-" . $detalle['especializacion']. "-" . $detalle['formato']. "-" . $detalle['tipopapel']."-" . $detalle['tipopasta']. "-" . $detalle['original'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'INSTRUMENTOS')
+                                                    @php $nombre=$detalle['nombre'] . "-" . $detalle['marca'] . "-" . $detalle['modelo'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'GOLOSINAS')
+                                                    @php $nombre=$detalle['nombre'] . "-" . $detalle['peso'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'SNACKS')
+                                                    @php $nombre=$detalle['nombre']. "-" . $detalle['tamanio']  . "-" . $detalle['marcasnack'] . "-" . $detalle['saborsnack'] ; @endphp
                                                 @endif
                                                 <tr style="text-align: center;" id="fila{{ $indice }}">
-                                                    <td>{{ $detalle->tipo }}</td>
+                                                    <td style="text-align: left;">{{ $detalle['tipo'] }}</td>
                                                     <td style="text-align: left;">{{ $nombre }}</td>
-                                                    <td>{{ $detalle->cantidad }}</td>
-                                                    <td>S/.{{ $detalle->preciounitariomo }}</td>
-                                                    <td>S/.{{ $detalle->preciofinal }}</td>
+                                                    <td>{{ $detalle['cantidad'] }}</td>
+                                                    <td>S/.{{ $detalle['preciounitariomo'] }}</td>
+                                                    <td>S/.{{ $detalle['preciofinal'] }}</td>
                                                     <td><button type="button" class="btn btn-xs btn-danger"
                                                             type="button">ELIMINAR</button>
                                                     </td>
@@ -168,7 +168,7 @@
                             <hr>
                             <div class="col-md-12 mb-3">
                                 <button type="submit" id="btnguardar" name="btnguardar"
-                                    class="btn btn-primary text-white float-end">Guardar</button>
+                                    class="btn btn-primary text-white float-end">Actualizar</button>
                             </div>
                         </div>
                     </div>
@@ -189,7 +189,8 @@
         var nombre = "";
         var idproducto = 0;
         var ventatotal = document.getElementById('costoventa').value;
-        var estadoguardar = 0;
+        var estadoguardar = @json($indice);
+        estadoguardar--;
         $(document).ready(function() {
 
             $('.select2').select2({});
@@ -199,7 +200,7 @@
             var fechaActual = hoy.getFullYear() + '-' + (String(hoy.getMonth() + 1).padStart(2, '0')) + '-' +
                 String(hoy.getDate()).padStart(2, '0');
             document.getElementById("fecha").value = fechaActual;
-
+            botonguardar("inicio");
         });
         document.getElementById("cantidad").onchange = function() {
             preciofinal();
