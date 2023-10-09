@@ -194,7 +194,7 @@ class VentaController extends Controller
                     }
                 }
             }
-            
+
             //termino de registrar la venta
             $this->crearhistorial('crear', $venta->id, $company->nombre, $cliente->nombre, 'ventas');
             return redirect('admin/venta')->with('message', 'Venta Agregada Satisfactoriamente');
@@ -202,20 +202,75 @@ class VentaController extends Controller
         return redirect('admin/venta')->with('message', 'No se Pudo Agregar la Venta');
     }
 
-    public function productosxtipo($tipo){
-        if($tipo="UTILES"){
-
-        }else if($tipo="UNIFORMES"){
-
-        }else if($tipo="LIBROS"){
-
-        }else if($tipo="INSTRUMENTOS"){
-
-        }else if($tipo="GOLOSINAS"){
-
-        }else if($tipo="SNACKS"){
-
-        } 
+    public function productosxtipo($tipo)
+    {
+        if ($tipo == "UTILES") {
+            $productos = DB::table('utiles as u')
+                ->join('marcautils as mu', 'u.marcautil_id', '=', 'mu.id')
+                ->join('colorutils as cu', 'u.colorutil_id', '=', 'cu.id')
+                ->select('u.id', 'u.nombre', 'u.precio', 'u.stock1', 'u.stock2', 'mu.marcautil', 'cu.colorutil')
+                ->where('u.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "UNIFORMES") {
+            $productos = DB::table('uniformes as u')
+                ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+                ->join('tallas as t', 'u.talla_id', '=', 't.id')
+                ->join('colors as c', 'u.color_id', '=', 'c.id')
+                ->select('u.id', 'u.nombre', 'u.genero', 'u.precio', 'u.stock1', 'u.stock2', 't.talla', 'c.color', 'tt.tela')
+                ->where('u.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "LIBROS") {
+            $productos = DB::table('libros as u')
+                ->join('tipopastas as tt', 'u.tipopasta_id', '=', 'tt.id')
+                ->join('tipopapels as tp', 'u.tipopapel_id', '=', 'tp.id')
+                ->join('formatos as f', 'u.formato_id', '=', 'f.id')
+                ->join('edicions as e', 'u.edicion_id', '=', 'e.id')
+                ->join('especializacions as es', 'u.especializacion_id', '=', 'es.id')
+                ->select(
+                    'u.autor',
+                    'u.original',
+                    'tt.tipopasta',
+                    'tp.tipopapel',
+                    'u.id',
+                    'u.titulo',
+                    'u.anio',
+                    'u.precio',
+                    'u.stock1',
+                    'u.stock2',
+                    'f.formato',
+                    'e.edicion',
+                    'es.especializacion'
+                )
+                ->where('u.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "INSTRUMENTOS") {
+            $productos = DB::table('instrumentos as i')
+                ->join('marcas as m', 'i.marca_id', '=', 'm.id')
+                ->join('modelos as mo', 'i.modelo_id', '=', 'mo.id')
+                ->select('i.id', 'i.nombre', 'i.precio', 'i.stock1', 'i.stock2', 'i.garantia', 'm.marca', 'mo.modelo')
+                ->where('i.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "GOLOSINAS") {
+            $productos = DB::table('golosinas as g')
+                ->where('g.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "SNACKS") {
+            $productos = DB::table('snacks as s')
+                ->join('marcasnacks as ms', 's.marcasnack_id', '=', 'ms.id')
+                ->join('saborsnacks as sn', 's.saborsnack_id', '=', 'sn.id')
+                ->select(
+                    's.id',
+                    's.nombre',
+                    's.tamanio',
+                    's.precio',
+                    's.stock1',
+                    's.stock2',
+                    'ms.marcasnack',
+                    'sn.saborsnack'
+                )
+                ->where('s.status', '=', '0')->get();
+            return $productos;
+        }
     }
 
     //funcion para que reaccione al index principal

@@ -39,10 +39,10 @@ class HomeController extends Controller
     {
         $uniformessinstock = $this->uniformesinstock();
         $librossinstock = $this->librossinstock();
-        $instrumentossinstock = $this->librossinstock();
-        $utilessinstock = $this->librossinstock();
-        $golosinassinstock = $this->librossinstock(); 
-        $snackssinstock = $this->librossinstock(); 
+        $instrumentossinstock = $this->instrumentossinstock();
+        $utilessinstock = $this->utilessinstock();
+        $golosinassinstock = $this->golosinassinstock(); 
+        $snackssinstock = $this->snackssinstock(); 
         return view(
             'admin.dashboard',
             compact(

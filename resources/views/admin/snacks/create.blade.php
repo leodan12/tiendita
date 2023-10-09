@@ -17,11 +17,11 @@
             <div class="card">
                 <div class="card-header">
                     <h4>AÑADIR SNACK
-                        <a href="{{ url('admin/snaks') }}" class="btn btn-danger text-white float-end">VOLVER</a>
+                        <a href="{{ url('admin/snacks') }}" class="btn btn-danger text-white float-end">VOLVER</a>
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url('admin/snaks') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url('admin/snacks') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -86,7 +86,7 @@
 
         function agregarmarcasnack() {
             var marcasnack = document.getElementById("marcasnack").value;
-            var urladd = "{{ url('admin/snaks/addmarcasnack') }}";
+            var urladd = "{{ url('admin/snacks/addmarcasnack') }}";
             $.ajax({
                 type: "GET",
                 url: urladd + '/' + marcasnack,
@@ -99,7 +99,7 @@
 
         function agregarsaborsnack() {
             var saborsnack = document.getElementById("saborsnack").value;
-            var urladd = "{{ url('admin/snaks/addsaborsnack') }}";
+            var urladd = "{{ url('admin/snacks/addsaborsnack') }}";
             $.ajax({
                 type: "GET",
                 url: urladd + '/' + saborsnack,

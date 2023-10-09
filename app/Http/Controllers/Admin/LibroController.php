@@ -72,6 +72,9 @@ class LibroController extends Controller
         $libro->anio = $request->anio;
         $libro->precio = $request->precio;
         $libro->original = $request->original;
+        $libro->stock1 = 0;
+        $libro->stock2 = 0;
+        $libro->stockmin = 5;
 
         $formato = Formato::find($request->formato);
         if (!$formato) {

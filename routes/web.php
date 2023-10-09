@@ -314,22 +314,22 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/ingreso/productosxdetallexkitingreso/{iddetallekit}', 'productosxdetallexkitingreso'); //ver 
                 Route::post('/ingreso/guardardatospago',  'guardardatospago');
             });
-            //Ruta de la cotizacion
-            Route::controller(App\Http\Controllers\Admin\CotizacionesController::class)->group(function () {
-                Route::get('/cotizacion', 'index')->name('cotizacion.index');
-                Route::get('/cotizacion/create', 'create');
-                Route::post('/cotizacion', 'store');
-                Route::get('/cotizacion/{cotizacion_id}/edit', 'edit');
-                Route::put('/cotizacion/{cotizacion_id}', 'update');
-                Route::get('cotizacion/{cotizacion_id}/delete', 'destroy');
-                Route::get('/deletedetallecotizacion/{id}',  'destroydetallecotizacion');
-                Route::get('/deletecondicion/{id}',  'destroycondicion');
-                Route::get('/cotizacion/show/{id}', 'show'); //ver  
-                Route::get('/cotizacion/showcondiciones/{id}', 'showcondiciones'); //ver  
-                Route::get('/cotizacion/vendercotizacion/{id}',  'vendercotizacion');
-                Route::get('/cotizacion/generarcotizacionpdf/{id}',  'generarcotizacionpdf');
-                Route::get('/venta/productosxdetallexkitcotizacion/{iddetallekit}', 'productosxdetallexkitcotizacion'); //ver 
-            });
+            // //Ruta de la cotizacion
+            // Route::controller(App\Http\Controllers\Admin\CotizacionesController::class)->group(function () {
+            //     Route::get('/cotizacion', 'index')->name('cotizacion.index');
+            //     Route::get('/cotizacion/create', 'create');
+            //     Route::post('/cotizacion', 'store');
+            //     Route::get('/cotizacion/{cotizacion_id}/edit', 'edit');
+            //     Route::put('/cotizacion/{cotizacion_id}', 'update');
+            //     Route::get('cotizacion/{cotizacion_id}/delete', 'destroy');
+            //     Route::get('/deletedetallecotizacion/{id}',  'destroydetallecotizacion');
+            //     Route::get('/deletecondicion/{id}',  'destroycondicion');
+            //     Route::get('/cotizacion/show/{id}', 'show'); //ver  
+            //     Route::get('/cotizacion/showcondiciones/{id}', 'showcondiciones'); //ver  
+            //     Route::get('/cotizacion/vendercotizacion/{id}',  'vendercotizacion');
+            //     Route::get('/cotizacion/generarcotizacionpdf/{id}',  'generarcotizacionpdf');
+            //     Route::get('/venta/productosxdetallexkitcotizacion/{iddetallekit}', 'productosxdetallexkitcotizacion'); //ver 
+            // });
             //Ruta de los reportes
             Route::controller(App\Http\Controllers\Admin\ReportesController::class)->group(function () {
                 Route::get('/reporte', 'index');
@@ -463,24 +463,24 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/inventariogolosinas2', 'inventariogolosinas2')->name('inventariogolosinas2.index');
                 Route::get('/golosinas/showsinstock', 'showsinstock');
             });
-            Route::controller(App\Http\Controllers\Admin\GolosinaController::class)->group(function () {
-                Route::get('/snaks', 'index')->name('snaks.index');
-                Route::get('/snaks/create', 'create');
-                Route::post('/snaks', 'store');
-                Route::get('/snaks/{snack_id}/edit', 'edit');
-                Route::put('/snaks/{snack_id}', 'update');
-                Route::get('/snaks/{snack_id}/delete', 'destroy');
-                Route::get('/snaks/show/{id}', 'show'); //ver   
+            Route::controller(App\Http\Controllers\Admin\SnackController::class)->group(function () {
+                Route::get('/snacks', 'index')->name('snacks.index');
+                Route::get('/snacks/create', 'create');
+                Route::post('/snacks', 'store');
+                Route::get('/snacks/{snack_id}/edit', 'edit');
+                Route::put('/snacks/{snack_id}', 'update');
+                Route::get('/snacks/{snack_id}/delete', 'destroy');
+                Route::get('/snacks/show/{id}', 'show'); //ver   
                 //ruta PARA AÑADIR MARCA Y MODELO
-                Route::get('/snaks/addmarcasnack/{marcasnack}', 'addmarcasnack');
-                Route::get('/snaks/addsaborsnack/{saborsnack}', 'addsaborsnack');
+                Route::get('/snacks/addmarcasnack/{marcasnack}', 'addmarcasnack');
+                Route::get('/snacks/addsaborsnack/{saborsnack}', 'addsaborsnack');
                 //ruta para ver el inventario
-                Route::get('/inventariosnaks', 'inventariosnaks')->name('inventariosnaks.index');
-                Route::post('/snaks/updatestock', 'updatestock');
+                Route::get('/inventariosnacks', 'inventariosnacks')->name('inventariosnacks.index');
+                Route::post('/snacks/updatestock', 'updatestock');
                 //ver sin stock
-                Route::get('/snaks/numerosinstock', 'numerosinstock');
-                Route::get('/inventariosnaks2', 'inventariosnaks2')->name('inventariosnaks2.index');
-                Route::get('/snaks/showsinstock', 'showsinstock');
+                Route::get('/snacks/numerosinstock', 'numerosinstock');
+                Route::get('/inventariosnacks2', 'inventariosnacks2')->name('inventariosnacks2.index');
+                Route::get('/snacks/showsinstock', 'showsinstock');
             });
             //Rutas de las empresas
             Route::controller(App\Http\Controllers\Admin\TiendaController::class)->group(function () {

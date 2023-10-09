@@ -345,7 +345,7 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $snackssinstock }} Snacks Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventariogolosinas2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariosnacks2') }}" style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER SNACKS</i>
                             </a>
                         </div>

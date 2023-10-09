@@ -17,11 +17,11 @@
             <div class="card">
                 <div class="card-header">
                     <h4>EDITAR SNACK
-                        <a href="{{ url('admin/utiles') }}" class="btn btn-danger text-white float-end">VOLVER</a>
+                        <a href="{{ url('admin/snacks') }}" class="btn btn-danger text-white float-end">VOLVER</a>
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url('admin/utiles/' . $snack->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url('admin/snacks/' . $snack->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
