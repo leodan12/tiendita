@@ -5,7 +5,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4>EDITAR CLIENTE / PROVEEDOR
+                    <h4>EDITAR CLIENTE
                         <a href="{{ url('admin/cliente') }}" class="btn btn-primary text-white float-end">VOLVER</a>
                     </h4>
                 </div>

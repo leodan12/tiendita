@@ -13,14 +13,14 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <h4 id="mititulo">CLIENTES / PROVEEDORES:&nbsp;&nbsp;
+                                <h4 id="mititulo">CLIENTES:&nbsp;&nbsp;
                                 </h4>
                             </div>
                             <div class="col">
                                 <h4>
                                     @can('crear-cliente')
                                     <a href="{{ url('admin/cliente/create') }}" class="btn btn-primary float-end">Añadir
-                                        Cliente/Proveedor</a>
+                                        Cliente</a>
                                 @endcan
                                 </h4>
                             </div>

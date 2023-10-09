@@ -34,15 +34,15 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Persona a cargo</label>
-                                    <input type="text" name="encargado" id="encargado" class="form-control mayusculas" value="{{ old('encargado') }}" />
+                                    <label class="form-label is-required">Persona a cargo</label>
+                                    <input type="text" name="encargado" id="encargado" class="form-control mayusculas" value="{{ old('encargado') }}" required/>
                                     @error('encargado')
                                     <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label is-required">UBICACION</label>
-                                    <input type="text" name="ubicacion" id="ubicacion" class="form-control " required value="{{ old('ubicacion') }}" />
+                                    <input type="text" name="ubicacion" id="ubicacion" class="form-control " required value="{{ old('ubicacion') }}"  />
                                     @error('ubicacion')
                                     <small class="text-danger">{{ $message }}</small>
                                     @enderror

@@ -25,9 +25,9 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">Persona a cargo</label>
+                                        <label class="form-label is-required">Persona a cargo</label>
                                         <input type="text" name="encargado" id="encargado"
-                                            class="form-control mayusculas" value="{{ $tienda->encargado }}" />
+                                            class="form-control mayusculas" value="{{ $tienda->encargado }}" required/>
                                         @error('encargado')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror

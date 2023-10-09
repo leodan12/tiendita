@@ -19,23 +19,16 @@ return new class extends Migration
             $table->string('observacion')->nullable();
             $table->double('costoventa');
             $table->double('tasacambio')->nullable();
-            $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('cliente_id');
+           // $table->unsignedBigInteger('company_id');
+           // $table->unsignedBigInteger('cliente_id');
             $table->string('fecha');
             $table->string('fechav')->nullable();
             $table->string('pagada');
 
-            $table->string('nrooc')->nullable();
-            $table->string('guiaremision')->nullable();
-            $table->string('fechapago')->nullable();
-            $table->double('acuenta1')->nullable();
-            $table->double('acuenta2')->nullable();
-            $table->double('acuenta3')->nullable();
-            $table->double('saldo')->nullable();
-            $table->double('montopagado')->nullable();
+            
 
-            $table->foreign('company_id')->references('id')->on('companies');//->onDelete('cascade');
-            $table->foreign('cliente_id')->references('id')->on('clientes');//->onDelete('cascade');
+            //$table->foreign('company_id')->references('id')->on('companies');//->onDelete('cascade');
+            //$table->foreign('cliente_id')->references('id')->on('clientes');//->onDelete('cascade');
             $table->timestamps(); 
         });
     }
