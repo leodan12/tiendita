@@ -218,8 +218,8 @@
                 </div>
             </div>
             <br>
-            @if ($uniformessinstock > 0)
-                <div class="row">
+            <div class="row">
+                @if ($uniformessinstock > 0)
                     <div class="col">
                         <div class="alert alert-danger" role="alert">
 
@@ -234,16 +234,15 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $uniformessinstock }} Uniformes Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventariouniformes2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariouniformes2') }}"
+                                style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER UNIFORMES</i>
                             </a>
                         </div>
                     </div>
-                </div>
-            @endif
-            @if ($librossinstock > 0)
-                <div class="row">
-                    <div class="col">
+                @endif
+                @if ($librossinstock > 0)
+                    <div class="col-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -256,16 +255,16 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $librossinstock }} Libros Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventariolibros2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariolibros2') }}"
+                                style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER LIBROS</i>
                             </a>
                         </div>
                     </div>
-                </div>
-            @endif
-            @if ($instrumentossinstock > 0)
-                <div class="row">
-                    <div class="col">
+                @endif
+
+                @if ($instrumentossinstock > 0)
+                    <div class="col-6">
                         <div class="alert alert-danger" role="alert">
 
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
@@ -279,16 +278,15 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $instrumentossinstock }} instrumentos Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventarioinstrumentos2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventarioinstrumentos2') }}"
+                                style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER INSTRUMENTOS</i>
                             </a>
                         </div>
                     </div>
-                </div>
-            @endif
-            @if ($utilessinstock > 0)
-                <div class="row">
-                    <div class="col">
+                @endif
+                @if ($utilessinstock > 0)
+                    <div class="col-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -301,16 +299,15 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $utilessinstock }} Utiles Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventarioutiles2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventarioutiles2') }}"
+                                style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER UTILES</i>
                             </a>
                         </div>
                     </div>
-                </div>
-            @endif
-            @if ($golosinassinstock > 0)
-                <div class="row">
-                    <div class="col">
+                @endif
+                @if ($golosinassinstock > 0)
+                    <div class="col-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -323,16 +320,15 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $golosinassinstock }} Golosinas Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventariogolosinas2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariogolosinas2') }}"
+                                style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER GOLOSINAS</i>
                             </a>
                         </div>
                     </div>
-                </div>
-            @endif
-            @if ($snackssinstock > 0)
-                <div class="row">
-                    <div class="col">
+                @endif
+                @if ($snackssinstock > 0)
+                    <div class="col-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -345,20 +341,19 @@
                                     aria-label="Close"></button>
                             </h2>
                             Tienes {{ $snackssinstock }} Snacks Con Stock Minimo y sin stock &nbsp;&nbsp;
-                            <a class="btn btn-info" href="{{ url('admin/inventariosnacks2') }}" style="border-radius: 20px;">
+                            <a class="btn btn-info" href="{{ url('admin/inventariosnacks2') }}"
+                                style="border-radius: 20px;">
                                 <i class="mdi mdi-eye menu-icon"> VER SNACKS</i>
                             </a>
                         </div>
                     </div>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
- 
 @endsection
 @push('script')
     <script type="text/javascript">
-      
         $(document).ready(function() {
             var urlbalance = "{{ url('admin/reporte/balancemensualinicio') }}";
             $.get(urlbalance, function(data) {
@@ -381,7 +376,7 @@
                 document.getElementById('verProductostock').innerHTML = (data.productostock);
                 document.getElementById('verProductominimo').innerHTML = (data.productominimo);
                 document.getElementById('verProductosin').innerHTML = (data.productosin);
-            }); 
+            });
         });
     </script>
 @endpush
