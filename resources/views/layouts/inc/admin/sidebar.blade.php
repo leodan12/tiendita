@@ -98,7 +98,7 @@
                             auth()->user()->can('editar-empresa') ||
                             auth()->user()->can('eliminar-empresa'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventariouniformes') }}">
+                            <a class="nav-link" href="{{ url('admin/inventariouf') }}">
                                 <i class="mdi mdi-store menu-icon"></i>
                                 <span class="menu-title">I. UNIFORMES</span>
                             </a>
@@ -109,7 +109,7 @@
                             auth()->user()->can('editar-cliente') ||
                             auth()->user()->can('eliminar-cliente'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventariolibros') }}">
+                            <a class="nav-link" href="{{ url('admin/inventariolb') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. LIBROS</span>
                             </a>
@@ -120,7 +120,7 @@
                             auth()->user()->can('editar-cliente') ||
                             auth()->user()->can('eliminar-cliente'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventarioinstrumentos') }}">
+                            <a class="nav-link" href="{{ url('admin/inventarioit') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. INSTRUMENTOS</span>
                             </a>
@@ -131,7 +131,7 @@
                             auth()->user()->can('editar-cliente') ||
                             auth()->user()->can('eliminar-cliente'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventarioutiles') }}">
+                            <a class="nav-link" href="{{ url('admin/inventariout') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. UTILES</span>
                             </a>
@@ -142,7 +142,7 @@
                             auth()->user()->can('editar-cliente') ||
                             auth()->user()->can('eliminar-cliente'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventariogolosinas') }}">
+                            <a class="nav-link" href="{{ url('admin/inventariogl') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. GOLOSINAS</span>
                             </a>
@@ -153,7 +153,7 @@
                             auth()->user()->can('editar-cliente') ||
                             auth()->user()->can('eliminar-cliente'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/inventariosnacks') }}">
+                            <a class="nav-link" href="{{ url('admin/inventariosn') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. SNACKS</span>
                             </a>
@@ -250,18 +250,7 @@
 
                                 </i>
                                 SALIDA</a></li>
-                    @endif
-                    @if (auth()->user()->can('ver-cotizacion') ||
-                            auth()->user()->can('crear-cotizacion') ||
-                            auth()->user()->can('editar-cotizacion') ||
-                            auth()->user()->can('eliminar-cotizacion'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('admin/cotizacion') }}">
-                                <i class="mdi mdi-currency-usd menu-icon"></i>
-                                <span class="menu-title">COTIZACIÓN</span>
-                            </a>
-                        </li>
-                    @endif
+                    @endif 
                 </ul>
             </div>
         </li>

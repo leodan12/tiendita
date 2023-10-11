@@ -205,7 +205,7 @@ class UtilController extends Controller
     }
     public function inventarioutiles2()
     {
-        return redirect('admin/inventarioutiles')->with('verstock', 'Ver');
+        return redirect('admin/inventariout')->with('verstock', 'Ver');
     }
 
     public function showsinstock()

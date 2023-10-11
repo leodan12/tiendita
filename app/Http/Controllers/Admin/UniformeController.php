@@ -234,7 +234,7 @@ class UniformeController extends Controller
     }
     public function inventariouniformes2()
     {
-        return redirect('admin/inventariouniformes')->with('verstock', 'Ver');
+        return redirect('admin/inventariouf')->with('verstock', 'Ver');
     }
     public function showsinstock()
     {

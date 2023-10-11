@@ -215,7 +215,7 @@ class SnackController extends Controller
     }
     public function inventariosnacks2()
     {
-        return redirect('admin/inventariosnacks')->with('verstock', 'Ver');
+        return redirect('admin/inventariosn')->with('verstock', 'Ver');
     }
 
     public function showsinstock()

@@ -230,7 +230,7 @@ class InstrumentoController extends Controller
 
     public function inventarioinstrumentos2()
     {
-        return redirect('admin/inventarioinstrumentos')->with('verstock', 'Ver');
+        return redirect('admin/inventarioit')->with('verstock', 'Ver');
     }
 
     public function showsinstock()

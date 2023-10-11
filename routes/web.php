@@ -75,29 +75,17 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/venta/create', 'create');
                 Route::post('/venta', 'store');
                 Route::get('/venta/{venta_id}/edit', 'edit');
-                Route::get('/venta/create2/{idcotizacion}', 'create2');
+               
                 Route::put('/venta/{venta_id}', 'update');
                 Route::get('venta/{venta_id}/delete', 'destroy');
                 Route::get('/deletedetalleventa/{id}',  'destroydetalleventa');
                 Route::get('/venta/show/{id}', 'show'); //ver  
-                Route::get('/venta/showcreditos', 'showcreditos'); //ver   creditos
-                Route::get('/venta/comboempresacliente/{id}', 'comboempresacliente'); //para no seleccionar en una venta la misma empresa y cliente  
+              
                 Route::get('/venta/productosxtipo/{tipo}', 'productosxtipo'); //devuelve los productos con stock de una empresa
-                Route::post('/venta/guardardatospago',  'guardardatospago');
+               
                 Route::get('/venta/generarfacturapdf/{id}',  'generarfacturapdf');
-                Route::get('/venta/productosxkit/{id}', 'productosxkit'); //ver  
-                Route::get('/venta/stockkitxempresa/{id}', 'stockkitxempresa'); //ver  
-                Route::get('/venta/stockxprodxempresa/{idproducto}/{idempresa}', 'stockxprodxempresa'); //ver  
-                Route::get('/venta/comboempresaclientevi/{id}', 'comboempresaclientevi');
-                Route::get('/venta/facturadisponible/{empresa}/{factura}', 'facturadisponible');
-                Route::get('/venta/misdetallesventa/{idventa}', 'misdetallesventa'); //ver  
-                Route::get('/venta/stocktotalxkit/{id}', 'stocktotalxkit'); //ver  
-                Route::get('/venta/sinnumero', 'sinnumero');
-                Route::get('/venta/creditosxvencer', 'creditosxvencer');
-                Route::get('/venta/precioespecial/{idcliente}/{idproducto}', 'precioespecial');
-                Route::get('/venta/listaprecioscompra/{idproducto}/{idempresa}', 'listaprecioscompra');
-                Route::post('/venta/verstock', 'verstock');
-                Route::get('/venta/productosxdetallexkit/{iddetallekit}', 'productosxdetallexkit'); //ver 
+               
+                
             });
             //Ruta de ingresos
             Route::controller(App\Http\Controllers\Admin\IngresoController::class)->group(function () {
@@ -110,12 +98,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('ingreso/{ingreso_id}/delete', 'destroy');
                 Route::get('/deletedetalleingreso/{id}', 'destroydetalleingreso');
                 Route::get('/ingreso/show/{id}', 'show'); //ver  
-                Route::get('/ingreso/showcreditos', 'showcreditos'); //ver   creditos
-                Route::get('/ingreso/pagarfactura/{id}',  'pagarfactura');
-                Route::get('/ingreso/sinnumero', 'sinnumero');
-                Route::get('/ingreso/creditosxvencer', 'creditosxvencer');
-                Route::get('/ingreso/productosxdetallexkitingreso/{iddetallekit}', 'productosxdetallexkitingreso'); //ver 
-                Route::post('/ingreso/guardardatospago',  'guardardatospago');
+           
             });
              
             //Ruta de los reportes
@@ -165,7 +148,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/uniformes/addtipotela/{tipotela}', 'addtipotela');
                 Route::get('/uniformes/addcolor/{color}', 'addcolor');
                 //ruta para ver el inventario
-                Route::get('/inventariouniformes', 'inventariouniformes')->name('inventariouniforme.index');
+                Route::get('/inventariouf', 'inventariouniformes')->name('inventariouniforme.index');
                 Route::post('/uniformes/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/uniformes/numerosinstock', 'numerosinstock');
@@ -187,7 +170,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/libros/addedicion/{edicion}', 'addedicion');
                 Route::get('/libros/addespecializacion/{especializacion}', 'addespecializacion');
                 //ruta para ver el inventario
-                Route::get('/inventariolibros', 'inventariolibros')->name('inventariolibro.index');
+                Route::get('/inventariolb', 'inventariolibros')->name('inventariolibro.index');
                 Route::post('/libros/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/libros/numerosinstock', 'numerosinstock');
@@ -206,7 +189,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/instrumentos/addmarca/{marca}', 'addmarca');
                 Route::get('/instrumentos/addmodelo/{modelo}', 'addmodelo');
                 //ruta para ver el inventario
-                Route::get('/inventarioinstrumentos', 'inventarioinstrumentos')->name('inventarioinstrumento.index');
+                Route::get('/inventarioit', 'inventarioinstrumentos')->name('inventarioinstrumento.index');
                 Route::post('/instrumentos/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/instrumentos/numerosinstock', 'numerosinstock');
@@ -225,7 +208,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/utiles/addmarcautil/{marcautil}', 'addmarcautil');
                 Route::get('/utiles/addcolorutil/{coloutil}', 'addcolorutil');
                 //ruta para ver el inventario
-                Route::get('/inventarioutiles', 'inventarioutiles')->name('inventarioutiles.index');
+                Route::get('/inventariout', 'inventarioutiles')->name('inventarioutiles.index');
                 Route::post('/utiles/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/utiles/numerosinstock', 'numerosinstock');
@@ -244,7 +227,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/golosinas/addmarcautil/{marcautil}', 'addmarcautil');
                 Route::get('/golosinas/addcolorutil/{coloutil}', 'addcolorutil');
                 //ruta para ver el inventario
-                Route::get('/inventariogolosinas', 'inventariogolosinas')->name('inventariogolosinas.index');
+                Route::get('/inventariogl', 'inventariogolosinas')->name('inventariogolosinas.index');
                 Route::post('/golosinas/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/golosinas/numerosinstock', 'numerosinstock');
@@ -263,7 +246,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/snacks/addmarcasnack/{marcasnack}', 'addmarcasnack');
                 Route::get('/snacks/addsaborsnack/{saborsnack}', 'addsaborsnack');
                 //ruta para ver el inventario
-                Route::get('/inventariosnacks', 'inventariosnacks')->name('inventariosnacks.index');
+                Route::get('/inventariosn', 'inventariosnacks')->name('inventariosnacks.index');
                 Route::post('/snacks/updatestock', 'updatestock');
                 //ver sin stock
                 Route::get('/snacks/numerosinstock', 'numerosinstock');

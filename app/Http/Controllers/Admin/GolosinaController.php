@@ -192,7 +192,7 @@ class GolosinaController extends Controller
     }
     public function inventariogolosinas2()
     {
-        return redirect('admin/inventariogolosinas')->with('verstock', 'Ver');
+        return redirect('admin/inventariogl')->with('verstock', 'Ver');
     }
     public function showsinstock()
     {

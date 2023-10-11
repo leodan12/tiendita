@@ -299,7 +299,7 @@ class LibroController extends Controller
     }
     public function inventariolibros2()
     {
-        return redirect('admin/inventariolibros')->with('verstock', 'Ver');
+        return redirect('admin/inventariolb')->with('verstock', 'Ver');
     }
     public function showsinstock()
     {
