@@ -191,20 +191,11 @@
                                 $('#modalCreditos1').modal('hide');
                                 recargartabla();
                                 $(event.target).closest('tr').remove();
-                                Swal.fire({
-                                    icon: "success",
-                                    text: "Registro Eliminado",
-                                });
+                                mensaje("Registro Eliminado","success"); 
                             } else if (data1 == "0") {
-                                Swal.fire({
-                                    icon: "error",
-                                    text: "Registro No Eliminado",
-                                });
+                                mensaje("Registro No Eliminado","error");  
                             } else if (data1 == "2") {
-                                Swal.fire({
-                                    icon: "error",
-                                    text: "Registro No Encontrado",
-                                });
+                                mensaje("Registro No Encontrado","error");  
                             }
                         }
                     });

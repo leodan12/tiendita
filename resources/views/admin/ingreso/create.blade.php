@@ -243,13 +243,7 @@ endpush
                     nombre = nombrep;
                     stock1 = stock1p;
                     stock2 = stock2p;
-                    if (idtienda == 1) {
-                        document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock1p +
-                            ")";
-                    } else {
-                        document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock2p +
-                            ")";
-                    }
+                    
                     document.getElementById('cantidad').value = 1;
                     document.getElementById('preciounitariomo').value = preciop;
                     document.getElementById('preciofinal').value = preciop;

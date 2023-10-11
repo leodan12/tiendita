@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Cliente;
 use App\Models\Proveedor;
 use App\Models\Company;
 use App\Models\Ingreso;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Detalleingreso;
-use App\Models\Detalleinventario;
-use App\Models\DetalleKitingreso;
-use App\Models\Inventario;
+use App\Models\Utile;
+use App\Models\Snack;
+use App\Models\Instrumento;
+use App\Models\Libro;
+use App\Models\Uniforme;
+use App\Models\Golosina;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\IngresoFormRequest;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
 use App\Traits\ActualizarStockTrait;
@@ -27,18 +27,11 @@ class IngresoController extends Controller
     {
         $this->middleware(
             'permission:ver-ingreso|editar-ingreso|crear-ingreso|eliminar-ingreso',
-            ['only' => ['index', 'show', 'showcreditos',  'generarfacturapdf']]
+            ['only' => ['index', 'show']]
         );
-        $this->middleware('permission:crear-ingreso', ['only' => ['create', 'store', 'create2', 'facturadisponible']]);
-        $this->middleware('permission:editar-ingreso', ['only' => ['edit', 'update', 'destroydetalleingreso', 'misdetallesingreso']]);
+        $this->middleware('permission:crear-ingreso', ['only' => ['create', 'store', 'create2']]);
+        $this->middleware('permission:editar-ingreso', ['only' => ['edit', 'update', 'destroydetalleingreso']]);
         $this->middleware('permission:eliminar-ingreso', ['only' => ['destroy']]);
-        $this->middleware(
-            'permission:crear-ingreso|crear-cotizacion|crear-ingreso|editar-ingreso|editar-cotizacion|editar-ingreso|ver-ingreso|ver-ingreso|ver-cotizacion|eliminar-ingreso|eliminar-ingreso|eliminar-cotizacion',
-            ['only' => [
-                'productosxempresa', 'productosxkit', 'comboempresaproveedor', 'comboempresaproveedorvi',
-                'stockkitxempresa', 'stockxprodxempresa', 'facturadisponible'
-            ]]
-        );
     }
     use HistorialTrait;
     use ActualizarStockTrait;
@@ -87,7 +80,7 @@ class IngresoController extends Controller
             $product = $request->Lproduct;
             $cantidad = $request->Lcantidad;
             $preciofinal = $request->Lpreciofinal;
-            $preciounitariomo = $request->Lpreciounitariomo; 
+            $preciounitariomo = $request->Lpreciounitariomo;
             $tienda = Tienda::find($ingreso->tienda_id);
             if ($tipo !== null) {
                 //recorremos los detalles
@@ -101,7 +94,7 @@ class IngresoController extends Controller
                     $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
                     $Detalleingreso->preciofinal = $preciofinal[$i];
                     if ($Detalleingreso->save()) {
-                        //$this->actualizarstock($product[$i], $company->id, $cantidad[$i], "RESTA");
+                        $this->actualizarstockventa($cantidad[$i], $tipo[$i], $product[$i], "SUMA", $ingreso->tienda_id);
                     }
                 }
             }
@@ -343,11 +336,12 @@ class IngresoController extends Controller
             } else if ($detalles[$i]->tipo == "GOLOSINAS") {
                 $producto = DB::table('golosinas as g')
                     ->select(
-                        'i.nombre',
-                        'i.precio',
-                        'i.peso',
-                        'i.stock1',
-                        'i.stock2',
+                        'g.id as idproducto',
+                        'g.nombre',
+                        'g.precio',
+                        'g.peso',
+                        'g.stock1',
+                        'g.stock2',
                     )
                     ->where('g.status', '=', '0')
                     ->where('g.id', '=', $detalles[$i]->producto_id)
@@ -400,42 +394,42 @@ class IngresoController extends Controller
     //funcion para actualizar un registro de una ingreso
     public function update(Request $request, int $ingreso_id)
     {   //validamos los datos
-         //cramos un registro de ingreso
-         $ingreso =  Ingreso::find($ingreso_id);
-         $ingreso->tienda_id = $request->tienda_id;
-         $ingreso->fecha = $request->fecha;
-         $ingreso->costoventa = $request->costoingreso;
-         $ingreso->proveedor_id = $request->proveedor_id;
-         //guardamos la ingreso y los detalles
-         if ($ingreso->update()) {
-             //obtenemos los detalles 
-             $tipo = $request->Ltipo;
-             $product = $request->Lproduct;
-             $cantidad = $request->Lcantidad;
-             $preciofinal = $request->Lpreciofinal;
-             $preciounitariomo = $request->Lpreciounitariomo;
-             $tienda = Tienda::find($ingreso->tienda_id);
-             if ($tipo !== null) { 
-                 //recorremos los detalles
-                 for ($i = 0; $i < count($tipo); $i++) {
-                     //creamos los detalles de la ingreso
-                     $Detalleingreso = new Detalleingreso;
-                     $Detalleingreso->tipo = $tipo[$i];
-                     $Detalleingreso->ingreso_id = $ingreso->id;
-                     $Detalleingreso->producto_id = $product[$i];
-                     $Detalleingreso->cantidad = $cantidad[$i];
-                     $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
-                     $Detalleingreso->preciofinal = $preciofinal[$i];
-                     if ($Detalleingreso->save()) {
-                         //$this->actualizarstock($product[$i], $company->id, $cantidad[$i], "RESTA");
-                     }
-                 }
-             }
-             //termino de registrar la ingreso
-             $this->crearhistorial('editar', $ingreso->id, $tienda->nombre, $ingreso->costoingreso, 'ingresos');
-             return redirect('admin/ingreso')->with('message', 'Ingreso Actualizado Satisfactoriamente');
-         }
-         return redirect('admin/ingreso')->with('message', 'No se Pudo Actualizar el Ingreso');
+        //cramos un registro de ingreso
+        $ingreso =  Ingreso::find($ingreso_id);
+        $ingreso->tienda_id = $request->tienda_id;
+        $ingreso->fecha = $request->fecha;
+        $ingreso->costoventa = $request->costoingreso;
+        $ingreso->proveedor_id = $request->proveedor_id;
+        //guardamos la ingreso y los detalles
+        if ($ingreso->update()) {
+            //obtenemos los detalles 
+            $tipo = $request->Ltipo;
+            $product = $request->Lproduct;
+            $cantidad = $request->Lcantidad;
+            $preciofinal = $request->Lpreciofinal;
+            $preciounitariomo = $request->Lpreciounitariomo;
+            $tienda = Tienda::find($ingreso->tienda_id);
+            if ($tipo !== null) {
+                //recorremos los detalles
+                for ($i = 0; $i < count($tipo); $i++) {
+                    //creamos los detalles de la ingreso
+                    $Detalleingreso = new Detalleingreso;
+                    $Detalleingreso->tipo = $tipo[$i];
+                    $Detalleingreso->ingreso_id = $ingreso->id;
+                    $Detalleingreso->producto_id = $product[$i];
+                    $Detalleingreso->cantidad = $cantidad[$i];
+                    $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
+                    $Detalleingreso->preciofinal = $preciofinal[$i];
+                    if ($Detalleingreso->save()) {
+                        $this->actualizarstockventa($cantidad[$i], $tipo[$i], $product[$i], "SUMA", $ingreso->tienda_id);
+                    }
+                }
+            }
+            //termino de registrar la ingreso
+            $this->crearhistorial('editar', $ingreso->id, $tienda->nombre, $ingreso->costoingreso, 'ingresos');
+            return redirect('admin/ingreso')->with('message', 'Ingreso Actualizado Satisfactoriamente');
+        }
+        return redirect('admin/ingreso')->with('message', 'No se Pudo Actualizar el Ingreso');
     }
     //funcion para mostrar los datos de la ingreso
     public function show($idingreso)
@@ -448,9 +442,9 @@ class IngresoController extends Controller
             ->select('t.id', 't.nombre')
             ->where('v.id', '=', $idingreso)
             ->first();
-        $clientes="";
-        $clientes = DB::table('proveedors as c') 
-            ->join('ingresos as v','v.proveedor_id','=','c.id')
+        $clientes = "";
+        $clientes = DB::table('proveedors as c')
+            ->join('ingresos as v', 'v.proveedor_id', '=', 'c.id')
             ->select('c.id', 'c.nombre', 'c.ruc')
             ->where('v.id', '=', $idingreso)
             ->first();
@@ -473,37 +467,32 @@ class IngresoController extends Controller
         $datos->push($clientes);
         return $datos;
     }
-    //funcion para mostrar las ingresos a credito
-    public function showcreditos()
+    
+    //funcion para eliminar un registro de una venta
+    public function destroy(int $venta_id)
     {
-        $creditosvencidos = DB::table('ingresos as v')
-            ->join('companies as e', 'v.company_id', '=', 'e.id')
-            ->join('proveedors as cl', 'v.proveedor_id', '=', 'cl.id')
-            ->where('v.fechav', '!=', null)
-            ->where('v.pagada', '=', 'NO')
-            ->select(
-                'v.id',
-                'v.fecha',
-                'e.nombre as nombreempresa',
-                'cl.nombre as nombreproveedor',
-                'v.moneda',
-                'v.costoingreso',
-                'v.pagada',
-                'v.fechav',
-                'v.factura',
-                'v.formapago'
-            )
-            ->get();
-        return $creditosvencidos;
-    }
-    //funcion para eliminar un registro de una ingreso
-    public function destroy(int $ingreso_id)
-    {
-        $ingreso = Ingreso::find($ingreso_id);
-        if ($ingreso) {
+        $venta = Ingreso::find($venta_id);
+        if ($venta) {
+            $detalles = DB::table('detalleingresos as dv')
+                ->join('ingresos as v', 'dv.venta_id', '=', 'v.id')
+                ->select(
+                    'dv.tipo',
+                    'dv.id as iddetalleingreso',
+                    'dv.cantidad',
+                    'dv.preciounitariomo',
+                    'dv.preciofinal',
+                    'dv.producto_id',
+                    'v.id as idingreso',
+                    'v.tienda_id'
+                )
+                ->where('v.id', '=', $venta_id)->get();
             try {
-                $ingreso->delete();
-                $this->crearhistorial('eliminar', $ingreso->id, $ingreso->fecha, $ingreso->costoingreso, 'ingresos');
+                if ($venta->delete()) {
+                    for ($i = 0; $i < count($detalles); $i++) {
+                        $this->actualizarstockventa($detalles[$i]->cantidad, $detalles[$i]->tipo, $detalles[$i]->producto_id, "RESTA", $detalles[$i]->tienda_id);
+                    }
+                }
+                $this->crearhistorial('eliminar', $venta->id, $venta->fecha, $venta->costoventa, 'ventas');
                 return "1";
             } catch (\Throwable $th) {
                 return "0";
@@ -512,47 +501,18 @@ class IngresoController extends Controller
             return "2";
         }
     }
-    //funcion para eliminar un detalle de una ingreso
+    //funcion para eliminar un detalle de una venta
     public function destroydetalleingreso($id)
     {
         $detalleingreso = Detalleingreso::find($id);
         if ($detalleingreso) {
-            $ingreso = DB::table('detalleingresos as dv')
-                ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
-                ->join('products as p', 'dv.product_id', '=', 'p.id')
-                ->select(
-                    'dv.cantidad',
-                    'v.costoingreso',
-                    'dv.preciofinal',
-                    'v.id',
-                    'v.company_id as idempresa',
-                    'dv.product_id as idproducto',
-                    'v.proveedor_id as idproveedor',
-                    'p.tipo',
-                )
-                ->where('dv.id', '=', $id)->first();
-            if ($ingreso->tipo == "kit") {
-                $detalleingreso_kit = $this->productosxdetallexkit($id);
-                for ($i = 0; $i < count($detalleingreso_kit); $i++) {
-                    $this->actualizarstock($detalleingreso_kit[$i]->id, $ingreso->idempresa, ($detalleingreso_kit[$i]->cantidad * $ingreso->cantidad), "SUMA");
-                }
-            } else {
-                $this->actualizarstock($ingreso->idproducto, $ingreso->idempresa, $ingreso->cantidad, "SUMA");
-            }
+            $datos = $detalleingreso;
             if ($detalleingreso->delete()) {
-                //eliminamos el detalle y actualizamos el costo de la ingreso
-                $costof = $ingreso->costoingreso;
-                $detalle = $ingreso->preciofinal;
-                $idingreso = $ingreso->id;
-                $ingresoedit = Ingreso::findOrFail($idingreso);
-                $ingresoedit->costoingreso = $costof - $detalle;
-                $ingresoedit->update();
-                $company = Company::find($ingreso->idempresa);
-                $proveedor = Proveedor::find($ingreso->idproveedor);
-                if ($proveedor && $company) {
-                    $this->crearhistorial('editar', $ingreso->id, $company->nombre, $proveedor->nombre, 'ingresos');
-                }
-                return "1";
+                $ingreso = Ingreso::find($detalleingreso->venta_id);
+                $ingreso->costoventa =  $ingreso->costoventa - $datos->preciofinal;
+                $ingreso->update();
+                $this->actualizarstockventa($datos->cantidad, $datos->tipo, $datos->producto_id, "RESTA", $ingreso->tienda_id);
+                return 1;
             } else {
                 return 0;
             }
@@ -560,66 +520,134 @@ class IngresoController extends Controller
             return 2;
         }
     }
- 
 
-    //funcion para obtener los detalles de una ingreso
-    public function misdetallesingreso($ingreso_id)
+    public function actualizarstockventa($cantidad, $tipo, $idproducto, $sumaoresta, $idtienda)
     {
-        $detallesingreso = DB::table('detalleingresos as dv')
-            ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
-            ->join('products as p', 'dv.product_id', '=', 'p.id')
-            ->select('dv.observacionproducto', 'p.tipo', 'p.moneda', 'dv.id as iddetalleingreso', 'dv.cantidad', 'dv.preciounitario', 'dv.preciounitariomo', 'dv.servicio', 'dv.preciofinal', 'p.id as idproducto', 'p.nombre as producto')
-            ->where('v.id', '=', $ingreso_id)->get();
-        return  $detallesingreso;
-    }
-
-
-    //funcion para obtener los ultimos 5 compras de un producto en una empresa
-    public function listaprecioscompra($idproducto, $idempresa)
-    {
-        $lista = DB::table('detalleingresos as di')
-            ->join('products as p', 'p.id', '=', 'di.product_id')
-            ->join('ingresos as i', 'i.id', '=', 'di.ingreso_id')
-            ->join('companies as c', 'c.id', '=', 'i.company_id')
-            ->where('p.id', '=', $idproducto)
-            ->where('c.id', '=', $idempresa)
-            ->select(
-                'p.nombre',
-                'di.cantidad',
-                'di.preciounitariomo',
-                'i.fecha',
-                'i.moneda as monedafactura',
-                'p.moneda as monedaproducto',
-                'i.tasacambio'
-            )
-            ->take(5)
-            ->orderByDesc('i.fecha')
-            ->get();
-        $precioscompra = collect();
-        $precio = "";
-        $simboloP = "";
-        for ($i = 0; $i < count($lista); $i++) {
-
-            if ($lista[$i]->monedaproducto == "soles") {
-                $simboloP = "S/. ";
-            } else {
-                $simboloP = "$ ";
+        if ($sumaoresta == "RESTA") {
+            if ($tipo == "UTILES") {
+                $producto = Utile::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 - $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 - $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 - $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "UNIFORMES") {
+                $producto = Uniforme::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 - $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 - $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 - $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "LIBROS") {
+                $producto = Libro::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 - $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 - $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 - $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "INSTRUMENTOS") {
+                $producto = Instrumento::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 - $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 - $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 - $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "GOLOSINAS") {
+                $producto = Golosina::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 - $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 - $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 - $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "SNACKS") {
+                $producto = Snack::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 - $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 - $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 - $cantidad;
+                }
+                $producto->update();
             }
-            if ($lista[$i]->monedafactura == $lista[$i]->monedaproducto) {
-                $precio = $simboloP . $lista[$i]->preciounitariomo;
-            } else if ($lista[$i]->monedafactura == "soles" && $lista[$i]->monedaproducto == "dolares") {
-                $precio = $simboloP . (round(($lista[$i]->preciounitariomo / $lista[$i]->tasacambio), 2));
-            } else if ($lista[$i]->monedafactura == "dolares" && $lista[$i]->monedaproducto == "soles") {
-                $precio = $simboloP . (round(($lista[$i]->preciounitariomo * $lista[$i]->tasacambio), 2));
+        } else {
+            if ($tipo == "UTILES") {
+                $producto = Utile::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 + $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 + $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 + $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "UNIFORMES") {
+                $producto = Uniforme::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 + $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 + $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 + $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "LIBROS") {
+                $producto = Libro::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 + $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 + $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 + $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "INSTRUMENTOS") {
+                $producto = Instrumento::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 + $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 + $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 + $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "GOLOSINAS") {
+                $producto = Golosina::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 + $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 + $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 + $cantidad;
+                }
+                $producto->update();
+            } else if ($tipo == "SNACKS") {
+                $producto = Snack::find($idproducto);
+                if ($idtienda == 1) {
+                    $producto->stock1 =  $producto->stock1 + $cantidad;
+                } else if ($idtienda == 2) {
+                    $producto->stock2 =  $producto->stock2 + $cantidad;
+                } else if ($idtienda == 3) {
+                    $producto->stock3 =  $producto->stock3 + $cantidad;
+                }
+                $producto->update();
             }
-            $compra = collect();
-            $compra->put('fecha', $lista[$i]->fecha);
-            $compra->put('cantidad', $lista[$i]->cantidad);
-            $compra->put('precio', $precio);
-            $compra->put('producto', $lista[$i]->nombre);
-            $precioscompra->push($compra);
         }
-
-        return $precioscompra->values()->all();
     }
+  
 }

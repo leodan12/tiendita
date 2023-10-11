@@ -154,8 +154,11 @@
                                                     <td style="text-align: left;">{{ $nombre }}</td>
                                                     <td>{{ $detalle['cantidad'] }}</td>
                                                     <td>S/.{{ $detalle['preciounitariomo'] }}</td>
-                                                    <td>S/.{{ $detalle['preciofinal'] }}</td>
+                                                    <td>S/.{{ $detalle['preciofinal'] }} <input type="hidden"
+                                                            value="{{ $detalle['preciofinal'] }}"
+                                                            id="preciof{{ $indice }}"></td>
                                                     <td><button type="button" class="btn btn-xs btn-danger"
+                                                            onclick="eliminardetalleventa({{ $detalle['iddetalleventa'] }},{{ $indice }})"
                                                             type="button">ELIMINAR</button>
                                                     </td>
                                                 </tr>
@@ -244,8 +247,9 @@
 
                     producto_select += '<option id="productoxtipo' + data[i].id +
                         '" value="' + data[i].id + '" data-nombre="' + valortexto + '" data-stock1="' +
-                        data[i].stock1 + '" data-stock2="' + data[i].stock2 + '" data-precio="' +
-                        data[i].precio + '" >' + valortexto + '</option>';
+                        data[i].stock1 + '" data-stock2="' + data[i].stock2 + '" data-stock3="' +
+                        data[i].stock3 + '" data-precio="' + data[i].precio + '" >' + valortexto +
+                        '</option>';
                 }
                 $("#product").html(producto_select);
                 $('#product').removeAttr('disabled');
@@ -271,15 +275,20 @@
                     var nombrep = $(this).data("nombre");
                     var stock1p = $(this).data("stock1");
                     var stock2p = $(this).data("stock2");
+                    var stock3p = $(this).data("stock3");
                     precio = preciop;
                     nombre = nombrep;
                     stock1 = stock1p;
                     stock2 = stock2p;
+                    stock3 = stock3p;
                     if (idtienda == 1) {
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock1p +
                             ")";
-                    } else {
+                    } else if (idtienda == 2){
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock2p +
+                            ")";
+                    }else {
+                        document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock3p +
                             ")";
                     }
                     document.getElementById('cantidad').value = 1;
@@ -351,8 +360,37 @@
             botonguardar(funcion);
         }
 
+        function eliminardetalleventa(iddetalleventa, indicef) {
+            Swal.fire({
+                title: '¿Esta seguro de Eliminar?',
+                text: "No lo podra revertir!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí,Eliminar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('product').disabled = true;
+                    $('.product').select2("destroy");
+                    var urle = "{{ url('admin/deletedetalleventa') }}";
+                    $.get(urle + '/' + iddetalleventa, function(data) {
+                        //alert(data[0]);
+                        if (data[0] == 1) {
+                            mensaje("Registro Eliminado", "success");
+                            eliminarFila(indicef);
+                            $('.select2').select2({});
+                        } else if (data[0] == 0) {
+                            mensaje("No se puede eliminar", "error");
+                        } else if (data[0] == 2) {
+                            mensaje("Registro no encontrado", "error");
+                        }
+                    });
+                }
+            });
+        }
 
-        function eliminarFila(ind, idproducto) {
+        function eliminarFila(ind) {
             var resta = 0;
             resta = $('[id="preciof' + ind + '"]').val();
             ventatotal = (ventatotal - resta).toFixed(4);
@@ -363,7 +401,7 @@
 
             var funcion = "eliminar";
             botonguardar(funcion);
-            document.getElementById('productoxtipo' + idproducto).disabled = false;
+
             return false;
         }
 

@@ -65,7 +65,7 @@
                             <hr style="border: 0; height: 0; box-shadow: 0 2px 5px 2px rgb(0, 89, 255);">
                             <div class="row">
                                 <h4>Agregar Detalle de la Venta</h4>
-                                <div class="col-md-3 mb-1">
+                                <div class="col-md-3 mb-3">
                                     <label class="form-label" id="labeltipoproduct" name="labeltipoproduct">TIPO</label>
                                     <select class="form-select select2 " name="tipoproduct" id="tipoproduct" disabled>
                                         <option value="" selected disabled>Seleccione una opción
@@ -78,19 +78,19 @@
                                         <option value="UNIFORMES">UNIFORMES </option>
                                     </select>
                                 </div>
-                                <div class="col-md-9 mb-1">
+                                <div class="col-md-9 mb-3">
                                     <label class="form-label" id="labelproducto" name="labelproducto">PRODUCTO</label>
                                     <select class="form-select select2 " name="product" id="product" disabled>
                                         <option value="" selected disabled>Seleccione una opción
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-md-4 mb-1">
+                                <div class="col-md-4 mb-2">
                                     <label class="form-label" name="labelcantidad" id="labelcantidad">CANTIDAD</label>
                                     <input type="number" name="cantidad" id="cantidad" min="1" step="1"
                                         class="form-control " />
                                 </div>
-                                <div class="col-md-4 mb-1">
+                                <div class="col-md-4 mb-2">
                                     <div class="input-group">
                                         <label class="form-label input-group" id="labelpreciounitarioref">PRECIO
                                             UNITARIO:</label>
@@ -212,7 +212,8 @@
 
                     producto_select += '<option id="productoxtipo' + data[i].id +
                         '" value="' + data[i].id + '" data-nombre="' + valortexto + '" data-stock1="' +
-                        data[i].stock1 + '" data-stock2="' + data[i].stock2 + '" data-precio="' +
+                        data[i].stock1 + '" data-stock2="' + data[i].stock2 + '" data-stock3="' + data[i]
+                        .stock3 + '" data-precio="' +
                         data[i].precio + '" >' + valortexto + '</option>';
                 }
                 $("#product").html(producto_select);
@@ -239,15 +240,20 @@
                     var nombrep = $(this).data("nombre");
                     var stock1p = $(this).data("stock1");
                     var stock2p = $(this).data("stock2");
+                    var stock3p = $(this).data("stock3");
                     precio = preciop;
                     nombre = nombrep;
                     stock1 = stock1p;
                     stock2 = stock2p;
+                    stock3 = stock3p;
                     if (idtienda == 1) {
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock1p +
                             ")";
-                    } else {
+                    } else if (idtienda == 2){
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock2p +
+                            ")";
+                    }else {
+                        document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock3p +
                             ")";
                     }
                     document.getElementById('cantidad').value = 1;
@@ -306,7 +312,7 @@
                 '"  type="hidden" name="Lpreciofinal[]" value="' + LVenta[5] +
                 '"required> S/.' + LVenta[5] +
                 '</td><td style="text-align:center;"><button type="button" class="btn btn-xs btn-danger" onclick="eliminarFila(' +
-                indice + ',' + LVenta[0] +
+                indice +
                 ')" data-id="0">ELIMINAR</button></td></tr>';
             $("#detallesVenta>tbody").append(filaDetalle);
             $('.toast').toast('hide');
@@ -320,7 +326,7 @@
         }
 
 
-        function eliminarFila(ind, idproducto) {
+        function eliminarFila(ind) {
             var resta = 0;
             resta = $('[id="preciof' + ind + '"]').val();
             ventatotal = (ventatotal - resta).toFixed(4);
@@ -331,7 +337,6 @@
 
             var funcion = "eliminar";
             botonguardar(funcion);
-            document.getElementById('productoxtipo' + idproducto).disabled = false;
             return false;
         }
 
