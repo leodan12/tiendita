@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('fechavencimiento2');
             $table->integer('stock1')->nullable();
             $table->integer('stock2')->nullable();
+            $table->integer('stock3')->nullable();
             $table->integer('stockmin')->nullable();
             $table->unsignedBigInteger('marcasnack_id');
             $table->unsignedBigInteger('saborsnack_id'); 

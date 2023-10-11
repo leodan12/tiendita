@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Marca;
 use App\Models\Modelo;
+use App\Models\Tienda;
 use App\Models\Instrumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,7 @@ class InstrumentoController extends Controller
         $instrumento->modelo_id = $modelo->id;
         $instrumento->stock1 = 0;
         $instrumento->stock2 = 0;
+        $instrumento->stock3 = 0;
         $instrumento->stockmin = 5;
         $instrumento->save();
         $this->crearhistorial('crear', $instrumento->id, $instrumento->nombre, '', 'instrumentos');
@@ -95,6 +97,7 @@ class InstrumentoController extends Controller
                 'i.precio',
                 'i.stock1',
                 'i.stock2',
+                'i.stock3',
                 'i.stockmin',
             )->where('i.id', '=', $id)
             ->get();
@@ -171,6 +174,7 @@ class InstrumentoController extends Controller
     //inventario
     public function inventarioinstrumentos(Request $request)
     {
+        $tiendas = Tienda::all();
         if ($request->ajax()) {
             $registros = DB::table('instrumentos as i')
                 ->join('marcas as m', 'i.marca_id', '=', 'm.id')
@@ -184,6 +188,7 @@ class InstrumentoController extends Controller
                     'i.precio',
                     'i.stock1',
                     'i.stock2',
+                    'i.stock3',
                     'i.stockmin',
                 )->where('i.status', '=', 0);
             return DataTables::of($registros)
@@ -194,7 +199,7 @@ class InstrumentoController extends Controller
                 ->rawColumns(['acciones'])
                 ->make(true);
         }
-        return view('admin.inventarios.instrumentos');
+        return view('admin.inventarios.instrumentos',compact('tiendas'));
     }
 
     public function updatestock(Request $request)
@@ -203,6 +208,7 @@ class InstrumentoController extends Controller
             $instrumento =   Instrumento::find($request->idproducto);
             $instrumento->stock1 = $request->stock1;
             $instrumento->stock2 = $request->stock2;
+            $instrumento->stock3 = $request->stock3;
             $instrumento->stockmin = $request->stockmin;
             $instrumento->update();
             return "1";
@@ -215,9 +221,9 @@ class InstrumentoController extends Controller
     {
         $productossinstock = 0;
 
-        $productossinstock = DB::table('instrumentos')
-            ->whereRaw('stock1 + stock2 < stockmin')
-            ->where('status', '=', '0')
+        $productossinstock = DB::table('instrumentos as i')
+            ->whereRaw('i.stock1 < i.stockmin OR i.stock2 < i.stockmin OR i.stock3 < i.stockmin')
+            ->where('i.status', '=', '0')
             ->count();
         return $productossinstock;
     }
@@ -242,8 +248,9 @@ class InstrumentoController extends Controller
                 'i.precio',
                 'i.stock1',
                 'i.stock2',
+                'i.stock3',
                 'i.stockmin',
-            )->whereRaw('i.stock1 + i.stock2 < i.stockmin')
+            )->whereRaw('i.stock1 < i.stockmin OR i.stock2 < i.stockmin OR i.stock3 < i.stockmin')
             ->where('i.status', '=', '0')
             ->get();
         return $instrumentos;

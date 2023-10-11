@@ -10,6 +10,7 @@ use App\Models\Saborsnack;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
+use App\Models\Tienda;
 
 class SnackController extends Controller
 {   use HistorialTrait;
@@ -69,6 +70,7 @@ class SnackController extends Controller
         $snack->saborsnack_id = $saborsnack->id;
         $snack->stock1 = 0;
         $snack->stock2 = 0;
+        $snack->stock3 = 0;
         $snack->stockmin = 5;
         $snack->save();
         $this->crearhistorial('crear', $snack->id, $snack->nombre, '', 'snacks');
@@ -90,6 +92,7 @@ class SnackController extends Controller
                 's.fechavencimiento',
                 's.stock1',
                 's.stock2',
+                's.stock3',
                 's.stockmin',
             )->where('s.id', '=', $id)
             ->get();
@@ -157,7 +160,7 @@ class SnackController extends Controller
     }
 
     public function inventariosnacks(Request $request)
-    {
+    { $tiendas = Tienda::all();
         if ($request->ajax()) {
             $registros = DB::table('snacks as s')
             ->join('marcasnacks as ms', 's.marcasnack_id', '=', 'ms.id')
@@ -172,6 +175,7 @@ class SnackController extends Controller
                 's.precio',
                 's.stock1',
                 's.stock2',
+                's.stock3',
                 's.stockmin',
                 )->where('s.status', '=', 0);
             return DataTables::of($registros)
@@ -182,7 +186,7 @@ class SnackController extends Controller
                 ->rawColumns(['acciones'])
                 ->make(true);
         }
-        return view('admin.inventarios.snacks');
+        return view('admin.inventarios.snacks',compact('tiendas'));
     }
 
     public function updatestock(Request $request)
@@ -191,6 +195,7 @@ class SnackController extends Controller
             $snack =   Snack::find($request->idproducto);
             $snack->stock1 = $request->stock1;
             $snack->stock2 = $request->stock2;
+            $snack->stock3 = $request->stock3;
             $snack->stockmin = $request->stockmin;
             $snack->update();
             return "1";
@@ -202,9 +207,9 @@ class SnackController extends Controller
     public function numerosinstock()
     {
         $productossinstock = 0; 
-        $productossinstock = DB::table('snacks')
-            ->whereRaw('stock1 + stock2 < stockmin')
-            ->where('status', '=', '0')
+        $productossinstock = DB::table('snacks as s')
+            ->whereRaw('s.stock1 < s.stockmin OR s.stock2 < s.stockmin OR s.stock3 < s.stockmin')
+            ->where('s.status', '=', '0')
             ->count();
         return $productossinstock;
     }
@@ -229,8 +234,9 @@ class SnackController extends Controller
                 's.fechavencimiento',
                 's.stock1',
                 's.stock2',
+                's.stock3',
                 's.stockmin',
-            )->whereRaw('s.stock1 + s.stock2 < s.stockmin')
+            )->whereRaw('s.stock1 < s.stockmin OR s.stock2 < s.stockmin OR s.stock3 < s.stockmin')
             ->where('s.status', '=', '0')
             ->get();
         return $snacks;

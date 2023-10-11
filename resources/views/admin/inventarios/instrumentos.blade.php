@@ -39,8 +39,9 @@
                                     <th>MODELO</th>
                                     <th>GARANTIA</th>
                                     <th>PRECIO(soles)</th>
-                                    <th>STOCK TIENDA 1</th>
-                                    <th>STOCK TIENDA 2</th>
+                                    <th>STOCK {{ $tiendas[0]->nombre }}</th>
+                                    <th>STOCK {{ $tiendas[1]->nombre }}</th>
+                                    <th>STOCK {{ $tiendas[2]->nombre }}</th>
                                     <th>ACCIONES</th>
                                 </tr>
                             </thead>
@@ -88,12 +89,16 @@
                                             <hr>
 
                                             <div class="col-sm-3   mb-3" id="colstock1">
-                                                <label for="verstock1" class="col-form-label">STOCK 1:</label>
+                                                <label for="verstock1" class="col-form-label">STOCK {{ $tiendas[0]->nombre }}:</label>
                                                 <input type="number" class="form-control" id="verstock1">
                                             </div>
                                             <div class="col-sm-3 mb-3" id="colstock2">
-                                                <label for="verstock2" class="col-form-label">STOCK 2:</label>
+                                                <label for="verstock2" class="col-form-label">STOCK {{ $tiendas[1]->nombre }}:</label>
                                                 <input type="number" class="form-control" id="verstock2">
+                                            </div>
+                                            <div class="col-sm-3 mb-3" id="colstock3">
+                                                <label for="verstock3" class="col-form-label">STOCK {{ $tiendas[2]->nombre }}:</label>
+                                                <input type="number" class="form-control" id="verstock3">
                                             </div>
                                             <div class="col-sm-3 mb-3" id="colstockmin">
                                                 <label for="verstockmin" class="col-form-label">STOCK MIN:</label>
@@ -135,8 +140,9 @@
                                             <th>MARCA</th>
                                             <th>GARANTIA</th>
                                             <th>PRECIO(soles)</th>
-                                            <th>STOCK 1</th>
-                                            <th>STOCK 2</th>
+                                            <th>STOCK {{ $tiendas[0]->nombre }}</th>
+                                            <th>STOCK {{ $tiendas[1]->nombre }}</th>
+                                            <th>STOCK {{ $tiendas[2]->nombre }}</th>
                                             <th>ACCIONES</th>
                                         </tr>
                                     </thead>
@@ -197,6 +203,10 @@
                     name: 'stock2'
                 },
                 {
+                    data: 'stock3',
+                    name: 'stock3'
+                },
+                {
                     data: 'acciones',
                     name: 'acciones',
                     searchable: false,
@@ -234,23 +244,27 @@
                 document.getElementById("verprecio").value = data[0].precio;
                 var stock1 = document.getElementById("verstock1");
                 var stock2 = document.getElementById("verstock2");
+                var stock3 = document.getElementById("verstock3");
                 var stockmin = document.getElementById("verstockmin");
                 var btnactualizar = document.getElementById("btnactualizar");
                 if (accion == "ver") {
                     console.log("accion de ver");
                     stock1.setAttribute("readonly", true);
                     stock2.setAttribute("readonly", true);
+                    stock3.setAttribute("readonly", true);
                     stockmin.setAttribute("readonly", true);
                     btnactualizar.style.display = "none";
                 } else if (accion == "editar") {
                     console.log("accion de editar");
                     stock1.removeAttribute("readonly");
                     stock2.removeAttribute("readonly");
+                    stock3.removeAttribute("readonly");
                     stockmin.removeAttribute("readonly");
                     btnactualizar.style.display = "inline";
                 }
                 stock1.value = data[0].stock1;
                 stock2.value = data[0].stock2;
+                stock3.value = data[0].stock3;
                 stockmin.value = data[0].stockmin;
             });
         });
@@ -259,6 +273,7 @@
             var urlstock = "{{ url('admin/instrumentos/updatestock') }}";
             var stock1 = document.getElementById("verstock1").value;
             var stock2 = document.getElementById("verstock2").value;
+            var stock3 = document.getElementById("verstock3").value;
             var stockmin = document.getElementById("verstockmin").value;
             $.ajax({
                 type: "POST",
@@ -270,6 +285,7 @@
                 data: {
                     stock1: stock1,
                     stock2: stock2,
+                    stock3: stock3,
                     stockmin: stockmin,
                     idproducto: idproducto,
                 },
@@ -302,7 +318,7 @@
                 $('#mitabla1 tbody tr').slice().remove();
                 for (var i = 0; i < data.length; i++) {
                     var colorfondo = '<tr id="fila' + i + '">';
-                    if (data[i].stock1 + data[i].stock2 <= 0) {
+                    if (data[i].stock1 + data[i].stock2 + data[i].stock3 <= 0) {
                         colorfondo = '<tr style="background-color:  #f89f9f" id="fila' + i + '">';
                         nrosinstock++;
                     } else {
@@ -321,6 +337,7 @@
                         '</td><td>' + data[i].precio +
                         '</td><td>' + data[i].stock1 +
                         '</td><td>' + data[i].stock2 +
+                        '</td><td>' + data[i].stock3 +
                         '</td> <td> <button type="button" class="btn btn-success" data-id="' + data[i].id +
                         '" data-accion="editar" data-bs-toggle="modal" data-bs-target="#mimodal">Editar</button>  ' +
                         '<button type="button" class="btn btn-secondary" data-id="'+data[i].id+

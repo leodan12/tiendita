@@ -58,48 +58,48 @@ class HomeController extends Controller
 
     public function uniformesinstock()
     {
-        $numerosinstock = DB::table('uniformes as u')
-            ->whereRaw('u.stock1 + u.stock2 < u.stockmin')
+        $numerosinstock = DB::table('uniformes as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->count();
 
         return $numerosinstock;
     }
     public function librossinstock()
     {
-        $numerosinstock = DB::table('libros as l')
-            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+        $numerosinstock = DB::table('libros as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->count();
 
         return   $numerosinstock;
     }
     public function instrumentossinstock()
     {
-        $numerosinstock = DB::table('instrumentos as l')
-            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+        $numerosinstock = DB::table('instrumentos as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->count();
 
         return   $numerosinstock;
     }
     public function utilessinstock()
     {
-        $numerosinstock = DB::table('utiles as l')
-            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+        $numerosinstock = DB::table('utiles as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->count();
 
         return   $numerosinstock;
     }
     public function golosinassinstock()
     {
-        $numerosinstock = DB::table('golosinas as l')
-            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+        $numerosinstock = DB::table('golosinas as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->count();
 
         return   $numerosinstock;
     }
     public function snackssinstock()
     {
-        $numerosinstock = DB::table('snacks as l')
-            ->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+        $numerosinstock = DB::table('snacks as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->count();
 
         return   $numerosinstock;

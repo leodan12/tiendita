@@ -11,6 +11,7 @@ use App\Models\Color;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
+use App\Models\Tienda;
 
 class UniformeController extends Controller
 {
@@ -74,6 +75,7 @@ class UniformeController extends Controller
         $uniforme->color_id = $color->id;
         $uniforme->stock1 = 0;
         $uniforme->stock2 = 0;
+        $uniforme->stock3 = 0;
         $uniforme->stockmin = 5;
         $uniforme->save();
         $this->crearhistorial('crear', $uniforme->id, $uniforme->nombre, '', 'uniformes');
@@ -96,6 +98,7 @@ class UniformeController extends Controller
                 'u.genero',
                 'u.stock1',
                 'u.stock2',
+                'u.stock3',
                 'u.stockmin',
             )->where('u.id', '=', $id)
             ->get();
@@ -175,6 +178,7 @@ class UniformeController extends Controller
     //inventario
     public function inventariouniformes(Request $request)
     {
+        $tiendas = Tienda::all();
         if ($request->ajax()) {
             $registros = DB::table('uniformes as u')
                 ->join('tallas as t', 'u.talla_id', '=', 't.id')
@@ -190,6 +194,7 @@ class UniformeController extends Controller
                     'u.genero',
                     'u.stock1',
                     'u.stock2',
+                    'u.stock3',
                     'u.stockmin',
                 )->where('u.status', '=', 0);
             return DataTables::of($registros)
@@ -200,7 +205,7 @@ class UniformeController extends Controller
                 ->rawColumns(['acciones'])
                 ->make(true);
         }
-        return view('admin.inventarios.uniformes');
+        return view('admin.inventarios.uniformes', compact('tiendas'));
     }
 
     public function updatestock(Request $request)
@@ -209,6 +214,7 @@ class UniformeController extends Controller
             $uniforme =   Uniforme::find($request->idproducto);
             $uniforme->stock1 = $request->stock1;
             $uniforme->stock2 = $request->stock2;
+            $uniforme->stock3 = $request->stock3;
             $uniforme->stockmin = $request->stockmin;
             $uniforme->update();
             return "1";
@@ -220,9 +226,9 @@ class UniformeController extends Controller
     {
         $productossinstock = 0;
 
-        $productossinstock = DB::table('uniformes')
-            ->whereRaw('stock1 + stock2 < stockmin')
-            ->where('status', '=', '0')
+        $productossinstock = DB::table('uniformes as u')
+            ->whereRaw('u.stock1 < u.stockmin OR u.stock2 < u.stockmin OR u.stock3 < u.stockmin')
+            ->where('u.status', '=', '0')
             ->count();
         return $productossinstock;
     }
@@ -232,7 +238,6 @@ class UniformeController extends Controller
     }
     public function showsinstock()
     {
-
         $uniformes = DB::table('uniformes as u')
             ->join('tallas as t', 'u.talla_id', '=', 't.id')
             ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
@@ -247,8 +252,9 @@ class UniformeController extends Controller
                 'u.genero',
                 'u.stock1',
                 'u.stock2',
+                'u.stock3',
                 'u.stockmin',
-            )->whereRaw('u.stock1 + u.stock2 < u.stockmin')
+            )->whereRaw('u.stock1 < u.stockmin OR u.stock2 < u.stockmin OR u.stock3 < u.stockmin')
             ->where('u.status', '=', '0')
             ->get();
         return $uniformes;

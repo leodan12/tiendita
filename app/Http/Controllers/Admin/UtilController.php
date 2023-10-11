@@ -10,6 +10,7 @@ use App\Models\Colorutil;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
+use App\Models\Tienda;
 
 class UtilController extends Controller
 {   use HistorialTrait;
@@ -64,6 +65,7 @@ class UtilController extends Controller
         $utile->colorutil_id = $colorutil->id;
         $utile->stock1 = 0;
         $utile->stock2 = 0;
+        $utile->stock3 = 0;
         $utile->stockmin = 5;
         $utile->save();
         $this->crearhistorial('crear', $utile->id, $utile->nombre, '', 'utiles');
@@ -83,6 +85,7 @@ class UtilController extends Controller
                 'ut.precio',
                 'ut.stock1',
                 'ut.stock2',
+                'ut.stock3',
                 'ut.stockmin',
             )->where('ut.id', '=', $id)
             ->get();
@@ -148,7 +151,7 @@ class UtilController extends Controller
     }
 
     public function inventarioutiles(Request $request)
-    {
+    {$tiendas = Tienda::all();
         if ($request->ajax()) {
             $registros = DB::table('utiles as ut')
             ->join('marcautils as mu', 'ut.marcautil_id', '=', 'mu.id')
@@ -161,6 +164,7 @@ class UtilController extends Controller
                 'ut.precio',
                 'ut.stock1',
                 'ut.stock2',
+                'ut.stock3',
                 'ut.stockmin',
                 )->where('ut.status', '=', 0);
             return DataTables::of($registros)
@@ -171,7 +175,7 @@ class UtilController extends Controller
                 ->rawColumns(['acciones'])
                 ->make(true);
         }
-        return view('admin.inventarios.utiles');
+        return view('admin.inventarios.utiles', compact('tiendas'));
     }
 
     public function updatestock(Request $request)
@@ -180,6 +184,7 @@ class UtilController extends Controller
             $utile =   Utile::find($request->idproducto);
             $utile->stock1 = $request->stock1;
             $utile->stock2 = $request->stock2;
+            $utile->stock3 = $request->stock3;
             $utile->stockmin = $request->stockmin;
             $utile->update();
             return "1";
@@ -192,9 +197,9 @@ class UtilController extends Controller
     {
         $productossinstock = 0;
 
-        $productossinstock = DB::table('utiles')
-            ->whereRaw('stock1 + stock2 < stockmin')
-            ->where('status', '=', '0')
+        $productossinstock = DB::table('utiles as ut')
+            ->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
+            ->where('ut.status', '=', '0')
             ->count();
         return $productossinstock;
     }
@@ -217,8 +222,9 @@ class UtilController extends Controller
                 'ut.precio',
                 'ut.stock1',
                 'ut.stock2',
+                'ut.stock3',
                 'ut.stockmin',
-            )->whereRaw('ut.stock1 + ut.stock2 < ut.stockmin')
+            )->whereRaw('ut.stock1 < ut.stockmin OR ut.stock2 < ut.stockmin OR ut.stock3 < ut.stockmin')
             ->where('ut.status', '=', '0')
             ->get();
         return $utiles;

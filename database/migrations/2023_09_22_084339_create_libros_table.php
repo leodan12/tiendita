@@ -20,6 +20,7 @@ return new class extends Migration
             $table->double('precio');
             $table->integer('stock1')->nullable();
             $table->integer('stock2')->nullable();
+            $table->integer('stock3')->nullable();
             $table->integer('stockmin')->nullable();
             $table->unsignedBigInteger('formato_id'); 
             $table->unsignedBigInteger('tipopapel_id'); 

@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
-
+use App\Models\Tienda;
 
 
 class LibroController extends Controller
@@ -74,6 +74,7 @@ class LibroController extends Controller
         $libro->original = $request->original;
         $libro->stock1 = 0;
         $libro->stock2 = 0;
+        $libro->stock3 = 0;
         $libro->stockmin = 5;
 
         $formato = Formato::find($request->formato);
@@ -128,6 +129,7 @@ class LibroController extends Controller
                 'es.especializacion',
                 'l.stock1',
                 'l.stock2',
+                'l.stock3',
                 'l.stockmin',
             )->where('l.id', '=', $id)
             ->get();
@@ -235,6 +237,7 @@ class LibroController extends Controller
     //inventario
     public function inventariolibros(Request $request)
     {
+        $tiendas = Tienda::all();
         if ($request->ajax()) {
             $registros = DB::table('libros as l')
                 ->join('formatos as f', 'l.formato_id', '=', 'f.id')
@@ -256,6 +259,7 @@ class LibroController extends Controller
                     'l.autor',
                     'l.stock1',
                     'l.stock2',
+                    'l.stock3',
                     'l.stockmin', 
                 )->where('l.status', '=', 0);
             return DataTables::of($registros)
@@ -266,7 +270,7 @@ class LibroController extends Controller
                 ->rawColumns(['acciones'])
                 ->make(true);
         }
-        return view('admin.inventarios.libros');
+        return view('admin.inventarios.libros',compact('tiendas'));
     }
 
     public function updatestock(Request $request)
@@ -275,6 +279,7 @@ class LibroController extends Controller
             $libro =   Libro::find($request->idproducto);
             $libro->stock1 = $request->stock1;
             $libro->stock2 = $request->stock2;
+            $libro->stock3 = $request->stock3;
             $libro->stockmin = $request->stockmin;
             $libro->update();
             return "1";
@@ -286,9 +291,9 @@ class LibroController extends Controller
     {
         $productossinstock = 0;
 
-        $productossinstock = DB::table('libros')
-            ->whereRaw('stock1 + stock2 < stockmin')
-            ->where('status', '=', '0')
+        $productossinstock = DB::table('libros as l')
+            ->whereRaw('l.stock1 < l.stockmin OR l.stock2 < l.stockmin OR l.stock3 < l.stockmin')
+            ->where('l.status', '=', '0')
             ->count();
         return $productossinstock;
     }
@@ -318,8 +323,9 @@ class LibroController extends Controller
                 'es.especializacion',
                 'l.stock1',
                 'l.stock2',
+                'l.stock3',
                 'l.stockmin',
-            )->whereRaw('l.stock1 + l.stock2 < l.stockmin')
+            )->whereRaw('l.stock1 < l.stockmin OR l.stock2 < l.stockmin OR l.stock3 < l.stockmin')
             ->where('l.status', '=', '0')
             ->get();
         return $libros; 

@@ -11,6 +11,7 @@ use App\Models\Color;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
+use App\Models\Tienda;
 
 class GolosinaController extends Controller
 {
@@ -50,6 +51,7 @@ class GolosinaController extends Controller
         $golosina->precio = $request->precio;  
         $golosina->stock1 = 0;
         $golosina->stock2 = 0;
+        $golosina->stock3 = 0;
         $golosina->stockmin = 5;
         $golosina->save();
         $this->crearhistorial('crear', $golosina->id, $golosina->nombre, '', 'golosinas');
@@ -66,6 +68,7 @@ class GolosinaController extends Controller
                 'u.peso',
                 'u.stock1',
                 'u.stock2',
+                'u.stock3',
                 'u.stockmin',
             )->where('u.id', '=', $id)
             ->get();
@@ -139,6 +142,7 @@ class GolosinaController extends Controller
     //inventario
     public function inventariogolosinas(Request $request)
     {
+        $tiendas = Tienda::all();
         if ($request->ajax()) {
             $registros = DB::table('golosinas as u') 
                 ->select(
@@ -148,6 +152,7 @@ class GolosinaController extends Controller
                     'u.peso',
                     'u.stock1',
                     'u.stock2',
+                    'u.stock3',
                     'u.stockmin',
                 )->where('u.status', '=', 0);
             return DataTables::of($registros)
@@ -158,7 +163,7 @@ class GolosinaController extends Controller
                 ->rawColumns(['acciones'])
                 ->make(true);
         }
-        return view('admin.inventarios.golosinas');
+        return view('admin.inventarios.golosinas', compact('tiendas'));
     }
 
     public function updatestock(Request $request)
@@ -167,6 +172,7 @@ class GolosinaController extends Controller
             $golosina =   Golosina::find($request->idproducto);
             $golosina->stock1 = $request->stock1;
             $golosina->stock2 = $request->stock2;
+            $golosina->stock3 = $request->stock3;
             $golosina->stockmin = $request->stockmin;
             $golosina->update();
             return "1";
@@ -178,9 +184,9 @@ class GolosinaController extends Controller
     {
         $productossinstock = 0;
 
-        $productossinstock = DB::table('golosinas')
-            ->whereRaw('stock1 + stock2 < stockmin')
-            ->where('status', '=', '0')
+        $productossinstock = DB::table('golosinas as u')
+            ->whereRaw('u.stock1 < u.stockmin OR u.stock2 < u.stockmin OR u.stock3 < u.stockmin')
+            ->where('u.status', '=', '0')
             ->count();
         return $productossinstock;
     }
@@ -199,8 +205,9 @@ class GolosinaController extends Controller
                 'u.precio',
                 'u.stock1',
                 'u.stock2',
+                'u.stock3',
                 'u.stockmin',
-            )->whereRaw('u.stock1 + u.stock2 < u.stockmin')
+            )->whereRaw('u.stock1 < u.stockmin OR u.stock2 < u.stockmin OR u.stock3 < u.stockmin')
             ->where('u.status', '=', '0')
             ->get();
         return $golosinas;

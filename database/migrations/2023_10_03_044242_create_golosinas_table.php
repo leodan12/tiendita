@@ -18,6 +18,7 @@ return new class extends Migration
             $table->double('precio');
             $table->integer('stock1')->nullable();
             $table->integer('stock2')->nullable();
+            $table->integer('stock3')->nullable();
             $table->integer('stockmin')->nullable();
             $table->tinyInteger('status')->default('0')->comment('0=visible,1=oculto');
             $table->timestamps();

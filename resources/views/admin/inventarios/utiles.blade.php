@@ -38,8 +38,9 @@
                                     <th>MARCA</th>
                                     <th>COLOR</th>
                                     <th>PRECIO(soles)</th>
-                                    <th>STOCK TIENDA 1</th>
-                                    <th>STOCK TIENDA 2</th>
+                                    <th>STOCK {{ $tiendas[0]->nombre }}</th>
+                                    <th>STOCK {{ $tiendas[1]->nombre }}</th>
+                                    <th>STOCK {{ $tiendas[2]->nombre }}</th>
                                     <th>ACCIONES</th>
                                 </tr>
                             </thead>
@@ -78,15 +79,22 @@
                                             <div class="col-sm-3 mb-3">
                                                 <label for="vercolorutil" class="col-form-label">COLOR:</label>
                                                 <input type="text" class="form-control" id="vercolorutil" readonly>
-                                            </div> 
-                                            <hr> 
+                                            </div>
+                                            <hr>
                                             <div class="col-sm-3   mb-3" id="colstock1">
-                                                <label for="verstock1" class="col-form-label">STOCK 1:</label>
+                                                <label for="verstock1" class="col-form-label">STOCK
+                                                    {{ $tiendas[0]->nombre }}:</label>
                                                 <input type="number" class="form-control" id="verstock1">
                                             </div>
                                             <div class="col-sm-3 mb-3" id="colstock2">
-                                                <label for="verstock2" class="col-form-label">STOCK 2:</label>
+                                                <label for="verstock2" class="col-form-label">STOCK
+                                                    {{ $tiendas[1]->nombre }}:</label>
                                                 <input type="number" class="form-control" id="verstock2">
+                                            </div>
+                                            <div class="col-sm-3 mb-3" id="colstock3">
+                                                <label for="verstock3" class="col-form-label">STOCK
+                                                    {{ $tiendas[2]->nombre }}:</label>
+                                                <input type="number" class="form-control" id="verstock3">
                                             </div>
                                             <div class="col-sm-3 mb-3" id="colstockmin">
                                                 <label for="verstockmin" class="col-form-label">STOCK MIN:</label>
@@ -97,7 +105,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-success" id="btnactualizar"
-                                        onclick="actualizarstock();">Actualizar Inventario</button> 
+                                        onclick="actualizarstock();">Actualizar Inventario</button>
                                     <button type="button" class="btn btn-secondary" onclick="volver()">Cerrar</button>
                                 </div>
                             </div>
@@ -127,8 +135,9 @@
                                             <th>MARCA</th>
                                             <th>COLOR</th>
                                             <th>PRECIO(soles)</th>
-                                            <th>STOCK 1</th>
-                                            <th>STOCK 2</th>
+                                            <th>STOCK {{ $tiendas[0]->nombre }}</th>
+                                            <th>STOCK {{ $tiendas[1]->nombre }}</th>
+                                            <th>STOCK {{ $tiendas[2]->nombre }}</th>
                                             <th>ACCIONES</th>
                                         </tr>
                                     </thead>
@@ -185,6 +194,10 @@
                     name: 'stock2'
                 },
                 {
+                    data: 'stock3',
+                    name: 'stock3'
+                },
+                {
                     data: 'acciones',
                     name: 'acciones',
                     searchable: false,
@@ -194,7 +207,7 @@
             var btns = 'lfrtip';
             var idproducto = 0;
             iniciarTablaIndex(tabla, ruta, columnas, btns);
-            
+
             var rutasinstock = "{{ url('admin/utiles/numerosinstock') }}";
             $.get(rutasinstock, function(data) {
                 numerosinstock = data;
@@ -210,32 +223,36 @@
             idproducto = id;
             const accion = button.getAttribute('data-accion');
             var urlregistro = "{{ url('admin/utiles/show') }}";
-            $.get(urlregistro + '/' + id, function(data) { 
+            $.get(urlregistro + '/' + id, function(data) {
                 const modalTitle = mimodal.querySelector('.modal-title');
-                modalTitle.textContent = `Ver Inventario de los Utiles ${id}`; 
+                modalTitle.textContent = `Ver Inventario de los Utiles ${id}`;
                 document.getElementById("vernombre").value = data[0].nombre;
                 document.getElementById("vermarcautil").value = data[0].marcautil;
                 document.getElementById("verprecio").value = data[0].precio;
                 document.getElementById("vercolorutil").value = data[0].colorutil;
                 var stock1 = document.getElementById("verstock1");
                 var stock2 = document.getElementById("verstock2");
+                var stock3 = document.getElementById("verstock3");
                 var stockmin = document.getElementById("verstockmin");
                 var btnactualizar = document.getElementById("btnactualizar");
                 if (accion == "ver") {
                     console.log("accion de ver");
                     stock1.setAttribute("readonly", true);
                     stock2.setAttribute("readonly", true);
+                    stock3.setAttribute("readonly", true);
                     stockmin.setAttribute("readonly", true);
                     btnactualizar.style.display = "none";
                 } else if (accion == "editar") {
                     console.log("accion de editar");
                     stock1.removeAttribute("readonly");
                     stock2.removeAttribute("readonly");
+                    stock3.removeAttribute("readonly");
                     stockmin.removeAttribute("readonly");
                     btnactualizar.style.display = "inline";
                 }
                 stock1.value = data[0].stock1;
                 stock2.value = data[0].stock2;
+                stock3.value = data[0].stock3;
                 stockmin.value = data[0].stockmin;
             });
         });
@@ -244,6 +261,7 @@
             var urlstock = "{{ url('admin/utiles/updatestock') }}";
             var stock1 = document.getElementById("verstock1").value;
             var stock2 = document.getElementById("verstock2").value;
+            var stock3 = document.getElementById("verstock3").value;
             var stockmin = document.getElementById("verstockmin").value;
             $.ajax({
                 type: "POST",
@@ -255,6 +273,7 @@
                 data: {
                     stock1: stock1,
                     stock2: stock2,
+                    stock3: stock3,
                     stockmin: stockmin,
                     idproducto: idproducto,
                 },
@@ -278,7 +297,7 @@
             var nrostockminimo = 0;
             var urldatos = "{{ url('admin/utiles/showsinstock') }}";
 
-            $.get(urldatos, function(data) { 
+            $.get(urldatos, function(data) {
                 var btns = 'lfrtip';
                 var tabla = '#mitabla1';
                 if (inicializartablasinstock > 0) {
@@ -287,7 +306,7 @@
                 $('#mitabla1 tbody tr').slice().remove();
                 for (var i = 0; i < data.length; i++) {
                     var colorfondo = '<tr id="fila' + i + '">';
-                    if (data[i].stock1 + data[i].stock2 <= 0) {
+                    if (data[i].stock1 + data[i].stock2 + data[i].stock3 <= 0) {
                         colorfondo = '<tr style="background-color:  #f89f9f" id="fila' + i + '">';
                         nrosinstock++;
                     } else {
@@ -305,9 +324,10 @@
                         '</td><td>' + data[i].precio +
                         '</td><td>' + data[i].stock1 +
                         '</td><td>' + data[i].stock2 +
+                        '</td><td>' + data[i].stock3 +
                         '</td> <td> <button type="button" class="btn btn-success" data-id="' + data[i].id +
                         '" data-accion="editar" data-bs-toggle="modal" data-bs-target="#mimodal">Editar</button>  ' +
-                        '<button type="button" class="btn btn-secondary" data-id="'+data[i].id+
+                        '<button type="button" class="btn btn-secondary" data-id="' + data[i].id +
                         '" data-accion="ver" data-bs-toggle="modal" data-bs-target="#mimodal">Ver</button>' +
                         '</td> ' +
                         '</tr>';
@@ -332,7 +352,7 @@
             }
         }
 
-        function volver(){
+        function volver() {
             $('#mimodal').modal('hide');
             if (numerosinstock > 0 && mostrar == "SI") {
                 $('#modalSinStock').modal('show');

@@ -560,58 +560,7 @@ class IngresoController extends Controller
             return 2;
         }
     }
-
-    //funcion para generar un pdf de la ingreso
-    public function generarfacturapdf($id)
-    {
-        $vent = Ingreso::find($id);
-        $empresa = Company::find($vent->company_id);
-        $proveedor = Proveedor::find($vent->proveedor_id);
-        //obtenemos los datos de la ingreso y los detalles del kit
-        $ingreso = DB::table('ingresos as v')
-            ->join('detalleingresos as dv', 'dv.ingreso_id', '=', 'v.id')
-            ->join('products as p', 'dv.product_id', '=', 'p.id')
-            ->select(
-                'v.id as idingreso',
-                'v.fecha',
-                'p.nombre as nombreproducto',
-                'dv.cantidad',
-                'dv.preciounitariomo',
-                'dv.preciounitario',
-                'dv.observacionproducto',
-                'dv.servicio',
-                'dv.preciofinal',
-                'v.moneda as monedaingreso',
-                'p.moneda as monedaproducto',
-                'v.formapago',
-                'v.factura',
-                'v.costoingreso',
-                'v.tasacambio',
-                'v.costoingreso',
-                'p.tipo',
-                'dv.id as iddetalle'
-            )
-            ->where('v.id', '=', $id)->get();
-        $detallekit = DB::table('ingresos as v')
-            ->join('detalleingresos as dv', 'dv.ingreso_id', '=', 'v.id')
-            ->join('products as p', 'dv.product_id', '=', 'p.id')
-            ->join('kits as k', 'k.product_id', '=', 'p.id')
-            ->join('products as pk', 'k.kitproduct_id', '=', 'pk.id')
-            ->select(
-                'v.id as idingreso',
-                'k.cantidad',
-                'pk.nombre',
-                'dv.id as iddetalle'
-            )
-            ->where('v.id', '=', $id)->get();
-        //return $ingreso;
-        $pdf = PDF::loadView(
-            'admin.ingreso.facturapdf',
-            ["ingreso" => $ingreso, "empresa" => $empresa, "proveedor" => $proveedor, "detallekit" => $detallekit]
-        );
-        return $pdf->stream('ingreso.pdf');
-    }
-
+ 
 
     //funcion para obtener los detalles de una ingreso
     public function misdetallesingreso($ingreso_id)

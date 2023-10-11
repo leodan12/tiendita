@@ -17,6 +17,7 @@ return new class extends Migration
             $table->double('precio');
             $table->integer('stock1')->nullable();
             $table->integer('stock2')->nullable();
+            $table->integer('stock3')->nullable();
             $table->integer('stockmin')->nullable();
             $table->unsignedBigInteger('marcautil_id');
             $table->unsignedBigInteger('colorutil_id'); 
