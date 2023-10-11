@@ -166,10 +166,9 @@
                 },
             ];
             var btns = 'lfrtip';
-
             iniciarTablaIndex(tabla, ruta, columnas, btns);
-
         });
+
         //para borrar un registro de la tabla
         $(document).on('click', '.btnborrar', function(event) {
             const idregistro = event.target.dataset.idregistro;
@@ -220,39 +219,50 @@
             const id = button.getAttribute('data-id');
             $('#detallesventa tbody tr').slice().remove();
             var urlventa = "{{ url('admin/venta/show') }}";
-            $.get(urlventa + '/' + id, function(data) {
-                var midata = data;
+            $.get(urlventa + '/' + id, function(data) { 
                 const modalTitle = mimodal.querySelector('.modal-title')
                 modalTitle.textContent = `Ver Registro ${id}`;
-                idventa = id;
-                formapago = midata[0].formapago;
-                document.getElementById("verFecha").value = midata[0].fecha;
-                document.getElementById("verTienda").value = midata[0].tienda;
-                document.getElementById("verPrecioventa").value = midata[0].costoventa;
 
-
+                document.getElementById("verPrecioventa").value = data[0]['costoventa'];
+                document.getElementById("verFecha").value = data[0]['fecha'];
+                document.getElementById("verTienda").value = data[1]['nombre'];
+                if(data[3]){
+                    document.getElementById("verCliente").value = data[3]['nombre'];
+                }
+                 
                 var tabla = document.getElementById(detallesventa);
-                for (var ite = 0; ite < midata.length; ite++) {
-                    var monedaproducto = midata[ite].monedaproducto;
+                for (var i = 0; i < data[2].length; i++) {
+                    var nombre = "";
+                    if (data[2][i]['tipo'] == "UTILES") {
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['marcautil'] + " - " + data[2][i]['colorutil'];
+                    } else if (data[2][i]['tipo'] == "UNIFORMES") {
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['genero'] + " - " + data[2][i]['talla'] +
+                            " - " + data[2][i]['tela'] + " - " + data[2][i]['color'];
+                    } else if (data[2][i]['tipo'] == "LIBROS") {
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['autor'] + " - " + data[2][i]['anio'] +
+                            " - " + data[2][i]['original'] + " - " + data[2][i]['formato'] + " - " + data[2][i]['tipopapel'] +
+                            " - " + data[2][i]['tipopasta'] + " - " + data[2][i]['edicion'] + " - " + data[2][i]['especializacion'];
+                    } else if (data[2][i]['tipo'] == "INSTRUMENTOS") {
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['marca'] + " - " + data[2][i]['modelo'] +
+                            " - " + data[2][i]['garantia'];
+                    } else if (data[2][i]['tipo'] == "GOLOSINAS") {
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['peso'];
+                    } else if (data[2][i]['tipo'] == "SNACKS") {
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['tamanio'] + " - " + data[2][i]['marcasnack'] +
+                            " - " + data[2][i]['saborsnack'];
+                    }
 
-                    filaDetalle = '<tr id="fila' + ite +
-                        '"><td> <b>' + midata[ite].producto + '</b>' +
-                        '</td><td style="text-align: center;"> ' + midata[ite].unidad +
-                        '</td><td> ' + observacion +
-                        '</td><td style="text-align: center;"> ' + midata[ite].cantidad +
-                        '</td><td style="text-align: center;"> ' + simbolomonedaproducto + midata[ite]
-                        .preciounitario +
-                        '</td><td style="text-align: center;"> ' + simbolomonedafactura + midata[ite]
-                        .preciounitariomo +
-                        '</td><td style="text-align: center;"> ' + simbolomonedafactura + midata[ite]
-                        .servicio +
-                        '</td><td style="text-align: center;"> ' + simbolomonedafactura + midata[ite]
-                        .preciofinal +
+                    filaDetalle = '<tr ><td>' + data[2][i]['tipo'] + 
+                        '</td><td >' + nombre +
+                        '</td><td style="text-align: center;">' + data[2][i]['cantidad'] +
+                        '</td><td style="text-align: center;">S/.' + data[2][i]['preciounitariomo'] +
+                        '</td><td style="text-align: center;">S/.' + data[2][i]['preciofinal'] +
                         '</td></tr>';
                     $("#detallesventa>tbody").append(filaDetalle);
-
                 }
+
             });
+              
         })
 
         $('#generarfactura').click(function() {

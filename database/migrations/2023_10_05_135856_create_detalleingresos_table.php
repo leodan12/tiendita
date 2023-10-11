@@ -13,16 +13,13 @@ return new class extends Migration
     {
         Schema::create('detalleingresos', function (Blueprint $table) {
             $table->id();
-            //$table->unsignedBigInteger('ingreso_id');
-            //$table->unsignedBigInteger('product_id');
-            $table->integer('cantidad');
-            $table->string('observacionproducto')->nullable();
-            $table->double('preciounitario');
+            $table->string('tipo');
+            $table->integer('cantidad'); 
             $table->double('preciounitariomo');
-            $table->double('servicio');
             $table->double('preciofinal');
-            //$table->foreign('product_id')->references('id')->on('products');//->onDelete('cascade');
-           // $table->foreign('ingreso_id')->references('id')->on('ingresos')->onDelete('cascade');
+            $table->unsignedBigInteger('ingreso_id');
+            $table->integer('producto_id');  
+            $table->foreign('ingreso_id')->references('id')->on('ingresos')->onDelete('cascade');
             $table->timestamps();
         });
     }

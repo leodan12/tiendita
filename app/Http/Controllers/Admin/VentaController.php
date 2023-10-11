@@ -193,8 +193,7 @@ class VentaController extends Controller
             ->select('t.id', 't.nombre')
             ->where('v.id', '=', $venta_id)
             ->get();
-        $clientes = DB::table('clientes as c')
-
+        $clientes = DB::table('clientes as c') 
             ->select('c.id', 'c.nombre', 'c.ruc')
             //->where('v.id', '=', $venta_id)
             ->get();
@@ -438,50 +437,40 @@ class VentaController extends Controller
          return redirect('admin/venta')->with('message', 'No se Pudo Actualizar la Venta');
     }
     //funcion para mostrar los datos de la venta
-    public function show($id)
+    public function show($venta_id)
     {
-        $venta = DB::table('ventas as v')
-            ->join('detalleventas as dv', 'dv.venta_id', '=', 'v.id')
-            ->join('companies as c', 'v.company_id', '=', 'c.id')
-            ->join('clientes as cl', 'v.cliente_id', '=', 'cl.id')
-            ->join('products as p', 'dv.product_id', '=', 'p.id')
+        $datos = collect();
+        $venta = Venta::findOrFail($venta_id);
+        //$companies = Company::all();
+        $tiendas = DB::table('tiendas as t')
+            ->join('ventas as v', 'v.tienda_id', '=', 't.id')
+            ->select('t.id', 't.nombre')
+            ->where('v.id', '=', $venta_id)
+            ->first();
+        $clientes="";
+        $clientes = DB::table('clientes as c') 
+            ->join('ventas as v','v.cliente_id','=','c.id')
+            ->select('c.id', 'c.nombre', 'c.ruc')
+            ->where('v.id', '=', $venta_id)
+            ->first();
+        $detallesventa = DB::table('detalleventas as dv')
+            ->join('ventas as v', 'dv.venta_id', '=', 'v.id')
             ->select(
-                'v.fecha',
-                'v.factura',
-                'v.formapago',
-                'v.moneda',
-                'v.costoventa',
-                'v.fechav',
-                'v.tasacambio',
-                'v.observacion',
-                'p.moneda as monedaproducto',
-                'p.id as idproducto',
-                'p.tipo',
-                'c.nombre as company',
-                'cl.nombre as cliente',
-                'p.nombre as producto',
-                'dv.cantidad',
-                'dv.preciounitario',
-                'dv.preciounitariomo',
-                'dv.servicio',
-                'dv.preciofinal',
-                'dv.observacionproducto',
+                'dv.tipo',
                 'dv.id as iddetalleventa',
-                'v.pagada',
-                'v.nrooc',
-                'v.guiaremision',
-                'v.fechapago',
-                'v.constanciaretencion',
-                'v.acuenta1',
-                'v.acuenta2',
-                'v.acuenta3',
-                'v.saldo',
-                'v.retencion',
-                'v.montopagado',
-                'p.unidad'
+                'dv.cantidad',
+                'dv.preciounitariomo',
+                'dv.preciofinal',
+                'dv.producto_id',
+                'v.id as idventa'
             )
-            ->where('v.id', '=', $id)->get();
-        return  $venta;
+            ->where('v.id', '=', $venta_id)->get();
+        $detalles = $this->detallesventa($detallesventa);
+        $datos->push($venta);
+        $datos->push($tiendas);
+        $datos->push($detalles);
+        $datos->push($clientes);
+        return $datos;
     }
     //funcion para mostrar las ventas a credito
     public function showcreditos()

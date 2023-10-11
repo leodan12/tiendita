@@ -1,10 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-
     <div class="row">
         <div class="col-md-12">
-            @php  $detalles = count($detallesingreso) @endphp
             @if (count($errors) > 0)
                 <div class="alert alert-danger">
                     <p>Corrige los siguientes errores:</p>
@@ -15,954 +13,362 @@
                     </ul>
                 </div>
             @endif
+            @if (session('message'))
+                <div class="alert alert-danger">{{ session('message') }}</div>
+            @endif
+
             <div class="card">
-                <div class="card-header">
-                    <h4>EDITAR EL INGRESO
-                        <a href="{{ url('admin/ingreso') }}" id="btnvolver" name="btnvolver"
-                            class="btn btn-danger text-white float-end">VOLVER</a>
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <form action="{{ url('admin/ingreso/' . $ingreso->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+                <form action="{{ url('admin/ingreso/' . $ingreso->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="card-header">
+                        <h4>EDITAR EL INGRESO
+                            <a href="{{ url('admin/ingreso') }}" id="btnvolver" name="btnvolver"
+                                class="btn btn-danger text-white float-end">VOLVER</a>
+                        </h4>
+                    </div>
+                    <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <label class="form-label is-required">FECHA</label>
-                                <input type="date" name="fecha" id="fecha" class="form-control " required
-                                    value="{{ $ingreso->fecha }}" />
+                                <input type="date" name="fecha" id="fecha" class="form-control "
+                                    value="{{ $ingreso->fecha }}" required />
                                 @error('fecha')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label ">NUMERO DE FACTURA</label>
-                                <input type="text" name="factura" id="factura" class="form-control mayusculas"
-                                    value="{{ $ingreso->factura }}" />
-                                @error('factura')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label is-required">FORMA DE PAGO</label>
-                                <select name="formapago" id="formapago" class="form-select " required>
-                                    <option value="" selected disabled>Seleccion una opción</option>
-                                    @if ($ingreso->formapago == 'credito')
-                                        <option value="credito" data-formapago="credito" selected>Credito</option>
-                                    @elseif($ingreso->formapago == 'contado')
-                                        <option value="contado" data-formapago="contado" selected>Contado</option>
-                                    @endif
-                                </select>
-                                @error('formapago')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                @if ($ingreso->formapago == 'contado')
-                                    <label id="labelfechav" class="form-label">FECHA DE VENCIMIENTO</label>
-                                    <input type="date" name="fechav" id="fechav" class="form-control " readonly
-                                        value="{{ $ingreso->fechav }}" />
-                                    @error('fechav')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                @endif
-                                @if ($ingreso->formapago == 'credito')
-                                    <label id="labelfechav" class="form-label is-required">FECHA DE VENCIMIENTO</label>
-                                    <input type="date" name="fechav" id="fechav" class="form-control "
-                                        value="{{ $ingreso->fechav }}" />
-                                    @error('fechav')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                @endif
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label is-required">MONEDA</label>
-                                <select name="moneda" id="moneda" class="form-select " required>
-                                    <option value="" selected disabled>Seleccion una opción</option>
-                                    @if ($ingreso->moneda == 'soles')
-                                        <option value="soles" data-moneda="soles" selected>Soles</option>
-                                    @elseif($ingreso->moneda == 'dolares')
-                                        <option value="dolares" data-moneda="dolares" selected>Dolares Americanos</option>
-                                    @endif
-                                </select>
-                                @error('tipo')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label id="labeltasacambio" class="form-label is-required">TASA DE CAMBIO</label>
-                                <input type="number" name="tasacambio" id="tasacambio" step="0.0001" readonly
-                                    class="form-control " value="{{ $ingreso->tasacambio }}" />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label is-required">EMPRESA</label>
-                                <select class="form-select select2 " name="company_id" required>
-                                    <option value="" selected disabled>Seleccione una opción</option>
-                                    @foreach ($companies as $company)
-                                        <option value="{{ $company->id }}"
-                                            {{ $company->id == $ingreso->company_id ? 'selected' : '' }}>
-                                            {{ $company->nombre }}</option>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label is-required">TIENDA</label>
+                                <select class="form-select select2  " name="tienda_id" id="tienda_id" required>
+                                    <option value="" disabled selected>Seleccione una opción</option>
+                                    @foreach ($tiendas as $tienda)
+                                        <option value="{{ $tienda->id }}"
+                                            {{ $tienda->id == $ingreso->tienda_id ? 'selected' : '' }}>{{ $tienda->nombre }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label is-required">PROVEEDOR</label>
-                                <select class="form-select select2 " name="cliente_id" id="cliente_id" required>
+                            <div class="col-md-5 mb-3">
+                                <label class="form-label">PROVEEDOR</label>
+                                <select class="form-select select2  " name="proveedor_id" id="proveedor_id">
                                     <option value="" selected disabled>Seleccione una opción</option>
-
+                                    @foreach ($proveedors as $proveedor)
+                                        <option value="{{ $proveedor->id }}"
+                                            {{ $proveedor->id == $ingreso->proveedor_id ? 'selected' : '' }}>
+                                            {{ $proveedor->nombre }}</option>
+                                    @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <div class="input-group">
-                                    <label class="form-label input-group is-required">PRECIO DE LA VENTA </label>
-                                    @if ($ingreso->moneda == 'dolares')
-                                        <span class="input-group-text" id="spancostoventa">$</span>
-                                    @elseif($ingreso->moneda == 'soles')
-                                        <span class="input-group-text" id="spancostoventa">S/.</span>
-                                    @endif
-                                    <input type="number" name="costoventa" id="costoventa" min="0.1" step="0.01"
-                                        class="form-control  required" required readonly
+                                    <label class="form-label input-group is-required">PRECIO INGRESO </label>
+                                    <span class="input-group-text" id="spancostoingreso">S/.</span>
+                                    <input type="number" name="costoingreso" id="costoingreso" min="0.1" step="0.01"
+                                        class="form-control sinborde  required" required style="background-color: #fb0c3249"
                                         value="{{ $ingreso->costoventa }}" />
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label is-required">FACTURA PAGADA</label>
-                                <select name="pagada" id="pagada" class="form-select " required>
-                                    <option value="" disabled>Seleccion una opción</option>
-                                    @if ($ingreso->pagada == 'NO')
-                                        <option value="NO" selected>NO</option>
-                                        <option value="SI">SI</option>
-                                    @elseif($ingreso->pagada == 'SI')
-                                        <option value="SI" selected>SI</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <div class="col-md-12 mb-5">
-                                <label class="form-label">OBSERVACION</label>
-                                <input type="text" name="observacion" id="observacion"
-                                    class="form-control mayusculas" value="{{ $ingreso->observacion }}" />
-                                @error('observacion')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col-lg-12">
-                                    <hr style="border: 0; height: 0; box-shadow: 0 2px 5px 2px rgb(0, 89, 255);">
-                                    <nav class="" style="border-radius: 5px; ">
-                                        <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
-
-                                            <button class="nav-link active" id="nav-detalles-tab" data-bs-toggle="tab"
-                                                data-bs-target="#nav-detalles" type="button" role="tab"
-                                                aria-controls="nav-detalles" aria-selected="false">DETALLES</button>
-                                            <button class="nav-link " id="nav-condiciones-tab" data-bs-toggle="tab"
-                                                data-bs-target="#nav-condiciones" type="button" role="tab"
-                                                aria-controls="nav-condiciones" aria-selected="false">¿AGREGAR DATOS DE
-                                                PAGO?</button>
-                                        </div>
-                                    </nav>
-                                    <div class="tab-content" id="nav-tabContent">
-                                        <div class="tab-pane fade show active" id="nav-detalles" role="tabpanel"
-                                            aria-labelledby="nav-detalles-tab" tabindex="0">
-                                            <br>
-                                            <div class="row">
-                                                <h4>Agregar Detalle del Ingreso</h4>
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="form-label " id="labelproducto">PRODUCTO</label>
-                                                    <select class="form-select select2 " name="product" id="product">
-                                                        <option selected disabled value="">Seleccione una opción
-                                                        </option>
-                                                        @foreach ($products as $product)
-                                                            @php $contp=0;    @endphp
-                                                            @foreach ($detallesingreso as $item)
-                                                                @if ($product->id == $item->idproducto)
-                                                                    @php $contp++;    @endphp
-                                                                @endif
-                                                            @endforeach
-                                                            @if ($contp == 0)
-                                                                <option id="productoxempresa{{ $product->id }}"
-                                                                    value="{{ $product->id }}"
-                                                                    data-tipo="{{ $product->tipo }}"
-                                                                    data-name="{{ $product->nombre }}"
-                                                                    data-moneda="{{ $product->moneda }}"
-                                                                    data-unidad="{{ $product->unidad }}"
-                                                                    data-price="{{ $product->preciocompra }}">
-                                                                    {{ $product->nombre }} - {{ $product->codigo }}
-                                                                </option>
-                                                            @else
-                                                                <option disabled id="productoxempresa{{ $product->id }}"
-                                                                    value="{{ $product->id }}"
-                                                                    data-tipo="{{ $product->tipo }}"
-                                                                    data-name="{{ $product->nombre }}"
-                                                                    data-moneda="{{ $product->moneda }}"
-                                                                    data-unidad="{{ $product->unidad }}"
-                                                                    data-price="{{ $product->preciocompra }}">
-                                                                    {{ $product->nombre }} - {{ $product->codigo }}
-                                                                </option>
-                                                            @endif
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="form-label" id="labelunidad">UNIDAD</label>
-                                                    <input type="text" name="unidadproducto" id="unidadproducto"
-                                                        class="form-control mayusculas" />
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="form-label">CANTIDAD</label>
-                                                    <input type="number" name="cantidad" id="cantidad" min="1"
-                                                        step="1" class="form-control " />
-                                                    @error('cantidad')
-                                                        <small class="text-danger">{{ $message }}</small>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group"
-                                                            id="labelpreciounitarioref">PRECIO UNITARIO
-                                                            (REFERENCIAL)</label>
-                                                        <span class="input-group-text" id="spanpreciounitarioref"></span>
-                                                        <input type="number" name="preciounitario" min="0.1"
-                                                            step="0.0001" id="preciounitario" readonly
-                                                            class="form-control " />
-                                                        @error('preciounitario')
-                                                            <small class="text-danger">{{ $message }}</small>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group"
-                                                            id="labelpreciounitario">PRECIO UNITARIO</label>
-                                                        <span class="input-group-text" id="spanpreciounitario"></span>
-                                                        <input type="number" name="preciounitariomo" min="0.1"
-                                                            step="0.0001" id="preciounitariomo" class="form-control " />
-                                                        @error('preciounitariomo')
-                                                            <small class="text-danger">{{ $message }}</small>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group" id="labelservicio">SERVICIO
-                                                            ADICIONAL</label>
-                                                        <span class="input-group-text" id="spanservicio"></span>
-                                                        <input type="number" name="servicio" min="0.1"
-                                                            step="0.0001" id="servicio"class="form-control " />
-                                                        @error('servicio')
-                                                            <small class="text-danger">{{ $message }}</small>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group" id="labelpreciototal">PRECIO
-                                                            TOTAL POR
-                                                            PRODUCTO:</label>
-                                                        <span class="input-group-text" id="spanpreciototal"></span>
-                                                        <input type="number" name="preciofinal" min="0.1"
-                                                            step="0.0001" id="preciofinal" readonly
-                                                            class="form-control " />
-                                                        @error('preciofinal')
-                                                            <small class="text-danger">{{ $message }}</small>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-8 mb-3">
-                                                    <label class="form-label "
-                                                        id="labelobservacionproducto">OBSERVACION(Nro Serie):</label>
-                                                    <input type="text" name="observacionproducto"
-                                                        id="observacionproducto"
-                                                        class="form-control mayusculas gui-input" />
-                                                </div>
-                                                @php $ind=0 ; @endphp
-                                                @php $indice=count($detallesingreso) ; @endphp
-                                                <button type="button" class="btn btn-info" id="addDetalleBatch"
-                                                    onclick="agregarFila('{{ $indice }}')"><i
-                                                        class="fa fa-plus"></i> Agregar Producto
-                                                    al ingreso</button>
-
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped table-row-bordered gy-5 gs-5"
-                                                        id="detallesVenta">
-                                                        <thead class="fw-bold text-primary">
-                                                            <tr>
-                                                                <th>PRODUCTO</th>
-                                                                <th>UNIDAD</th>
-                                                                <th>OBSERVACION</th>
-                                                                <th>CANTIDAD</th>
-                                                                <th>PRECIO UNITARIO(REFERENCIAL)</th>
-                                                                <th>PRECIO UNITARIO</th>
-                                                                <th>SERVICIO ADICIONAL</th>
-                                                                <th>PRECIO FINAL DEL PRODUCTO</th>
-                                                                <th>ELIMINAR</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @php $datobd="db" ;  @endphp
-                                                            @foreach ($detallesingreso as $detalle)
-                                                                @php $ind++;    @endphp
-                                                                <tr id="fila{{ $ind }}">
-                                                                    <td> <b> {{ $detalle->producto }} </b>
-                                                                        @if ($detalle->tipo == 'kit')
-                                                                            : <br>
-                                                                            @foreach ($detalleskit as $kit)
-                                                                                @if ($detalle->iddetalleingreso == $kit->iddetalleingreso)
-                                                                                    -{{ $kit->cantidad }}
-                                                                                    {{ $kit->producto }} <br>
-                                                                                @endif
-                                                                            @endforeach
-                                                                        @endif
-                                                                    </td>
-                                                                    <td></td>
-                                                                    <td> {{ $detalle->observacionproducto }}</td>
-                                                                    <td> {{ $detalle->cantidad }}</td>
-                                                                    <td>
-                                                                        @if ($detalle->moneda == 'soles')
-                                                                            S/.
-                                                                        @elseif($detalle->moneda == 'dolares')
-                                                                            $
-                                                                        @endif
-                                                                        {{ $detalle->preciounitario }}
-                                                                    </td>
-                                                                    <td>
-                                                                        @if ($ingreso->moneda == 'soles')
-                                                                            S/.
-                                                                        @elseif($ingreso->moneda == 'dolares')
-                                                                            $
-                                                                        @endif
-                                                                        {{ $detalle->preciounitariomo }}
-                                                                    </td>
-                                                                    <td>
-                                                                        @if ($ingreso->moneda == 'soles')
-                                                                            S/.
-                                                                        @elseif($ingreso->moneda == 'dolares')
-                                                                            $
-                                                                        @endif
-                                                                        {{ $detalle->servicio }}
-                                                                    </td>
-                                                                    <td><input type="hidden"
-                                                                            id="preciof{{ $ind }}"
-                                                                            value="{{ $detalle->preciofinal }}" />
-                                                                        @if ($ingreso->moneda == 'soles')
-                                                                            S/.
-                                                                        @elseif($ingreso->moneda == 'dolares')
-                                                                            $
-                                                                        @endif
-                                                                        {{ $detalle->preciofinal }}
-                                                                    </td>
-                                                                    <td><button type="button" class="btn btn-danger"
-                                                                            onclick="eliminarFila( '{{ $ind }}' ,'{{ $datobd }}', '{{ $detalle->iddetalleingreso }}', '{{ $detalle->idproducto }}'  )"
-                                                                            data-id="0"><i
-                                                                                class="bi bi-trash-fill"></i>ELIMINAR</button>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade  " id="nav-condiciones" role="tabpanel"
-                                            aria-labelledby="nav-condiciones-tab" tabindex="0">
-                                            <br><br>
-                                            <div class="row">
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="input-group form-label">PRECIO DE LA VENTA CON
-                                                            IGV</label>
-                                                        @if ($ingreso->moneda == 'dolares')
-                                                            <span class="input-group-text"
-                                                                id="spanprecioventaconigv">$</span>
-                                                        @elseif($ingreso->moneda == 'soles')
-                                                            <span class="input-group-text"
-                                                                id="spanprecioventaconigv">S/.</span>
-                                                        @endif
-                                                        <input type="number" name="precioventaconigv" readonly
-                                                            id="precioventaconigv" class="input-group form-control " />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="form-label">NRO OC</label>
-                                                    <input type="text" name="nrooc" id="nrooc"
-                                                        class="form-control mayusculas" value="{{ $ingreso->nrooc }}" />
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="form-label input-group">GUIA DE REMISION</label>
-                                                    <input type="text" name="guiaremision" id="guiaremision"
-                                                        class="form-control mayusculas"
-                                                        value="{{ $ingreso->guiaremision }}" />
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="form-label input-group">FECHA DE PAGO</label>
-                                                    <input type="date" name="fechapago" id="fechapago"
-                                                        class="form-control" value="{{ $ingreso->fechapago }}" />
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group" id="labelacuenta">A CUENTA
-                                                            1</label>
-                                                        @if ($ingreso->moneda == 'dolares')
-                                                            <span class="input-group-text" id="spancuenta1">$</span>
-                                                        @elseif($ingreso->moneda == 'soles')
-                                                            <span class="input-group-text" id="spancuenta1">S/.</span>
-                                                        @endif
-                                                        <input type="number" name="acuenta1" min="0"
-                                                            step="0.0001" id="acuenta1" class="form-control"
-                                                            value="{{ $ingreso->acuenta1 }}" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group" id="labelacuenta2">A CUENTA
-                                                            2</label>
-                                                        @if ($ingreso->moneda == 'dolares')
-                                                            <span class="input-group-text" id="spancuenta2">$</span>
-                                                        @elseif($ingreso->moneda == 'soles')
-                                                            <span class="input-group-text" id="spancuenta2">S/.</span>
-                                                        @endif
-                                                        <input type="number" name="acuenta2" min="0"
-                                                            step="0.0001" id="acuenta2" class="form-control "
-                                                            value="{{ $ingreso->acuenta2 }}" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group" id="labelacuenta3">A CUENTA
-                                                            3</label>
-                                                        @if ($ingreso->moneda == 'dolares')
-                                                            <span class="input-group-text" id="spancuenta3">$</span>
-                                                        @elseif($ingreso->moneda == 'soles')
-                                                            <span class="input-group-text" id="spancuenta3">S/.</span>
-                                                        @endif
-                                                        <input type="number" name="acuenta3" min="0"
-                                                            step="0.0001" id="acuenta3" class="form-control "
-                                                            value="{{ $ingreso->acuenta3 }}" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group"
-                                                            id="labelsaldo">SALDO</label>
-                                                        @if ($ingreso->moneda == 'dolares')
-                                                            <span class="input-group-text" id="spansaldo">$</span>
-                                                        @elseif($ingreso->moneda == 'soles')
-                                                            <span class="input-group-text" id="spansaldo">S/.</span>
-                                                        @endif
-                                                        <input type="number" name="saldo" min="0"
-                                                            step="0.0001" id="saldo" class="form-control "
-                                                            value="{{ $ingreso->saldo }}" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="input-group">
-                                                        <label class="form-label input-group" id="labelmontopagado">MONTO
-                                                            PAGADO</label>
-                                                        @if ($ingreso->moneda == 'dolares')
-                                                            <span class="input-group-text" id="spanmontopagado">$</span>
-                                                        @elseif($ingreso->moneda == 'soles')
-                                                            <span class="input-group-text" id="spanmontopagado">S/.</span>
-                                                        @endif
-                                                        <input type="number" name="montopagado" min="0"
-                                                            step="0.0001" id="montopagado" class="form-control "
-                                                            value="{{ $ingreso->montopagado }}" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <br>
+                            <hr style="border: 0; height: 0; box-shadow: 0 2px 5px 2px rgb(0, 89, 255);">
+                            <div class="row">
+                                <h4>Agregar Detalle del Ingreso</h4>
+                                <div class="col-md-3 mb-1">
+                                    <label class="form-label" id="labeltipoproduct" name="labeltipoproduct">TIPO</label>
+                                    <select class="form-select select2 " name="tipoproduct" id="tipoproduct">
+                                        <option value="" selected disabled>Seleccione una opción
+                                        </option>
+                                        <option value="SNACKS">SNACKS </option>
+                                        <option value="GOLOSINAS">GOLOSINAS </option>
+                                        <option value="INSTRUMENTOS">INSTRUMENTOS </option>
+                                        <option value="UTILES">UTILES </option>
+                                        <option value="LIBROS">LIBROS </option>
+                                        <option value="UNIFORMES">UNIFORMES </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9 mb-1">
+                                    <label class="form-label" id="labelproducto" name="labelproducto">PRODUCTO</label>
+                                    <select class="form-select select2 " name="product" id="product" disabled>
+                                        <option value="" selected disabled>Seleccione una opción
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-1">
+                                    <label class="form-label" name="labelcantidad" id="labelcantidad">CANTIDAD</label>
+                                    <input type="number" name="cantidad" id="cantidad" min="1" step="1"
+                                        class="form-control " />
+                                </div>
+                                <div class="col-md-4 mb-1">
+                                    <div class="input-group">
+                                        <label class="form-label input-group" id="labelpreciounitarioref">PRECIO
+                                            UNITARIO:</label>
+                                        <span class="input-group-text" id="spanpreciounitarioref">S/.</span>
+                                        <input type="number" name="preciounitariomo" min="0" step="0.0001"
+                                            id="preciounitariomo" class="form-control " />
                                     </div>
                                 </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="input-group">
+                                        <label class="form-label input-group" id="labelpreciototal">PRECIO
+                                            TOTAL POR
+                                            PRODUCTO</label>
+                                        <span class="input-group-text" id="spanpreciototal">S/.</span>
+                                        <input type="number" name="preciofinal" min="0" step="0.0001"
+                                            id="preciofinal" class="form-control " />
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-info" id="addDetalleBatch"><i
+                                        class="fa fa-plus"></i>
+                                    Agregar Producto al Ingreso</button>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-striped table-row-bordered gy-5 gs-5"
+                                        id="detallesIngreso">
+                                        <thead class="fw-bold text-primary">
+                                            <tr style="text-align: center;">
+                                                <th style="width: 5%;">TIPO</th>
+                                                <th style="width: 73%;">PRODUCTO</th>
+                                                <th style="width: 4%;">CANTIDAD</th>
+                                                <th style="width: 7%;">PRECIO UNITARIO</th>
+                                                <th style="width: 7%;">TOTAL PRODUCTO</th>
+                                                <th style="width: 4%;">ELIMINAR</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php  $indice =1; @endphp
+                                            @foreach ($detalles as $detalle)
+                                                @php $nombre =""; @endphp
+                                                @if ($detalle['tipo'] == 'UTILES')
+                                                    @php $nombre=$detalle['nombre']. "-" . $detalle['marcautil']."-" . $detalle['colorutil'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'UNIFORMES')
+                                                    @php $nombre=$detalle['nombre']."-" . $detalle['genero']."-" . $detalle['talla']. "-" . $detalle['tela']."-" . $detalle['color'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'LIBROS')
+                                                    @php $nombre=$detalle['nombre']."-" . $detalle['autor']."-" . $detalle['anio']. "-" . $detalle['edicion']."-" . $detalle['especializacion']. "-" . $detalle['formato']. "-" . $detalle['tipopapel']."-" . $detalle['tipopasta']. "-" . $detalle['original'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'INSTRUMENTOS')
+                                                    @php $nombre=$detalle['nombre'] . "-" . $detalle['marca'] . "-" . $detalle['modelo'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'GOLOSINAS')
+                                                    @php $nombre=$detalle['nombre'] . "-" . $detalle['peso'] ; @endphp
+                                                @elseif($detalle['tipo'] == 'SNACKS')
+                                                    @php $nombre=$detalle['nombre']. "-" . $detalle['tamanio']  . "-" . $detalle['marcasnack'] . "-" . $detalle['saborsnack'] ; @endphp
+                                                @endif
+                                                <tr style="text-align: center;" id="fila{{ $indice }}">
+                                                    <td style="text-align: left;">{{ $detalle['tipo'] }}</td>
+                                                    <td style="text-align: left;">{{ $nombre }}</td>
+                                                    <td>{{ $detalle['cantidad'] }}</td>
+                                                    <td>S/.{{ $detalle['preciounitariomo'] }}</td>
+                                                    <td>S/.{{ $detalle['preciofinal'] }}</td>
+                                                    <td><button type="button" class="btn btn-xs btn-danger"
+                                                            type="button">ELIMINAR</button>
+                                                    </td>
+                                                </tr>
+                                                @php $indice++; @endphp
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                            <hr>
                             <div class="col-md-12 mb-3">
                                 <button type="submit" id="btnguardar" name="btnguardar"
                                     class="btn btn-primary text-white float-end">Actualizar</button>
                             </div>
                         </div>
-                    </form>
-                    <div class="toast-container position-fixed bottom-0 start-0 p-2" style="z-index: 1000">
-                        <div class="toast " role="alert" aria-live="assertive" aria-atomic="true"
-                            data-bs-autohide="false" style="width: 100%; box-shadow: 0 2px 5px 2px rgb(0, 89, 255); ">
-                            <div class="  card-header">
-                                <i class="mdi mdi-information menu-icon"></i>
-                                <strong class="mr-auto"> &nbsp; Productos que incluye el kit:</strong>
-                                <button type="button" class="btn-close float-end" data-bs-dismiss="toast"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="toast-body">
-                                <table id="detalleskit">
-                                    <thead class="fw-bold text-primary">
-                                        <tr>
-                                            <th>CANTIDAD</th>
-                                            <th>PRODUCTO</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
+
 @endsection
 @push('script')
     <script type="text/javascript">
-        var indice = 0;
-        var ventatotal = 0;
-        var preciounit = 0;
-        var nameproduct = 0;
-        var preciototalI = 0;
-        var estadoguardar = 0;
-        var monedafactura = "";
-        var monedaproducto = "";
-        var simbolomonedaproducto = "";
-        var simbolomonedafactura = "";
+        var indice = @json($indice);
+        var idtienda = 0;
         var tipoproducto = "";
+        var stock1 = 0;
+        var stock2 = 0;
+        var precio = 0;
+        var nombre = "";
         var idproducto = 0;
-        var idcompany = 0;
-        var idcliente = 0;
-        var precioventaconigv = @json($ingreso->costoventa);
-        var numeroproductoskit = 0;
-        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        estadoguardar = @json($detalles);
-        idcliente = @json($ingreso->cliente_id);
-        idcompany = @json($ingreso->company_id);
-        //alert(estadoguardar);
-        var funcion1 = "inicio";
-        botonguardar(funcion1);
-        var costoventa = $('[id="costoventa"]').val();
-        ventatotal = costoventa;
+        var ingresototal = document.getElementById('costoingreso').value;
+        var estadoguardar = @json($indice);
+        estadoguardar--;
         $(document).ready(function() {
-            $('.toast').toast();
+
             $('.select2').select2({});
-            monedafactura = $('[name="moneda"]').val();
-            if (monedafactura == "dolares") {
-                simbolomonedafactura = "$";
-            } else if (monedafactura == "soles") {
-                simbolomonedafactura = "S/.";
-            }
+            $("#btnguardar").prop("disabled", true);
+            //Para poner automaticamente la fecha actual
+            var hoy = new Date();
+            var fechaActual = hoy.getFullYear() + '-' + (String(hoy.getMonth() + 1).padStart(2, '0')) + '-' +
+                String(hoy.getDate()).padStart(2, '0');
+            document.getElementById("fecha").value = fechaActual;
+            botonguardar("inicio");
+        });
+        document.getElementById("cantidad").onchange = function() {
+            preciofinal();
+        };
 
-            var miurl = "{{ url('admin/venta/comboempresacliente') }}";
-            $.get(miurl + '/' + idcompany, function(data) {
-                var producto_select = '<option value="" disabled selected>Seleccione una opción</option>'
+        $("#tienda_id").change(function() {
+            var tienda = $(this).val();
+            idtienda = tienda;
+            $('#tipoproduct').removeAttr('disabled');
+        });
+
+        $("#tipoproduct").change(function() {
+            var tipo = $(this).val();
+            tipoproducto = tipo;
+            var miurl = "{{ url('admin/venta/productosxtipo') }}";
+            $.get(miurl + '/' + tipoproducto, function(data) {
+                console.log(data);
+                var producto_select =
+                    '<option value="" disabled selected>Seleccione una opcion</option>';
                 for (var i = 0; i < data.length; i++) {
-                    if (idcliente == data[i].id) {
-                        producto_select += '<option value="' + data[i].id + '" data-name="' + data[i]
-                            .nombre +
-                            '" selected>' + data[i].nombre + '</option>';
-                    } else {
-                        producto_select += '<option value="' + data[i].id + '" data-name="' + data[i]
-                            .nombre +
-                            '" >' + data[i].nombre + '</option>';
+                    var valortexto = "";
+                    if (tipoproducto == "UTILES") {
+                        valortexto = data[i].nombre + " - " + data[i].marcautil + " - " + data[i].colorutil;
+                    } else if (tipoproducto == "UNIFORMES") {
+                        valortexto = data[i].nombre + " - " + data[i].genero + " - " + data[i].talla +
+                            " - " + data[i].tela + " - " + data[i].color;
+                    } else if (tipoproducto == "LIBROS") {
+                        valortexto = data[i].titulo + " - " + data[i].autor + " - " + data[i].anio +
+                            " - " + data[i].original + " - " + data[i].formato + " - " + data[i].tipopapel +
+                            " - " + data[i].tipopasta + " - " + data[i].edicion + " - " + data[i]
+                            .especializacion;
+                    } else if (tipoproducto == "INSTRUMENTOS") {
+                        valortexto = data[i].nombre + " - " + data[i].marca + " - " + data[i].modelo +
+                            " - " + data[i].garantia;
+                    } else if (tipoproducto == "GOLOSINAS") {
+                        valortexto = data[i].nombre + " - " + data[i].peso;
+                    } else if (tipoproducto == "SNACKS") {
+                        valortexto = data[i].nombre + " - " + data[i].tamanio + " - " + data[i].marcasnack +
+                            " - " + data[i].saborsnack;
                     }
-                }
-                $("#cliente_id").html(producto_select);
-            });
-            document.getElementById("precioventaconigv").value = parseFloat((precioventaconigv * 1.18).toFixed(2));
-            document.getElementById("cantidad").onchange = function() {
-                preciofinal();
-            };
-            document.getElementById("servicio").onchange = function() {
-                preciofinal();
-            };
-            document.getElementById("preciounitariomo").onchange = function() {
-                preciofinal();
-            };
 
-            function preciofinal() {
-
-                var cantidad = $('[name="cantidad"]').val();
-                var preciounit = $('[name="preciounitariomo"]').val();
-                var servicio = $('[name="servicio"]').val();
-                if (cantidad >= 1 && preciounit >= 0 && servicio >= 0) {
-                    preciototalI = (parseFloat(parseFloat(cantidad) * parseFloat(preciounit)) + parseFloat(
-                        parseFloat(cantidad) * parseFloat(servicio)));
-                    document.getElementById('preciofinal').value = parseFloat(preciototalI.toFixed(4));
+                    producto_select += '<option id="productoxtipo' + data[i].id +
+                        '" value="' + data[i].id + '" data-nombre="' + valortexto + '" data-stock1="' +
+                        data[i].stock1 + '" data-stock2="' + data[i].stock2 + '" data-precio="' +
+                        data[i].precio + '" >' + valortexto + '</option>';
                 }
-            }
-
-            //para los datos de los pagos
-            document.getElementById("acuenta1").onchange = function() {
-                pagocredito();
-            };
-            document.getElementById("acuenta2").onchange = function() {
-                pagocredito();
-            };
-            document.getElementById("acuenta3").onchange = function() {
-                pagocredito();
-            };
-            document.getElementById("saldo").onchange = function() {
-                saldox = document.getElementById("saldo").value;
-                var selectElement = document.getElementById("pagada");
-                if (saldox < 0.2) {
-                    for (var i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === "SI") {
-                            selectElement.selectedIndex = i;
-                            break;
-                        }
-                    }
-                } else {
-                    for (var i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === "NO") {
-                            selectElement.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            function pagocredito() {
-                var acuenta1 = $('[name="acuenta1"]').val();
-                var acuenta2 = $('[name="acuenta2"]').val();
-                var acuenta3 = $('[name="acuenta3"]').val();
-                var precioventaconigv = $('[name="precioventaconigv"]').val();
-                var montopagado = 0;
-                var saldo = 0;
-                if (parseFloat(acuenta1)) {
-                    montopagado += parseFloat(acuenta1);
-                }
-                if (parseFloat(acuenta2)) {
-                    montopagado += parseFloat(acuenta2);
-                }
-                if (parseFloat(acuenta3)) {
-                    montopagado += parseFloat(acuenta3);
-                }
-                if (parseFloat(precioventaconigv)) {
-                    saldo = parseFloat(precioventaconigv) - parseFloat(montopagado);
-                }
-                document.getElementById('saldo').value = parseFloat(saldo.toFixed(4));
-                document.getElementById('montopagado').value = parseFloat(montopagado.toFixed(4));
-                var selectElement = document.getElementById("pagada");
-                if (saldo < 0.2) {
-                    for (var i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === "SI") {
-                            selectElement.selectedIndex = i;
-                            break;
-                        }
-                    }
-                } else {
-                    for (var i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === "NO") {
-                            selectElement.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            $("#product").change(function() {
-                $("#product option:selected").each(function() {
-                    var miproduct = $(this).val();
-                    if (miproduct) {
-                        preciototalI = 0;
-                        $moneda = $(this).data("moneda");
-                        monedaproducto = $moneda;
-                        $named = $(this).data("name");
-                        $tipo = $(this).data("tipo");
-                        $unidad = $(this).data("unidad");
-                        tipoproducto = $tipo;
-                        idproducto = miproduct;
-                        $price = $(this).data("price");
-                        //alert(tipo);
-                        if ($tipo == "kit") {
-                            numeroproductoskit = 0;
-                            var urlventa = "{{ url('admin/venta/productosxkit') }}";
-                            $('#detalleskit tbody tr').slice().remove();
-                            $.get(urlventa + '/' + miproduct, function(data) {
-                                var filasconcantidad = "";
-                                var filasconcero = "";
-                                for (var i = 0; i < data.length; i++) {
-                                    var fondo = "white";
-                                    if (data[i].cantidad == 0) {
-                                        fondo = "#ff000095";
-                                    }
-                                    numeroproductoskit++;
-                                    filaDetalle =
-                                        '<tr style="border-top: 1px solid silver; background-color: ' +
-                                        fondo + ';" id="filatoast' + i +
-                                        '"><td><input type="number" id="cantidadproductokit' +
-                                        i + '" min="0" value="' + data[i].cantidad +
-                                        '" style="width:70px;" onchange="cantidadproductocero(' +
-                                        i +
-                                        ');" /></td><td><input type="hidden" id="idproductokit' +
-                                        i + '" value="' + data[i].id +
-                                        '"/><input type="hidden" id="nombreproductokit' +
-                                        i + '" value="' + data[i].producto + '"/>' +
-                                        data[i].producto + '</td></tr>';
-                                    if (data[i].cantidad != 0) {
-                                        filasconcantidad += filaDetalle;
-                                    } else {
-                                        filasconcero += filaDetalle;
-                                    }
-                                }
-                                $("#detalleskit>tbody").append(filasconcantidad);
-                                $("#detalleskit>tbody").append(filasconcero);
-                            });
-                            $('.toast').toast('show');
-                        }
-                        if ($tipo == "estandar") {
-                            $('.toast').toast('hide');
-                            document.getElementById('labelproducto').innerHTML = "PRODUCTO";
-                        } else if ($tipo == "kit") {
-                            document.getElementById('labelproducto').innerHTML =
-                                "PRODUCTO TIPO KIT";
-                        }
-                        if (monedaproducto == "soles") {
-                            simbolomonedaproducto = "S/.";
-                        } else {
-                            simbolomonedaproducto = "$";
-                        }
-                        var mitasacambio1 = $('[name="tasacambio"]').val();
-                        var cant = document.getElementById('cantidad');
-                        cant.setAttribute("min", 1);
-                        if ($price) {
-                            preciounit = parseFloat(($price).toFixed(4));
-                            if (monedaproducto == monedafactura) {
-                                preciototalI = parseFloat(($price).toFixed(4));
-                            } else if (monedaproducto == "dolares" && monedafactura == "soles") {
-                                preciototalI = parseFloat(($price * mitasacambio1).toFixed(4));
-                            } else if (monedaproducto == "soles" && monedafactura == "dolares") {
-                                preciototalI = parseFloat(($price / mitasacambio1).toFixed(4));
-                            }
-                            document.getElementById('preciounitario').value = parseFloat((
-                                $price).toFixed(2));
-                            document.getElementById('preciounitariomo').value = parseFloat((
-                                preciototalI).toFixed(4));
-                            document.getElementById('preciofinal').value = parseFloat((
-                                preciototalI).toFixed(4));
-                            nameproduct = $named;
-                        } else {
-                            nameproduct = $named;
-                            document.getElementById('preciofinal').value = 0;
-                            document.getElementById('preciounitario').value = 0;
-                            document.getElementById('preciounitariomo').value = 0;
-                        }
-                        document.getElementById('cantidad').value = 1;
-                        document.getElementById('servicio').value = 0;
-                        document.getElementById('unidadproducto').value = $unidad;
-                        document.getElementById('labelpreciounitarioref').innerHTML =
-                            "PRECIO UNITARIO(REFERENCIAL): " + monedaproducto;
-                        document.getElementById('labelpreciounitario').innerHTML =
-                            "PRECIO UNITARIO: " + monedafactura;
-                        document.getElementById('labelservicio').innerHTML =
-                            "SERVICIO ADICIONAL: " + monedafactura;
-                        document.getElementById('labelpreciototal').innerHTML =
-                            "PRECIO TOTAL POR PRODUCTO: " + monedafactura;
-                        document.getElementById('spanpreciounitarioref').innerHTML =
-                            simbolomonedaproducto;
-                        document.getElementById('spanpreciounitario').innerHTML =
-                            simbolomonedafactura;
-                        document.getElementById('spanservicio').innerHTML = simbolomonedafactura;
-                        document.getElementById('spanpreciototal').innerHTML = simbolomonedafactura;
-                        //alert(nameprod);
-                    }
-                });
-            });
-
-            //para cambiar la forma de pago  y dehabilitar la fecha de vencimiento
-            $("#formapago").change(function() {
-                $("#formapago option:selected").each(function() {
-                    $mimoneda = $(this).data("formapago");
-                    if ($mimoneda == "credito") {
-                        $("#fechav").prop("readonly", false);
-                        $("#fechav").prop("required", true);
-                        var fechav = document.getElementById("labelfechav");
-                        fechav.className += " is-required";
-                    } else if ($mimoneda == "contado") {
-                        $("#fechav").prop("readonly", true);
-                        $("#fechav").prop("required", false);
-                        var fechav = document.getElementById("labelfechav");
-                        fechav.className = "form-label ";
-                    }
-                });
+                $("#product").html(producto_select);
+                $('#product').removeAttr('disabled');
+                $('.select2').select2({});
+                limpiarinputs();
             });
         });
 
-        //funcion para agregar una fila
-        var indice = 0;
-        var pv = 0;
+        function preciofinal() {
+            var cantidad = $('[name="cantidad"]').val();
+            var preciounit = $('[name="preciounitariomo"]').val();
 
-        function cantidadproductocero(itoast) {
-            var cantidadtoast = document.getElementById("cantidadproductokit" + itoast).value;
-            var fila = document.getElementById("filatoast" + itoast);
-            if (cantidadtoast == 0) {
-                fila.style.backgroundColor = "#ff000095";
-            } else {
-                fila.style.backgroundColor = "white";
+            if (cantidad >= 1 && preciounit >= 0) {
+                preciototalI = (parseFloat(parseFloat(cantidad) * parseFloat(preciounit)));
+                document.getElementById('preciofinal').value = parseFloat(preciototalI.toFixed(4));
             }
         }
+        $("#product").change(function() {
+            $("#product option:selected").each(function() {
+                var miproduct = $(this).val();
+                if (miproduct) {
+                    var preciop = $(this).data("precio");
+                    var nombrep = $(this).data("nombre");
+                    var stock1p = $(this).data("stock1");
+                    var stock2p = $(this).data("stock2");
+                    precio = preciop;
+                    nombre = nombrep;
+                    stock1 = stock1p;
+                    stock2 = stock2p;
+                    if (idtienda == 1) {
+                        document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock1p +
+                            ")";
+                    } else {
+                        document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock2p +
+                            ")";
+                    }
+                    document.getElementById('cantidad').value = 1;
+                    document.getElementById('preciounitariomo').value = preciop;
+                    document.getElementById('preciofinal').value = preciop;
+                }
+            });
+        });
+        $('#addDetalleBatch').click(function() {
 
-        function agregarFila(indice1) {
-
-            if (pv == 0) {
-                indice = indice1;
-                pv++;
-                indice++;
-            } else {
-                indice++;
-            }
             //datos del detalleSensor
             var product = $('[name="product"]').val();
             var cantidad = $('[name="cantidad"]').val();
-            var preciounitario = $('[name="preciounitario"]').val();
-            var servicio = $('[name="servicio"]').val();
+            var preciounitario = $('[name="preciounitariomo"]').val();
+            var tipo = $('[name="tipoproduct"]').val();
             var preciofinal = $('[name="preciofinal"]').val();
-            var preciounitariomo = $('[name="preciounitariomo"]').val();
-            var observacionproducto = $('[name="observacionproducto"]').val();
-            var unidadproducto = $('[name="unidadproducto"]').val();
             //alertas para los detallesBatch
+            if (!tipo) {
+                alert("Seleccione un Tipo");
+                return;
+            }
             if (!product) {
-                alert("Seleccione un producto");
+                alert("Seleccione un Producto");
                 return;
             }
             if (!cantidad) {
                 alert("Ingrese una cantidad");
                 return;
             }
-            if (parseInt(cantidad) < 1) {
-                alert("La cantidad mínima permitida es: 1");
-                document.getElementById('cantidad').value = 1;
+            if (!preciounitario) {
+                alert("Ingrese una precio unitario");
                 return;
             }
-            if (!preciounitariomo) {
-                alert("Ingrese un precio");
+            if (!preciofinal) {
+                alert("Ingrese una precio total del producto");
                 return;
             }
-            var tasacambio = document.getElementById('tasacambio').value;;
 
-            var preciocompranuevo = 0;
-            if (monedaproducto == monedafactura) {
-                preciocompranuevo = preciounitariomo;
-            } else if (monedaproducto == "soles" && monedafactura == "dolares") {
-                preciocompranuevo = parseFloat((preciounitariomo * tasacambio).toFixed(4));
-            } else if (monedafactura == "soles" && monedaproducto == "dolares") {
-                preciocompranuevo = parseFloat((preciounitariomo / tasacambio).toFixed(4));
-            }
+            var LIngreso = [];
+            var tam = LIngreso.length;
+            LIngreso.push(product, nombre, cantidad, preciounitario, tipoproducto, preciofinal);
+            agregarFilasTabla(LIngreso);
+        });
 
-            var milista = '<br>';
-            var puntos = '';
-            var listaproductoskit = "";
-            var LVenta = [];
-            var tam = LVenta.length;
-            var datodb = "local";
-            LVenta.push(product, nameproduct, cantidad, preciounitario, servicio, preciofinal, preciounitariomo,
-                observacionproducto, unidadproducto, preciocompranuevo);
-            if (tipoproducto == "kit") {
-                puntos = ': ';
-                for (var i = 0; i < numeroproductoskit; i++) {
-                    var cant = document.getElementById("cantidadproductokit" + i).value;
-                    var nombre = document.getElementById("nombreproductokit" + i).value;
-                    var id = document.getElementById("idproductokit" + i).value;
-                    var coma = '<br>';
-                    if (i + 1 == numeroproductoskit) {
-                        coma = '';
-                    }
-                    if (cant > 0) {
-                        milista = milista + '-' + cant + ' ' + nombre + coma;
-                        listaproductoskit += '<input  type="hidden" name="Lidkit[]" value="' +
-                            idproducto +
-                            '" /><input  type="hidden" name="Lcantidadproductokit[]" value="' +
-                            cant + '" /><input  type="hidden" name="Lidproductokit[]" value="' +
-                            id + '" />';
-                    }
-                }
-                milista += listaproductoskit;
-                agregarFilasTabla(LVenta, puntos, milista);
-            } else {
-                agregarFilasTabla(LVenta, puntos, milista);
-            }
-        }
-
-        function agregarFilasTabla(LVenta, puntos, milista) {
+        function agregarFilasTabla(LIngreso) {
             filaDetalle = '<tr id="fila' + indice +
-                '"><td><input  type="hidden" name="Lproduct[]" value="' + LVenta[0] + '"required><b>' + LVenta[1] + '</b>' +
-                puntos + milista + '</td><td><input  type="hidden" name="Lunidadprod[]" >' + LVenta[8] +
-                '</td><td><input  type="hidden" name="Lobservacionproducto[]" id="observacionproducto' + indice +
-                '" value="' + LVenta[7] + '" required>' + LVenta[7] +
-                '</td><td><input  type="hidden" name="Lcantidad[]" id="cantidad' + indice + '" value="' + LVenta[2] +
-                '" required>' + LVenta[2] +
-                '</td><td><input  type="hidden" name="Lpreciounitario[]" id="preciounitario' + indice + '" value="' +
-                LVenta[3] + '" required>' + simbolomonedaproducto + LVenta[3] +
-                '</td><td><input  type="hidden" name="Lpreciounitariomo[]" id="preciounitariomo' + indice + '" value="' +
-                LVenta[6] + '" required>' + simbolomonedafactura + LVenta[6] +
-                '</td><td><input  type="hidden" name="Lservicio[]" id="servicio' + indice + '" value="' + LVenta[4] +
-                '" required>' + simbolomonedafactura + LVenta[4] +
-                '</td><td ><input id="preciof' + indice + '"  type="hidden" name="Lpreciofinal[]" value="' + LVenta[5] +
-                '" required> <input  type="hidden" name="Lpreciocompranuevo[]" value="' + LVenta[9] + '" required> ' +
-                simbolomonedafactura + LVenta[5] +
-                '</td><td> <button type="button" class="btn btn-danger" onclick="eliminarFila(' + indice + ',' + 0 + ',' +
-                0 + ',' + LVenta[0] + ')" data-id="0">ELIMINAR</button></td></tr>';
-
-            $("#detallesVenta>tbody").append(filaDetalle);
+                '"><td><input  type="hidden" name="Ltipo[]" value="' + LIngreso[4] + '"required>' + LIngreso[4] +
+                '</td><td><input  type="hidden" name="Lproduct[]" value="' + LIngreso[0] + '"required> ' + LIngreso[1] +
+                '</td><td style="text-align:center;"><input  type="hidden" name="Lcantidad[]" id="cantidad' + indice +
+                '" value="' + LIngreso[2] +
+                '"required>' + LIngreso[2] +
+                '</td><td style="text-align:center;"><input  type="hidden" name="Lpreciounitariomo[]" id="preciounitario' +
+                indice + '" value="' +
+                LIngreso[3] + '"required> S/.' + LIngreso[3] +
+                '</td><td style="text-align:center;"><input id="preciof' + indice +
+                '"  type="hidden" name="Lpreciofinal[]" value="' + LIngreso[5] +
+                '"required> S/.' + LIngreso[5] +
+                '</td><td style="text-align:center;"><button type="button" class="btn btn-xs btn-danger" onclick="eliminarFila(' +
+                indice + ',' + LIngreso[0] +
+                ')" data-id="0">ELIMINAR</button></td></tr>';
+            $("#detallesIngreso>tbody").append(filaDetalle);
             $('.toast').toast('hide');
             indice++;
-            ventatotal = parseFloat(ventatotal) + parseFloat(preciototalI);
-            $('#product').val(null).trigger('change');
-            document.getElementById('costoventa').value = (ventatotal).toFixed(2);
+            ingresototal = parseFloat(ingresototal) + parseFloat(LIngreso[5]);
             limpiarinputs();
-            document.getElementById('productoxempresa' + LVenta[0]).disabled = true;
+            document.getElementById('costoingreso').value = parseFloat((ingresototal * 1).toFixed(2));
+            document.getElementById('productoxtipo' + LIngreso[0]).disabled = true;
             var funcion = "agregar";
             botonguardar(funcion);
-
         }
 
-        function eliminarFila(ind, lugardato, iddetalle, idproducto) {
-            if (lugardato == "db") {
-                Swal.fire({
-                    title: '¿Esta seguro de Eliminar?',
-                    text: "No lo podra revertir!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí,Eliminar!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var miurl2 = "{{ url('admin/deletedetalleingreso') }}";
-                        $.get(miurl2 + '/' + iddetalle, function(data) {
-                            if (data[0] == 1) {
-                                Swal.fire({
-                                    text: "Registro Eliminado",
-                                    icon: "success"
-                                });
-                                quitarFila(ind);
 
-                            } else if (data[0] == 0) {
-                                Swal.fire({
-                                    text: "No se puede eliminar",
-                                    icon: "error"
-                                });;
-                            } else if (data[0] == 2) {
-                                Swal.fire({
-                                    text: "Registro no encontrado",
-                                    icon: "error"
-                                });
-                            }
-                        });
-                    }
-                })
-            } else {
-                quitarFila(ind);
-            }
-            document.getElementById('productoxempresa' + idproducto).disabled = false;
+        function eliminarFila(ind, idproducto) {
+            var resta = 0;
+            resta = $('[id="preciof' + ind + '"]').val();
+            ingresototal = (ingresototal - resta).toFixed(4);
+            $('#fila' + ind).remove();
+            //indice--;
+            // damos el valor
+            document.getElementById('costoingreso').value = (ingresototal * 1).toFixed(2);
+
+            var funcion = "eliminar";
+            botonguardar(funcion);
+            document.getElementById('productoxtipo' + idproducto).disabled = false;
             return false;
         }
 
-        function quitarFila(indicador) {
-            var resta = 0;
-            resta = $('[id="preciof' + indicador + '"]').val();
-            ventatotal = ventatotal - resta;
-            $('#fila' + indicador).remove();
-            //indice--;
-            document.getElementById('costoventa').value = (ventatotal).toFixed(2);
-            var funcion = "eliminar";
-            botonguardar(funcion);
-        }
 
         function botonguardar(funcion) {
-
             if (funcion == "eliminar") {
                 estadoguardar--;
             } else if (funcion == "agregar") {
@@ -977,23 +383,10 @@
 
         function limpiarinputs() {
             $('#product').val(null).trigger('change');
-            document.getElementById('labelpreciounitario').innerHTML = "PRECIO UNITARIO: ";
-            document.getElementById('labelpreciounitarioref').innerHTML = "PRECIO UNITARIO(REFERENCIAL): ";
-            document.getElementById('labelservicio').innerHTML = "SERVICIO ADICIONAL:";
-            document.getElementById('labelpreciototal').innerHTML = "PRECIO TOTAL POR PRODUCTO:";
-            document.getElementById('spanpreciounitarioref').innerHTML = "";
-            document.getElementById('spanpreciounitario').innerHTML = "";
-            document.getElementById('spanservicio').innerHTML = "";
-            document.getElementById('spanpreciototal').innerHTML = "";
+            document.getElementById('labelcantidad').innerHTML = "CANTIDAD";
             document.getElementById('cantidad').value = "";
-            document.getElementById('servicio').value = "";
             document.getElementById('preciofinal').value = "";
-            document.getElementById('preciounitario').value = "";
             document.getElementById('preciounitariomo').value = "";
-            document.getElementById('observacionproducto').value = "";
-            document.getElementById('unidadproducto').value = "";
-            monedaproducto = "";
-            simbolomonedaproducto = "";
         }
     </script>
 @endpush

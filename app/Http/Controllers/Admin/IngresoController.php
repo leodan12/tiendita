@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Cliente;
+use App\Models\Proveedor;
 use App\Models\Company;
 use App\Models\Ingreso;
 use App\Models\Product;
@@ -17,6 +18,8 @@ use App\Http\Requests\IngresoFormRequest;
 use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
 use App\Traits\ActualizarStockTrait;
+use App\Models\Tienda;
+use PDF;
 
 class IngresoController extends Controller
 {   //para asignar los permisos a las funciones
@@ -24,11 +27,18 @@ class IngresoController extends Controller
     {
         $this->middleware(
             'permission:ver-ingreso|editar-ingreso|crear-ingreso|eliminar-ingreso',
-            ['only' => ['index', 'show', 'showcreditos', 'productosxkit']]
+            ['only' => ['index', 'show', 'showcreditos',  'generarfacturapdf']]
         );
-        $this->middleware('permission:crear-ingreso', ['only' => ['create', 'store']]);
-        $this->middleware('permission:editar-ingreso', ['only' => ['edit', 'update', 'destroydetalleingreso']]);
+        $this->middleware('permission:crear-ingreso', ['only' => ['create', 'store', 'create2', 'facturadisponible']]);
+        $this->middleware('permission:editar-ingreso', ['only' => ['edit', 'update', 'destroydetalleingreso', 'misdetallesingreso']]);
         $this->middleware('permission:eliminar-ingreso', ['only' => ['destroy']]);
+        $this->middleware(
+            'permission:crear-ingreso|crear-cotizacion|crear-ingreso|editar-ingreso|editar-cotizacion|editar-ingreso|ver-ingreso|ver-ingreso|ver-cotizacion|eliminar-ingreso|eliminar-ingreso|eliminar-cotizacion',
+            ['only' => [
+                'productosxempresa', 'productosxkit', 'comboempresaproveedor', 'comboempresaproveedorvi',
+                'stockkitxempresa', 'stockxprodxempresa', 'facturadisponible'
+            ]]
+        );
     }
     use HistorialTrait;
     use ActualizarStockTrait;
@@ -36,19 +46,13 @@ class IngresoController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $ingresos = DB::table('ingresos as i')
-                ->join('clientes as c', 'i.cliente_id', '=', 'c.id')
-                ->join('companies as e', 'i.company_id', '=', 'e.id')
+            $ingresos = DB::table('ingresos as v')
+                ->join('tiendas as t', 'v.tienda_id', '=', 't.id')
                 ->select(
-                    'i.id',
-                    'c.nombre as cliente',
-                    'e.nombre as empresa',
-                    'i.moneda',
-                    'i.formapago',
-                    'i.factura',
-                    'i.costoventa',
-                    'i.pagada',
-                    'i.fecha',
+                    'v.id',
+                    't.nombre as tienda',
+                    'v.fecha',
+                    'v.costoventa'
                 );
             return DataTables::of($ingresos)
                 ->addColumn('acciones', 'Acciones')
@@ -60,550 +64,495 @@ class IngresoController extends Controller
         }
         return view('admin.ingreso.index');
     }
-    //funcion para redirigir al index principal pero que nos muestre el modal de ingresos por pagar
-    public function index2()
-    {
-        return redirect('admin/ingreso')->with('verstock', 'Ver');
-    }
-    //funcion para ver cuantos ingresos no tienen numero de factura
-    public function sinnumero()
-    {
-        $sinnumero = DB::table('ingresos as i')
-            ->where('i.factura', '=', null)
-            ->select('i.id')
-            ->count();
-        return $sinnumero;
-    }
-    //funcion para ver cuantos ingresos a credito estan por vencer
-    public function creditosxvencer()
-    {
-        $creditosxvencer = DB::table('ingresos as i')
-            ->join('companies as e', 'i.company_id', '=', 'e.id')
-            ->join('clientes as cl', 'i.cliente_id', '=', 'cl.id')
-            ->where('i.fechav', '!=', null)
-            ->where('i.pagada', '=', 'NO')
-            ->select(
-                'i.id',
-                'i.fecha',
-                'e.nombre as nombreempresa',
-                'cl.nombre as nombrecliente',
-                'i.moneda',
-                'i.costoventa',
-                'i.pagada',
-                'i.fechav',
-                'i.factura',
-                'i.formapago'
-            )
-            ->count();
-        return $creditosxvencer;
-    }
     //vista crear
     public function create()
     {
-        $companies = Company::all();
-        $clientes = Cliente::all();
-        $products = DB::table('products as p')
-            ->select('p.id', 'p.nombre', 'p.NoIGV', 'p.moneda', 'p.tipo', 'p.NoIGV', 'p.unidad', 'p.preciocompra', 'p.codigo')
-            ->where('p.status', '=', 0)
-            ->get();
-        return view('admin.ingreso.create', compact('companies', 'products', 'clientes'));
+        $tiendas = Tienda::where('status', '=', '0')->get();
+        $proveedors = Proveedor::where('status', '=', '0')->get();
+        return view('admin.ingreso.create', compact('tiendas', 'proveedors'));
     }
-    //funcion para guardar un ingreso
-    public function store(IngresoFormRequest $request)
-    {   //se realizan las validaciones
-        $validatedData = $request->validated();
-        $company = Company::findOrFail($validatedData['company_id']);
-        $cliente = Cliente::findOrFail($validatedData['cliente_id']);
-        $fecha = $validatedData['fecha'];
-        $moneda = $validatedData['moneda'];
-        $costoventa = $validatedData['costoventa'];
-        $formapago = $validatedData['formapago'];
-        $pagada = $validatedData['pagada'];
-        //se crea el registro de ingreso
+    //funcion para registrar una ingreso
+    public function store(Request $request)
+    {
+        //cramos un registro de ingreso
         $ingreso = new Ingreso;
-        $ingreso->company_id = $company->id;
-        $ingreso->cliente_id = $cliente->id;
-        $ingreso->fecha = $fecha;
-        $ingreso->costoventa = $costoventa;
-        $ingreso->formapago = $formapago;
-        $ingreso->moneda = $moneda;
-        $ingreso->factura = $request->factura;
-        $ingreso->pagada = $pagada;
-        $observacion = $validatedData['observacion'];
-        $tasacambio = $validatedData['tasacambio'];
-        $fechav = $validatedData['fechav'];
-        $ingreso->observacion = $observacion;
-        if ($formapago == 'credito') {
-            $ingreso->fechav = $fechav;
-        }
-        $ingreso->tasacambio = $tasacambio;
-        //datos del pago
-        $ingreso->nrooc = $request->nrooc;
-        $ingreso->guiaremision = $request->guiaremision;
-        $ingreso->fechapago = $request->fechapago;
-        $ingreso->acuenta1 = $request->acuenta1;
-        $ingreso->acuenta2 = $request->acuenta2;
-        $ingreso->acuenta3 = $request->acuenta3;
-        $ingreso->saldo = $request->saldo;
-        $ingreso->montopagado = $request->montopagado;
-        //guardamos el ingreso y los detalles
+        $ingreso->tienda_id = $request->tienda_id;
+        $ingreso->fecha = $request->fecha;
+        $ingreso->costoventa = $request->costoingreso;
+        $ingreso->proveedor_id = $request->proveedor_id;
+        //guardamos la ingreso y los detalles
         if ($ingreso->save()) {
-            //detalles
+            //obtenemos los detalles 
+            $tipo = $request->Ltipo;
             $product = $request->Lproduct;
-            $observacionproducto = $request->Lobservacionproducto;
             $cantidad = $request->Lcantidad;
-            $preciounitario = $request->Lpreciounitario;
-            $servicio = $request->Lservicio;
             $preciofinal = $request->Lpreciofinal;
-            $preciounitariomo = $request->Lpreciounitariomo;
-            $preciocompranuevo = $request->Lpreciocompranuevo;
-            //arrays de los productos vendidos de un kit
-            $idkits = $request->Lidkit;
-            $cantidadproductokit = $request->Lcantidadproductokit;
-            $idproductokit = $request->Lidproductokit;
-            if ($product !== null) {
+            $preciounitariomo = $request->Lpreciounitariomo; 
+            $tienda = Tienda::find($ingreso->tienda_id);
+            if ($tipo !== null) {
                 //recorremos los detalles
-                for ($i = 0; $i < count($product); $i++) {
-                    //creamos y guardamos los detalles
+                for ($i = 0; $i < count($tipo); $i++) {
+                    //creamos los detalles de la ingreso
                     $Detalleingreso = new Detalleingreso;
+                    $Detalleingreso->tipo = $tipo[$i];
                     $Detalleingreso->ingreso_id = $ingreso->id;
-                    $Detalleingreso->product_id = $product[$i];
-                    $Detalleingreso->observacionproducto = $observacionproducto[$i];
+                    $Detalleingreso->producto_id = $product[$i];
                     $Detalleingreso->cantidad = $cantidad[$i];
-                    $Detalleingreso->preciounitario = $preciounitario[$i];
                     $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
-                    $Detalleingreso->servicio = $servicio[$i];
                     $Detalleingreso->preciofinal = $preciofinal[$i];
                     if ($Detalleingreso->save()) {
-                        if ($idkits !== null) {
-                            for ($x = 0; $x < count($idkits); $x++) {
-                                if ($idkits[$x] == $product[$i]) {
-                                    $ingreso_kit = new DetalleKitingreso;
-                                    $ingreso_kit->detalleingreso_id = $Detalleingreso->id;
-                                    $ingreso_kit->kitproduct_id = $idproductokit[$x];
-                                    $ingreso_kit->cantidad = $cantidadproductokit[$x];
-                                    $ingreso_kit->save();
-                                }
-                            }
-                        }
-                        $this->actualizarprecio($preciocompranuevo[$i], $product[$i]);
-                        $productb = Product::find($product[$i]);
-                        //para cuanto el producto es un kit se busca los productos de ese kit
-                        if ($productb && $productb->tipo == "kit") {
-                            $milistaproductos = $this->productosxdetallexkitingreso($Detalleingreso->id);
-                            //recorremos la lista de productos de un kit y actualizamos el stock del inventarios
-                            //para cada producto
-                            for ($j = 0; $j < count($milistaproductos); $j++) {
-                                //obtenemos el stock de la empresa
-                                $this->actualizarstock($milistaproductos[$j]->id, $company->id, ($milistaproductos[$j]->cantidad) * $cantidad[$i], "SUMAR");
-                            }
-                        } else if ($productb && $productb->tipo == "estandar") { //para cuando el producto es estandar
-                            //se obtienen el stock de la empresa
-                            $this->actualizarstock($product[$i], $company->id, $cantidad[$i], "SUMAR");
-                        }
-                        //para actualizar el precio maximo y minimo del producto comprado
-                        if ($productb) {
-                            if ($moneda == $productb->moneda) {
-                                if ($preciounitariomo[$i] > $productb->NoIGV) {
-                                    $productb->maximo = $preciounitariomo[$i];
-                                } else  if ($preciounitariomo[$i] < $productb->NoIGV) {
-                                    $productb->minimo = $preciounitariomo[$i];
-                                }
-                            } else if ($moneda == "dolares" && $productb->moneda == "soles") {
-                                if ($preciounitariomo[$i] > round(($productb->NoIGV) / $tasacambio, 2)) {
-                                    $productb->maximo = round($preciounitariomo[$i] * $tasacambio, 2);
-                                } else  if ($preciounitariomo[$i] < round(($productb->NoIGV) / $tasacambio, 2)) {
-                                    $productb->minimo = round($preciounitariomo[$i] * $tasacambio, 2);
-                                }
-                            } else if ($moneda == "soles" && $productb->moneda == "dolares") {
-                                if ($preciounitariomo[$i] > round(($productb->NoIGV) * $tasacambio, 2)) {
-                                    $productb->maximo = round($preciounitariomo[$i] / $tasacambio, 2);
-                                } else  if ($preciounitariomo[$i] < round(($productb->NoIGV) * $tasacambio, 2)) {
-                                    $productb->minimo = round($preciounitariomo[$i] / $tasacambio, 2);
-                                }
-                            }
-                            $productb->save();
-                        }
+                        //$this->actualizarstock($product[$i], $company->id, $cantidad[$i], "RESTA");
                     }
                 }
             }
-            $this->crearhistorial('crear', $ingreso->id, $company->nombre, $cliente->nombre, 'ingresos');
-            return redirect('admin/ingreso')->with('message', 'Ingreso Agregado Satisfactoriamente');
+            //termino de registrar la ingreso
+            $this->crearhistorial('crear', $ingreso->id, $tienda->nombre, $ingreso->costoingreso, 'ingresos');
+            return redirect('admin/ingreso')->with('message', 'Ingreso Agregada Satisfactoriamente');
         }
         return redirect('admin/ingreso')->with('message', 'No se Pudo Agregar el Ingreso');
     }
-    //para crear un detalle inventario
-    public function creardetalleinventario($idempresa, $idproducto)
-    {
-        $inv3 = DB::table('inventarios as i')
-            ->where('i.product_id', '=', $idproducto)
-            ->select('i.id')
-            ->first();
 
-        $detalle2 = new Detalleinventario;
-        $detalle2->company_id = $idempresa;
-        $detalle2->inventario_id = $inv3->id;
-        $detalle2->stockempresa = 0;
-        $detalle2->status = 0;
-        $detalle2->save();
-
-        return $detalle2;
-    }
- 
-    //para buscar los productos vendidos en un detalle kit
-    public function productosxdetallexkitingreso($detalleingreso_id)
+    public function productosxtipo($tipo)
     {
-        $productosxkit_ingreso = DB::table('products as p')
-            ->join('detalle_kitingresos as dki', 'dki.kitproduct_id', '=', 'p.id')
-            ->where('dki.detalleingreso_id', '=', $detalleingreso_id)
-            ->select('p.id', 'p.nombre as producto', 'dki.cantidad')
-            ->get();
-        return  $productosxkit_ingreso;
-    }
-    //guardar los datos de pago
-    public function guardardatospago(Request $request)
-    {
-        $ingreso = Ingreso::find($request->idventa);
-        if ($ingreso) {
-            try {
-                $ingreso->pagada = $request->pagada;
-                $ingreso->nrooc = $request->nrooc;
-                $ingreso->guiaremision = $request->guiaremision;
-                $ingreso->fechapago = $request->fechapago;
-                $ingreso->acuenta1 = $request->acuenta1;
-                $ingreso->acuenta2 = $request->acuenta2;
-                $ingreso->acuenta3 = $request->acuenta3;
-                $ingreso->saldo = $request->saldo;
-                $ingreso->montopagado = $request->montopagado;
-                $ingreso->update();
-                $company = Company::find($ingreso->company_id);
-                $cliente = Cliente::find($ingreso->cliente_id);
-                if ($cliente && $company) {
-                    $this->crearhistorial('editar', $ingreso->id, $company->nombre, $cliente->nombre, 'ingresos');
-                }
-                return "1";
-            } catch (\Throwable $th) {
-                return "0";
-            }
-        } else {
-            return "2";
+        if ($tipo == "UTILES") {
+            $productos = DB::table('utiles as u')
+                ->join('marcautils as mu', 'u.marcautil_id', '=', 'mu.id')
+                ->join('colorutils as cu', 'u.colorutil_id', '=', 'cu.id')
+                ->select('u.id', 'u.nombre', 'u.precio', 'u.stock1', 'u.stock2', 'mu.marcautil', 'cu.colorutil')
+                ->where('u.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "UNIFORMES") {
+            $productos = DB::table('uniformes as u')
+                ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+                ->join('tallas as t', 'u.talla_id', '=', 't.id')
+                ->join('colors as c', 'u.color_id', '=', 'c.id')
+                ->select('u.id', 'u.nombre', 'u.genero', 'u.precio', 'u.stock1', 'u.stock2', 't.talla', 'c.color', 'tt.tela')
+                ->where('u.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "LIBROS") {
+            $productos = DB::table('libros as u')
+                ->join('tipopastas as tt', 'u.tipopasta_id', '=', 'tt.id')
+                ->join('tipopapels as tp', 'u.tipopapel_id', '=', 'tp.id')
+                ->join('formatos as f', 'u.formato_id', '=', 'f.id')
+                ->join('edicions as e', 'u.edicion_id', '=', 'e.id')
+                ->join('especializacions as es', 'u.especializacion_id', '=', 'es.id')
+                ->select(
+                    'u.autor',
+                    'u.original',
+                    'tt.tipopasta',
+                    'tp.tipopapel',
+                    'u.id',
+                    'u.titulo',
+                    'u.anio',
+                    'u.precio',
+                    'u.stock1',
+                    'u.stock2',
+                    'f.formato',
+                    'e.edicion',
+                    'es.especializacion'
+                )
+                ->where('u.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "INSTRUMENTOS") {
+            $productos = DB::table('instrumentos as i')
+                ->join('marcas as m', 'i.marca_id', '=', 'm.id')
+                ->join('modelos as mo', 'i.modelo_id', '=', 'mo.id')
+                ->select('i.id', 'i.nombre', 'i.precio', 'i.stock1', 'i.stock2', 'i.garantia', 'm.marca', 'mo.modelo')
+                ->where('i.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "GOLOSINAS") {
+            $productos = DB::table('golosinas as g')
+                ->where('g.status', '=', '0')->get();
+            return $productos;
+        } else if ($tipo == "SNACKS") {
+            $productos = DB::table('snacks as s')
+                ->join('marcasnacks as ms', 's.marcasnack_id', '=', 'ms.id')
+                ->join('saborsnacks as sn', 's.saborsnack_id', '=', 'sn.id')
+                ->select(
+                    's.id',
+                    's.nombre',
+                    's.tamanio',
+                    's.precio',
+                    's.stock1',
+                    's.stock2',
+                    'ms.marcasnack',
+                    'sn.saborsnack'
+                )
+                ->where('s.status', '=', '0')->get();
+            return $productos;
         }
     }
-    //vista editar
+
+    //vista editar una ingreso
     public function edit(int $ingreso_id)
     {
-        $clientes = Cliente::all();
-        $products = Product::all()->where('status', '=', 0);
-        $companies = DB::table('companies as c')
-            ->join('ingresos as i', 'i.company_id', '=', 'c.id')
-            ->select('c.id', 'c.nombre', 'c.ruc')
-            ->where('i.id', '=', $ingreso_id)
-            ->get();
         $ingreso = Ingreso::findOrFail($ingreso_id);
-        $detallesingreso = DB::table('detalleingresos as di')
-            ->join('ingresos as i', 'di.ingreso_id', '=', 'i.id')
-            ->join('products as p', 'di.product_id', '=', 'p.id')
+        //$companies = Company::all();
+        $tiendas = DB::table('tiendas as t')
+            ->join('ingresos as v', 'v.tienda_id', '=', 't.id')
+            ->select('t.id', 't.nombre')
+            ->where('v.id', '=', $ingreso_id)
+            ->get();
+        $proveedors = DB::table('proveedors as c')
+
+            ->select('c.id', 'c.nombre', 'c.ruc')
+            //->where('v.id', '=', $ingreso_id)
+            ->get();
+        $detallesingreso = DB::table('detalleingresos as dv')
+            ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
             ->select(
-                'di.observacionproducto',
-                'p.tipo',
-                'p.moneda',
-                'di.id as iddetalleingreso',
-                'di.cantidad',
-                'di.preciounitario',
-                'di.preciounitariomo',
-                'di.servicio',
-                'di.preciofinal',
-                'p.id as idproducto',
-                'p.nombre as producto'
+                'dv.tipo',
+                'dv.id as iddetalleingreso',
+                'dv.cantidad',
+                'dv.preciounitariomo',
+                'dv.preciofinal',
+                'dv.producto_id',
+                'v.id as idingreso'
             )
-            ->where('i.id', '=', $ingreso_id)->get();
-        $detalleskit = DB::table('products as p')
-            ->join('detalle_kitingresos as dki', 'dki.kitproduct_id', '=', 'p.id')
-            ->join('detalleingresos as di', 'dki.detalleingreso_id', '=', 'di.id')
-            ->join('ingresos as i', 'di.ingreso_id', '=', 'i.id')
-            ->select('dki.cantidad', 'p.nombre as producto', 'di.id as iddetalleingreso')
-            ->where('i.id', '=', $ingreso_id)->get();
-        return view('admin.ingreso.edit', compact('products', 'ingreso', 'companies', 'clientes', 'detalleskit', 'detallesingreso'));
+            ->where('v.id', '=', $ingreso_id)->get();
+        $detalles = $this->detallesingreso($detallesingreso);
+        //return $detalles;
+        return view('admin.ingreso.edit', compact('ingreso', 'tiendas', 'proveedors', 'detalles'));
     }
-    //funcion para mostrar un registro de un ingreso
-    public function show($id)
+
+    public function detallesingreso($detalles)
     {
-        $ingreso = DB::table('ingresos as i')
-            ->join('detalleingresos as di', 'di.ingreso_id', '=', 'i.id')
-            ->join('companies as c', 'i.company_id', '=', 'c.id')
-            ->join('clientes as cl', 'i.cliente_id', '=', 'cl.id')
-            ->join('products as p', 'di.product_id', '=', 'p.id')
+        $datos = collect();
+        for ($i = 0; $i < count($detalles); $i++) {
+            $detalle = collect();
+            if ($detalles[$i]->tipo == "UTILES") {
+                $producto = DB::table('utiles as u')
+                    ->join('marcautils as mu', 'u.marcautil_id', '=', 'mu.id')
+                    ->join('colorutils as cu', 'u.colorutil_id', '=', 'cu.id')
+                    ->select(
+                        'u.id as idproducto',
+                        'u.nombre',
+                        'u.precio',
+                        'u.stock1',
+                        'u.stock2',
+                        'mu.marcautil',
+                        'cu.colorutil',
+                    )
+                    ->where('u.status', '=', '0')
+                    ->where('u.id', '=', $detalles[$i]->producto_id)
+                    ->first();
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('marcautil', $producto->marcautil);
+                $detalle->put('colorutil', $producto->colorutil);
+            } else if ($detalles[$i]->tipo == "UNIFORMES") {
+                $producto = DB::table('uniformes as u')
+                    ->join('tipotelas as tt', 'u.tipotela_id', '=', 'tt.id')
+                    ->join('tallas as t', 'u.talla_id', '=', 't.id')
+                    ->join('colors as c', 'u.color_id', '=', 'c.id')
+                    ->join('detalleingresos as dv', 'dv.producto_id', '=', 'u.id')
+                    ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
+                    ->select(
+                        'u.id as idproducto',
+                        'u.nombre',
+                        'u.genero',
+                        'u.precio',
+                        'u.stock1',
+                        'u.stock2',
+                        't.talla',
+                        'c.color',
+                        'tt.tela',
+                    )
+                    ->where('u.status', '=', '0')
+                    ->where('u.id', '=', $detalles[$i]->producto_id)
+                    ->first();
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('genero', $producto->genero);
+                $detalle->put('talla', $producto->talla);
+                $detalle->put('color', $producto->color);
+                $detalle->put('tela', $producto->tela);
+            } else if ($detalles[$i]->tipo == "LIBROS") {
+                $producto = DB::table('libros as u')
+                    ->join('tipopastas as tt', 'u.tipopasta_id', '=', 'tt.id')
+                    ->join('tipopapels as tp', 'u.tipopapel_id', '=', 'tp.id')
+                    ->join('formatos as f', 'u.formato_id', '=', 'f.id')
+                    ->join('edicions as e', 'u.edicion_id', '=', 'e.id')
+                    ->join('especializacions as es', 'u.especializacion_id', '=', 'es.id')
+                    ->select(
+                        'u.autor',
+                        'u.original',
+                        'tt.tipopasta',
+                        'tp.tipopapel',
+                        'u.id as idproducto',
+                        'u.titulo as nombre',
+                        'u.anio',
+                        'u.precio',
+                        'u.stock1',
+                        'u.stock2',
+                        'f.formato',
+                        'e.edicion',
+                        'es.especializacion',
+                    )
+                    ->where('u.status', '=', '0')
+                    ->where('u.id', '=', $detalles[$i]->producto_id)
+                    ->first();
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('autor', $producto->autor);
+                $detalle->put('original', $producto->original);
+                $detalle->put('tipopasta', $producto->tipopasta);
+                $detalle->put('tipopapel', $producto->tipopapel);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('anio', $producto->anio);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('formato', $producto->formato);
+                $detalle->put('edicion', $producto->edicion);
+                $detalle->put('especializacion', $producto->especializacion);
+            } else if ($detalles[$i]->tipo == "INSTRUMENTOS") {
+                $producto = DB::table('instrumentos as i')
+                    ->join('marcas as m', 'i.marca_id', '=', 'm.id')
+                    ->join('modelos as mo', 'i.modelo_id', '=', 'mo.id')
+                    ->select(
+                        'i.id as idproducto',
+                        'i.nombre',
+                        'i.precio',
+                        'i.stock1',
+                        'i.stock2',
+                        'i.garantia',
+                        'm.marca',
+                        'mo.modelo',
+                    )
+                    ->where('i.status', '=', '0')
+                    ->where('i.id', '=', $detalles[$i]->producto_id)
+                    ->first();
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('garantia', $producto->garantia);
+                $detalle->put('marca', $producto->marca);
+                $detalle->put('modelo', $producto->modelo);
+            } else if ($detalles[$i]->tipo == "GOLOSINAS") {
+                $producto = DB::table('golosinas as g')
+                    ->select(
+                        'i.nombre',
+                        'i.precio',
+                        'i.peso',
+                        'i.stock1',
+                        'i.stock2',
+                    )
+                    ->where('g.status', '=', '0')
+                    ->where('g.id', '=', $detalles[$i]->producto_id)
+                    ->first();
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('peso', $producto->peso);
+            } else if ($detalles[$i]->tipo == "SNACKS") {
+                $producto = DB::table('snacks as s')
+                    ->join('marcasnacks as ms', 's.marcasnack_id', '=', 'ms.id')
+                    ->join('saborsnacks as sn', 's.saborsnack_id', '=', 'sn.id')
+                    ->select(
+                        's.id as idproducto',
+                        's.nombre',
+                        's.tamanio',
+                        's.precio',
+                        's.stock1',
+                        's.stock2',
+                        'ms.marcasnack',
+                        'sn.saborsnack',
+                    )
+                    ->where('s.status', '=', '0')
+                    ->where('s.id', '=', $detalles[$i]->producto_id)
+                    ->first();
+
+                $detalle->put('idproducto', $producto->idproducto);
+                $detalle->put('nombre', $producto->nombre);
+                $detalle->put('precio', $producto->precio);
+                $detalle->put('stock1', $producto->stock1);
+                $detalle->put('stock2', $producto->stock2);
+                $detalle->put('tamanio', $producto->tamanio);
+                $detalle->put('marcasnack', $producto->marcasnack);
+                $detalle->put('saborsnack', $producto->saborsnack);
+            }
+            $detalle->put('tipo', $detalles[$i]->tipo);
+            $detalle->put('iddetalleingreso', $detalles[$i]->iddetalleingreso);
+            $detalle->put('cantidad', $detalles[$i]->cantidad);
+            $detalle->put('preciounitariomo', $detalles[$i]->preciounitariomo);
+            $detalle->put('preciofinal', $detalles[$i]->preciofinal);
+            $detalle->put('producto_id', $detalles[$i]->producto_id);
+            $detalle->put('idingreso', $detalles[$i]->idingreso);
+            $datos->push($detalle);
+        }
+        return $datos;
+    }
+    //funcion para actualizar un registro de una ingreso
+    public function update(Request $request, int $ingreso_id)
+    {   //validamos los datos
+         //cramos un registro de ingreso
+         $ingreso =  Ingreso::find($ingreso_id);
+         $ingreso->tienda_id = $request->tienda_id;
+         $ingreso->fecha = $request->fecha;
+         $ingreso->costoventa = $request->costoingreso;
+         $ingreso->proveedor_id = $request->proveedor_id;
+         //guardamos la ingreso y los detalles
+         if ($ingreso->update()) {
+             //obtenemos los detalles 
+             $tipo = $request->Ltipo;
+             $product = $request->Lproduct;
+             $cantidad = $request->Lcantidad;
+             $preciofinal = $request->Lpreciofinal;
+             $preciounitariomo = $request->Lpreciounitariomo;
+             $tienda = Tienda::find($ingreso->tienda_id);
+             if ($tipo !== null) { 
+                 //recorremos los detalles
+                 for ($i = 0; $i < count($tipo); $i++) {
+                     //creamos los detalles de la ingreso
+                     $Detalleingreso = new Detalleingreso;
+                     $Detalleingreso->tipo = $tipo[$i];
+                     $Detalleingreso->ingreso_id = $ingreso->id;
+                     $Detalleingreso->producto_id = $product[$i];
+                     $Detalleingreso->cantidad = $cantidad[$i];
+                     $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
+                     $Detalleingreso->preciofinal = $preciofinal[$i];
+                     if ($Detalleingreso->save()) {
+                         //$this->actualizarstock($product[$i], $company->id, $cantidad[$i], "RESTA");
+                     }
+                 }
+             }
+             //termino de registrar la ingreso
+             $this->crearhistorial('editar', $ingreso->id, $tienda->nombre, $ingreso->costoingreso, 'ingresos');
+             return redirect('admin/ingreso')->with('message', 'Ingreso Actualizado Satisfactoriamente');
+         }
+         return redirect('admin/ingreso')->with('message', 'No se Pudo Actualizar el Ingreso');
+    }
+    //funcion para mostrar los datos de la ingreso
+    public function show($idingreso)
+    {
+        $datos = collect();
+        $ingreso = Ingreso::findOrFail($idingreso);
+        //$companies = Company::all();
+        $tiendas = DB::table('tiendas as t')
+            ->join('ingresos as v', 'v.tienda_id', '=', 't.id')
+            ->select('t.id', 't.nombre')
+            ->where('v.id', '=', $idingreso)
+            ->first();
+        $clientes="";
+        $clientes = DB::table('proveedors as c') 
+            ->join('ingresos as v','v.proveedor_id','=','c.id')
+            ->select('c.id', 'c.nombre', 'c.ruc')
+            ->where('v.id', '=', $idingreso)
+            ->first();
+        $detallesingreso = DB::table('detalleingresos as dv')
+            ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
             ->select(
-                'i.fecha',
-                'i.factura',
-                'i.formapago',
-                'i.moneda',
-                'i.costoventa',
-                'i.fechav',
-                'i.tasacambio',
-                'i.observacion',
-                'i.moneda',
-                'c.nombre as company',
-                'cl.nombre as cliente',
-                'p.nombre as producto',
-                'di.cantidad',
-                'di.preciounitario',
-                'di.preciounitariomo',
-                'di.servicio',
-                'di.preciofinal',
-                'di.observacionproducto',
-                'di.id as iddetalleingreso',
-                'p.moneda as monedaproducto',
-                'i.pagada',
-                'p.tipo',
-                'p.id as idproducto',
-                'i.nrooc',
-                'i.guiaremision',
-                'i.fechapago',
-                'i.acuenta1',
-                'i.acuenta2',
-                'i.acuenta3',
-                'i.saldo',
-                'i.montopagado',
+                'dv.tipo',
+                'dv.id as iddetalleingreso',
+                'dv.cantidad',
+                'dv.preciounitariomo',
+                'dv.preciofinal',
+                'dv.producto_id',
+                'v.id as idingreso'
             )
-            ->where('i.id', '=', $id)->get();
-        return  $ingreso;
+            ->where('v.id', '=', $idingreso)->get();
+        $detalles = $this->detallesingreso($detallesingreso);
+        $datos->push($ingreso);
+        $datos->push($tiendas);
+        $datos->push($detalles);
+        $datos->push($clientes);
+        return $datos;
     }
-    //funcion para actualizar un registro del ingreso
-    public function update(IngresoFormRequest $request, int $ingreso_id)
-    {   //valida los datos recibidos
-        $validatedData = $request->validated();
-        $company = Company::findOrFail($validatedData['company_id']);
-        $cliente = Cliente::findOrFail($validatedData['cliente_id']);
-        $fecha = $validatedData['fecha'];
-        $moneda = $validatedData['moneda'];
-        $costoventa = $validatedData['costoventa'];
-        $formapago = $validatedData['formapago'];
-        $pagada = $validatedData['pagada'];
-        //buscamos el registro y asignamos los nuevos datos
-        $ingreso =  Ingreso::findOrFail($ingreso_id);
-        $ingreso->company_id = $company->id;
-        $ingreso->cliente_id = $cliente->id;
-        $ingreso->fecha = $fecha;
-        $ingreso->costoventa = $costoventa;
-        $ingreso->formapago = $formapago;
-        $ingreso->moneda = $moneda;
-        $ingreso->factura = $request->factura;
-        $ingreso->pagada = $pagada;
-        $observacion = $validatedData['observacion'];
-        $tasacambio = $validatedData['tasacambio'];
-        $fechav = $validatedData['fechav'];
-        $ingreso->observacion = $observacion;
-        if ($formapago == 'credito') {
-            $ingreso->fechav = $fechav;
-        } elseif ($formapago == 'contado') {
-            $ingreso->fechav = null;
-        }
-        $ingreso->tasacambio = $tasacambio;
-        //datos del pago
-        $ingreso->nrooc = $request->nrooc;
-        $ingreso->guiaremision = $request->guiaremision;
-        $ingreso->fechapago = $request->fechapago;
-        $ingreso->acuenta1 = $request->acuenta1;
-        $ingreso->acuenta2 = $request->acuenta2;
-        $ingreso->acuenta3 = $request->acuenta3;
-        $ingreso->saldo = $request->saldo;
-        $ingreso->montopagado = $request->montopagado;
-        //guardamos la venta y los detalles
-        if ($ingreso->update()) {
-            //los detalles del ingreso
-            $product = $request->Lproduct;
-            $cantidad = $request->Lcantidad;
-            $observacionproducto = $request->Lobservacionproducto;
-            $preciounitario = $request->Lpreciounitario;
-            $servicio = $request->Lservicio;
-            $preciofinal = $request->Lpreciofinal;
-            $preciounitariomo = $request->Lpreciounitariomo;
-            $preciocompranuevo = $request->Lpreciocompranuevo;
-            //arrays de los productos vendidos de un kit
-            $idkits = $request->Lidkit;
-            $cantidadproductokit = $request->Lcantidadproductokit;
-            $idproductokit = $request->Lidproductokit;
-            if ($product !== null) {
-                //recorremos los detalles para guardarlos
-                for ($i = 0; $i < count($product); $i++) {
-                    //creamos y asignamos datos a un detalle
-                    $Detalleingreso = new Detalleingreso;
-                    $Detalleingreso->ingreso_id = $ingreso->id;
-                    $Detalleingreso->product_id = $product[$i];
-                    $Detalleingreso->observacionproducto = $observacionproducto[$i];
-                    $Detalleingreso->cantidad = $cantidad[$i];
-                    $Detalleingreso->preciounitario = $preciounitario[$i];
-                    $Detalleingreso->preciounitariomo = $preciounitariomo[$i];
-                    $Detalleingreso->servicio = $servicio[$i];
-                    $Detalleingreso->preciofinal = $preciofinal[$i];
-                    if ($Detalleingreso->save()) {
-                        if ($idkits !== null) {
-                            for ($x = 0; $x < count($idkits); $x++) {
-                                if ($idkits[$x] == $product[$i]) {
-                                    $ingreso_kit = new DetalleKitingreso;
-                                    $ingreso_kit->detalleingreso_id = $Detalleingreso->id;
-                                    $ingreso_kit->kitproduct_id = $idproductokit[$x];
-                                    $ingreso_kit->cantidad = $cantidadproductokit[$x];
-                                    $ingreso_kit->save();
-                                }
-                            }
-                        }
-                        $this->actualizarprecio($preciocompranuevo[$i], $product[$i]);
-                        $productb = Product::find($product[$i]);
-                        //pacar cuanto el producto es un kit
-                        if ($productb && $productb->tipo == "kit") {
-                            $milistaproductos = $this->productosxdetallexkitingreso($Detalleingreso->id);
-                            //recorremos los productos del kit
-                            for ($j = 0; $j < count($milistaproductos); $j++) {
-                                $this->actualizarstock($milistaproductos[$j]->id, $company->id, ($milistaproductos[$j]->cantidad) * $cantidad[$i], "SUMA");
-                            }
-                        }
-                        //para cuando el producto es estandar
-                        else if ($productb && $productb->tipo == "estandar") {
-                            $this->actualizarstock($product[$i], $company->id, $cantidad[$i], "SUMA");
-                        }
-                        //para actualizar el precio maximo y minimo del producto
-                        if ($productb) {
-                            if ($moneda == $productb->moneda) {
-                                if ($preciounitariomo[$i] > $productb->NoIGV) {
-                                    $productb->maximo = $preciounitariomo[$i];
-                                } else  if ($preciounitariomo[$i] < $productb->NoIGV) {
-                                    $productb->minimo = $preciounitariomo[$i];
-                                }
-                            } else if ($moneda == "dolares" && $productb->moneda == "soles") {
-                                if ($preciounitariomo[$i] > round(($productb->NoIGV) / $tasacambio, 2)) {
-                                    $productb->maximo = round($preciounitariomo[$i] * $tasacambio, 2);
-                                } else  if ($preciounitariomo[$i] < round(($productb->NoIGV) / $tasacambio, 2)) {
-                                    $productb->minimo = round($preciounitariomo[$i] * $tasacambio, 2);
-                                }
-                            } else if ($moneda == "soles" && $productb->moneda == "dolares") {
-                                if ($preciounitariomo[$i] > round(($productb->NoIGV) * $tasacambio, 2)) {
-                                    $productb->maximo = round($preciounitariomo[$i] / $tasacambio, 2);
-                                } else  if ($preciounitariomo[$i] < round(($productb->NoIGV) * $tasacambio, 2)) {
-                                    $productb->minimo = round($preciounitariomo[$i] / $tasacambio, 2);
-                                }
-                            }
-                            $productb->save();
-                        }
-                        //fin del guardar detalle
-                    }
-                }
-                $this->crearhistorial('editar', $ingreso->id, $company->nombre, $cliente->nombre, 'ingresos');
-                return redirect('admin/ingreso')->with('message', 'Ingreso Actualizado Satisfactoriamente');
-            }
-            return redirect('admin/ingreso')->with('message', 'Ingreso Actualizado Satisfactoriamente');
-        }
-    }
-    //funcion para eliminar un registro de ingreso
-    public function destroy(int $ingreso_id)
-    {
-        $ingreso = Ingreso::find($ingreso_id);
-        if ($ingreso) {
-            //obtenemos los detalles del ingreso
-            $detallesingreso = DB::table('detalleingresos as di')
-                ->join('ingresos as i', 'di.ingreso_id', '=', 'i.id')
-                ->join('products as p', 'di.product_id', '=', 'p.id')
-                ->select('di.cantidad', 'di.product_id', 'p.tipo', 'p.id', 'di.id as iddetalleingreso')
-                ->where('i.id', '=', $ingreso_id)->get();
-            //recorremos los detalles
-            for ($i = 0; $i < count($detallesingreso); $i++) {
-                if ($detallesingreso[$i]->tipo == "estandar") {
-                    $this->actualizarstock($detallesingreso[$i]->product_id, $ingreso->company_id, $detallesingreso[$i]->cantidad, "RESTA");
-                } else if ($detallesingreso[$i]->tipo == "kit") {
-                    //si el producto es un kit entonces obtenemos los productos de ese kit
-                    $products = $this->productosxdetallexkitingreso($detallesingreso[$i]->iddetalleingreso);
-                    for ($x = 0; $x < count($products); $x++) {
-                        $this->actualizarstock($products[$x]->id, $ingreso->company_id, $detallesingreso[$i]->cantidad * $products[$x]->cantidad, "RESTA");
-                    }
-                }
-            }
-            //borramos el registro del ingreso
-            try {
-                $company = Company::find($ingreso->company_id);
-                $cliente = Cliente::find($ingreso->cliente_id);
-                $ingreso->delete();
-                if ($cliente && $company) {
-                    $this->crearhistorial('eliminar', $ingreso->id, $company->nombre, $cliente->nombre, 'ingresos');
-                }
-                return "1";
-            } catch (\Throwable $th) {
-                return "0";
-            }
-        } else {
-            return "2";
-        }
-    }
-    //funcion para mostrar los ingresos a credito
+    //funcion para mostrar las ingresos a credito
     public function showcreditos()
     {
-        $creditosvencidos = DB::table('ingresos as i')
-            ->join('companies as e', 'i.company_id', '=', 'e.id')
-            ->join('clientes as cl', 'i.cliente_id', '=', 'cl.id')
-            ->where('i.fechav', '!=', null)
-            ->where('i.pagada', '=', 'NO')
+        $creditosvencidos = DB::table('ingresos as v')
+            ->join('companies as e', 'v.company_id', '=', 'e.id')
+            ->join('proveedors as cl', 'v.proveedor_id', '=', 'cl.id')
+            ->where('v.fechav', '!=', null)
+            ->where('v.pagada', '=', 'NO')
             ->select(
-                'i.id',
-                'i.fecha',
+                'v.id',
+                'v.fecha',
                 'e.nombre as nombreempresa',
-                'cl.nombre as nombrecliente',
-                'i.moneda',
-                'i.costoventa',
-                'i.pagada',
-                'i.fechav',
-                'i.factura',
-                'i.formapago'
+                'cl.nombre as nombreproveedor',
+                'v.moneda',
+                'v.costoingreso',
+                'v.pagada',
+                'v.fechav',
+                'v.factura',
+                'v.formapago'
             )
             ->get();
         return $creditosvencidos;
     }
-
-    //funcion para eliminar el detalle del ingreso
+    //funcion para eliminar un registro de una ingreso
+    public function destroy(int $ingreso_id)
+    {
+        $ingreso = Ingreso::find($ingreso_id);
+        if ($ingreso) {
+            try {
+                $ingreso->delete();
+                $this->crearhistorial('eliminar', $ingreso->id, $ingreso->fecha, $ingreso->costoingreso, 'ingresos');
+                return "1";
+            } catch (\Throwable $th) {
+                return "0";
+            }
+        } else {
+            return "2";
+        }
+    }
+    //funcion para eliminar un detalle de una ingreso
     public function destroydetalleingreso($id)
     {
         $detalleingreso = Detalleingreso::find($id);
         if ($detalleingreso) {
-            //buscamos el detalle que se va eliminar
-            $midetalle = $detalleingreso;
-            $ingreso = DB::table('detalleingresos as di')
-                ->join('ingresos as i', 'di.ingreso_id', '=', 'i.id')
-                ->join('products as p', 'di.product_id', '=', 'p.id')
+            $ingreso = DB::table('detalleingresos as dv')
+                ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
+                ->join('products as p', 'dv.product_id', '=', 'p.id')
                 ->select(
-                    'di.cantidad',
-                    'i.costoventa',
-                    'di.preciofinal',
-                    'i.id',
-                    'di.product_id as idproducto',
-                    'i.company_id as idempresa',
-                    'i.cliente_id as idcliente',
+                    'dv.cantidad',
+                    'v.costoingreso',
+                    'dv.preciofinal',
+                    'v.id',
+                    'v.company_id as idempresa',
+                    'dv.product_id as idproducto',
+                    'v.proveedor_id as idproveedor',
                     'p.tipo',
-                    'di.id as iddetalleingreso'
                 )
-                ->where('di.id', '=', $id)
-                ->first();
+                ->where('dv.id', '=', $id)->first();
             if ($ingreso->tipo == "kit") {
-                $milistaproductos = $this->productosxdetallexkitingreso($ingreso->iddetalleingreso);
-                //recorremos la lista de productos del kit
-                for ($j = 0; $j < count($milistaproductos); $j++) {
-                    $this->actualizarstock($milistaproductos[$j]->id, $ingreso->idempresa, ($milistaproductos[$j]->cantidad) * $midetalle->cantidad, "RESTA");
+                $detalleingreso_kit = $this->productosxdetallexkit($id);
+                for ($i = 0; $i < count($detalleingreso_kit); $i++) {
+                    $this->actualizarstock($detalleingreso_kit[$i]->id, $ingreso->idempresa, ($detalleingreso_kit[$i]->cantidad * $ingreso->cantidad), "SUMA");
                 }
-            } else if ($ingreso->tipo == "estandar") {
-                $this->actualizarstock($ingreso->idproducto, $ingreso->idempresa, $ingreso->cantidad, "RESTA");
+            } else {
+                $this->actualizarstock($ingreso->idproducto, $ingreso->idempresa, $ingreso->cantidad, "SUMA");
             }
             if ($detalleingreso->delete()) {
-                //eliminamos el ingreso y actualizamos los precios
-                $costof = $ingreso->costoventa;
+                //eliminamos el detalle y actualizamos el costo de la ingreso
+                $costof = $ingreso->costoingreso;
                 $detalle = $ingreso->preciofinal;
                 $idingreso = $ingreso->id;
                 $ingresoedit = Ingreso::findOrFail($idingreso);
-                $ingresoedit->costoventa = $costof - $detalle;
+                $ingresoedit->costoingreso = $costof - $detalle;
                 $ingresoedit->update();
                 $company = Company::find($ingreso->idempresa);
-                $cliente = Cliente::find($ingreso->idcliente);
-                if ($cliente && $company) {
-                    $this->crearhistorial('editar', $ingreso->id, $company->nombre, $cliente->nombre, 'ingresos');
+                $proveedor = Proveedor::find($ingreso->idproveedor);
+                if ($proveedor && $company) {
+                    $this->crearhistorial('editar', $ingreso->id, $company->nombre, $proveedor->nombre, 'ingresos');
                 }
-                return 1;
+                return "1";
             } else {
                 return 0;
             }
@@ -611,23 +560,117 @@ class IngresoController extends Controller
             return 2;
         }
     }
-    //funcion para obtener los productos de un kit
-    public function productosxkit($kit_id)
+
+    //funcion para generar un pdf de la ingreso
+    public function generarfacturapdf($id)
     {
-        $productosxkit = DB::table('products as p')
-            ->join('kits as k', 'k.kitproduct_id', '=', 'p.id')
-            ->where('k.product_id', '=', $kit_id)
-            ->select('p.id', 'p.nombre as producto', 'k.cantidad')
-            ->get();
-        return  $productosxkit;
+        $vent = Ingreso::find($id);
+        $empresa = Company::find($vent->company_id);
+        $proveedor = Proveedor::find($vent->proveedor_id);
+        //obtenemos los datos de la ingreso y los detalles del kit
+        $ingreso = DB::table('ingresos as v')
+            ->join('detalleingresos as dv', 'dv.ingreso_id', '=', 'v.id')
+            ->join('products as p', 'dv.product_id', '=', 'p.id')
+            ->select(
+                'v.id as idingreso',
+                'v.fecha',
+                'p.nombre as nombreproducto',
+                'dv.cantidad',
+                'dv.preciounitariomo',
+                'dv.preciounitario',
+                'dv.observacionproducto',
+                'dv.servicio',
+                'dv.preciofinal',
+                'v.moneda as monedaingreso',
+                'p.moneda as monedaproducto',
+                'v.formapago',
+                'v.factura',
+                'v.costoingreso',
+                'v.tasacambio',
+                'v.costoingreso',
+                'p.tipo',
+                'dv.id as iddetalle'
+            )
+            ->where('v.id', '=', $id)->get();
+        $detallekit = DB::table('ingresos as v')
+            ->join('detalleingresos as dv', 'dv.ingreso_id', '=', 'v.id')
+            ->join('products as p', 'dv.product_id', '=', 'p.id')
+            ->join('kits as k', 'k.product_id', '=', 'p.id')
+            ->join('products as pk', 'k.kitproduct_id', '=', 'pk.id')
+            ->select(
+                'v.id as idingreso',
+                'k.cantidad',
+                'pk.nombre',
+                'dv.id as iddetalle'
+            )
+            ->where('v.id', '=', $id)->get();
+        //return $ingreso;
+        $pdf = PDF::loadView(
+            'admin.ingreso.facturapdf',
+            ["ingreso" => $ingreso, "empresa" => $empresa, "proveedor" => $proveedor, "detallekit" => $detallekit]
+        );
+        return $pdf->stream('ingreso.pdf');
     }
-    //funcion para actualizar el precio de un producto al realizar una compra
-    public function actualizarprecio($precio, $producto_id)
+
+
+    //funcion para obtener los detalles de una ingreso
+    public function misdetallesingreso($ingreso_id)
     {
-        $producto = Product::find($producto_id);
-        if ($producto) {
-            $producto->preciocompra = $precio;
-            $producto->update();
+        $detallesingreso = DB::table('detalleingresos as dv')
+            ->join('ingresos as v', 'dv.ingreso_id', '=', 'v.id')
+            ->join('products as p', 'dv.product_id', '=', 'p.id')
+            ->select('dv.observacionproducto', 'p.tipo', 'p.moneda', 'dv.id as iddetalleingreso', 'dv.cantidad', 'dv.preciounitario', 'dv.preciounitariomo', 'dv.servicio', 'dv.preciofinal', 'p.id as idproducto', 'p.nombre as producto')
+            ->where('v.id', '=', $ingreso_id)->get();
+        return  $detallesingreso;
+    }
+
+
+    //funcion para obtener los ultimos 5 compras de un producto en una empresa
+    public function listaprecioscompra($idproducto, $idempresa)
+    {
+        $lista = DB::table('detalleingresos as di')
+            ->join('products as p', 'p.id', '=', 'di.product_id')
+            ->join('ingresos as i', 'i.id', '=', 'di.ingreso_id')
+            ->join('companies as c', 'c.id', '=', 'i.company_id')
+            ->where('p.id', '=', $idproducto)
+            ->where('c.id', '=', $idempresa)
+            ->select(
+                'p.nombre',
+                'di.cantidad',
+                'di.preciounitariomo',
+                'i.fecha',
+                'i.moneda as monedafactura',
+                'p.moneda as monedaproducto',
+                'i.tasacambio'
+            )
+            ->take(5)
+            ->orderByDesc('i.fecha')
+            ->get();
+        $precioscompra = collect();
+        $precio = "";
+        $simboloP = "";
+        for ($i = 0; $i < count($lista); $i++) {
+
+            if ($lista[$i]->monedaproducto == "soles") {
+                $simboloP = "S/. ";
+            } else {
+                $simboloP = "$ ";
+            }
+            if ($lista[$i]->monedafactura == $lista[$i]->monedaproducto) {
+                $precio = $simboloP . $lista[$i]->preciounitariomo;
+            } else if ($lista[$i]->monedafactura == "soles" && $lista[$i]->monedaproducto == "dolares") {
+                $precio = $simboloP . (round(($lista[$i]->preciounitariomo / $lista[$i]->tasacambio), 2));
+            } else if ($lista[$i]->monedafactura == "dolares" && $lista[$i]->monedaproducto == "soles") {
+                $precio = $simboloP . (round(($lista[$i]->preciounitariomo * $lista[$i]->tasacambio), 2));
+            }
+            $compra = collect();
+            $compra->put('fecha', $lista[$i]->fecha);
+            $compra->put('cantidad', $lista[$i]->cantidad);
+            $compra->put('precio', $precio);
+            $compra->put('producto', $lista[$i]->nombre);
+            $precioscompra->push($compra);
         }
+
+        return $precioscompra->values()->all();
     }
 }
