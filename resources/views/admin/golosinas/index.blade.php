@@ -16,7 +16,7 @@
                             </div>
                             <div class="col">
                                 <h4>
-                                    @can('crear-producto')
+                                    @can('crear-golosina')
                                         <a href="{{ url('admin/golosinas/create') }}" class="btn btn-primary float-end">Añadir
                                             Golosina</a>
                                     @endcan
@@ -30,7 +30,7 @@
                                 <tr>
                                     <th>ID</th> 
                                     <th>NOMBRE</th>
-                                    <th>PESO</th> 
+                                    <th>PESO(gramos)</th> 
                                     <th>PRECIO(soles)</th> 
                                     <th>ACCIONES</th>
                                 </tr>
@@ -60,11 +60,11 @@
                                                 <input type="text" class="form-control" id="vernombre" readonly>
                                             </div>
                                             <div class="col-sm-3   mb-3">
-                                                <label for="verprecio" class="col-form-label">PRECIO:</label>
+                                                <label for="verprecio" class="col-form-label">PRECIO(soles):</label>
                                                 <input type="number" class="form-control" id="verprecio" readonly>
                                             </div>
                                             <div class="col-sm-3   mb-3">
-                                                <label for="verpeso" class="col-form-label">PESO:</label>
+                                                <label for="verpeso" class="col-form-label">PESO(gramos):</label>
                                                 <input type="text" class="form-control" id="verpeso" readonly>
                                             </div>
                                             

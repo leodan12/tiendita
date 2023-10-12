@@ -29,7 +29,7 @@ class IngresoController extends Controller
             'permission:ver-ingreso|editar-ingreso|crear-ingreso|eliminar-ingreso',
             ['only' => ['index', 'show']]
         );
-        $this->middleware('permission:crear-ingreso', ['only' => ['create', 'store', 'create2']]);
+        $this->middleware('permission:crear-ingreso', ['only' => ['create', 'store' ]]);
         $this->middleware('permission:editar-ingreso', ['only' => ['edit', 'update', 'destroydetalleingreso']]);
         $this->middleware('permission:eliminar-ingreso', ['only' => ['destroy']]);
     }

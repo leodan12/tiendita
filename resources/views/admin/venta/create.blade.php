@@ -191,23 +191,24 @@
                 for (var i = 0; i < data.length; i++) {
                     var valortexto = "";
                     if (tipoproducto == "UTILES") {
-                        valortexto = data[i].nombre + " - " + data[i].marcautil + " - " + data[i].colorutil;
+                        valortexto = data[i].nombre + " - color:" + data[i].colorutil + " - marca:" + data[i]
+                            .marcautil;
                     } else if (tipoproducto == "UNIFORMES") {
-                        valortexto = data[i].nombre + " - " + data[i].genero + " - " + data[i].talla +
-                            " - " + data[i].tela + " - " + data[i].color;
+                        valortexto = data[i].nombre + " - " + data[i].genero + " - color:" + data[i].color +
+                            " - talla:" + data[i].talla +
+                            " - tela:" + data[i].tela;
                     } else if (tipoproducto == "LIBROS") {
-                        valortexto = data[i].titulo + " - " + data[i].autor + " - " + data[i].anio +
-                            " - " + data[i].original + " - " + data[i].formato + " - " + data[i].tipopapel +
-                            " - " + data[i].tipopasta + " - " + data[i].edicion + " - " + data[i]
-                            .especializacion;
+                        valortexto = data[i].titulo + " - autor:" + data[i].autor + " - año:" + data[i].anio +
+                            " - " + data[i].original + " - formato:" + data[i].formato + " - papel:" + data[i].tipopapel +
+                            " - pasta:" + data[i].tipopasta + " - edicion:" + data[i].edicion + " - especializacion:" + 
+                            data[i].especializacion;
                     } else if (tipoproducto == "INSTRUMENTOS") {
-                        valortexto = data[i].nombre + " - " + data[i].marca + " - " + data[i].modelo +
-                            " - " + data[i].garantia;
+                        valortexto = data[i].nombre + " - marca:" + data[i].marca + " - modelo:" + data[i].modelo ;
                     } else if (tipoproducto == "GOLOSINAS") {
-                        valortexto = data[i].nombre + " - " + data[i].peso;
+                        valortexto = data[i].nombre + " - peso:" + data[i].peso +' gramos';
                     } else if (tipoproducto == "SNACKS") {
-                        valortexto = data[i].nombre + " - " + data[i].tamanio + " - " + data[i].marcasnack +
-                            " - " + data[i].saborsnack;
+                        valortexto = data[i].nombre + " - tamaño:" + data[i].tamanio + " - marca:" + data[i].marcasnack +
+                            " - sabor:" + data[i].saborsnack;
                     }
 
                     producto_select += '<option id="productoxtipo' + data[i].id +
@@ -249,10 +250,10 @@
                     if (idtienda == 1) {
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock1p +
                             ")";
-                    } else if (idtienda == 2){
+                    } else if (idtienda == 2) {
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock2p +
                             ")";
-                    }else {
+                    } else {
                         document.getElementById('labelcantidad').innerHTML = "CANTIDAD(max:" + stock3p +
                             ")";
                     }

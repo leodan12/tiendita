@@ -19,7 +19,7 @@
                             </div>
                             <div class="col">
                                 <h4>
-                                    {{-- @can('crear-empresa')
+                                    {{-- @can('crear-tienda')
                                         <a href="{{ url('admin/tienda/create') }}" class="btn btn-primary float-end">Añadir
                                             Tienda</a>
                                     @endcan --}}

@@ -17,8 +17,14 @@ use App\Models\Tienda;
 
 
 class LibroController extends Controller
-{
-
+{ 
+    function __construct()
+    {
+        $this->middleware('permission:ver-libro|editar-libro|crear-libro|eliminar-libro', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-libro', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-libro', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-libro', ['only' => ['destroy']]); 
+    }
     use HistorialTrait;
 
     public function index(Request $request)

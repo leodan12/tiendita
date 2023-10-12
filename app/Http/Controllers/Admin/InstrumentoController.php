@@ -13,10 +13,17 @@ use Yajra\DataTables\DataTables;
 use App\Traits\HistorialTrait;
 
 class InstrumentoController extends Controller
-{   use HistorialTrait;
-    /**
-     * Display a listing of the resource.
-     */
+{   
+    function __construct()
+    {
+        $this->middleware('permission:ver-instrumento|editar-instrumento|crear-instrumento|eliminar-instrumento', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-instrumento', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-instrumento', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-instrumento', ['only' => ['destroy']]); 
+    }
+
+    use HistorialTrait;
+    
     public function index(Request $request)
     {
         if ($request->ajax()) {

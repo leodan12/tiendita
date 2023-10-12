@@ -16,7 +16,7 @@
                             </div>
                             <div class="col">
                                 <h4>
-                                    @can('crear-producto')
+                                    @can('crear-util')
                                         <a href="{{ url('admin/utiles/create') }}" class="btn btn-primary float-end">Añadir
                                             Utiles</a>
                                     @endcan

@@ -191,11 +191,11 @@
                                 $('#modalCreditos1').modal('hide');
                                 recargartabla();
                                 $(event.target).closest('tr').remove();
-                                mensaje("Registro Eliminado","success"); 
+                                mensaje("Registro Eliminado", "success");
                             } else if (data1 == "0") {
-                                mensaje("Registro No Eliminado","error");  
+                                mensaje("Registro No Eliminado", "error");
                             } else if (data1 == "2") {
-                                mensaje("Registro No Encontrado","error");  
+                                mensaje("Registro No Encontrado", "error");
                             }
                         }
                     });
@@ -210,40 +210,45 @@
             const id = button.getAttribute('data-id');
             $('#detallesventa tbody tr').slice().remove();
             var urlventa = "{{ url('admin/venta/show') }}";
-            $.get(urlventa + '/' + id, function(data) { 
+            $.get(urlventa + '/' + id, function(data) {
                 const modalTitle = mimodal.querySelector('.modal-title')
                 modalTitle.textContent = `Ver Registro ${id}`;
 
                 document.getElementById("verPrecioventa").value = data[0]['costoventa'];
                 document.getElementById("verFecha").value = data[0]['fecha'];
                 document.getElementById("verTienda").value = data[1]['nombre'];
-                if(data[3]){
+                if (data[3]) {
                     document.getElementById("verCliente").value = data[3]['nombre'];
                 }
-                 
+
                 var tabla = document.getElementById(detallesventa);
                 for (var i = 0; i < data[2].length; i++) {
                     var nombre = "";
                     if (data[2][i]['tipo'] == "UTILES") {
-                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['marcautil'] + " - " + data[2][i]['colorutil'];
+                        nombre = data[2][i]['nombre'] + " - marca:" + data[2][i]['marcautil'] +
+                            " - color:" + data[2][i]['colorutil'];
                     } else if (data[2][i]['tipo'] == "UNIFORMES") {
-                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['genero'] + " - " + data[2][i]['talla'] +
-                            " - " + data[2][i]['tela'] + " - " + data[2][i]['color'];
+                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['genero'] + " - talla:" + data[2]
+                            [i]['talla'] +
+                            " - tela:" + data[2][i]['tela'] + " - color:" + data[2][i]['color'];
                     } else if (data[2][i]['tipo'] == "LIBROS") {
-                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['autor'] + " - " + data[2][i]['anio'] +
-                            " - " + data[2][i]['original'] + " - " + data[2][i]['formato'] + " - " + data[2][i]['tipopapel'] +
-                            " - " + data[2][i]['tipopasta'] + " - " + data[2][i]['edicion'] + " - " + data[2][i]['especializacion'];
+                        nombre = data[2][i]['nombre'] + " - autor:" + data[2][i]['autor'] + " - año:" +
+                            data[2][i]['anio'] +
+                            " - formato:" + data[2][i]['formato'] + " - papel:" + data[2][i]['tipopapel'] +
+                            " - pasta:" + data[2][i]['tipopasta'] + " - edicion:" + data[2][i]['edicion'] +
+                            " - especialiacion:" + data[2][i]['especializacion'] +
+                            " - " + data[2][i]['original'];
                     } else if (data[2][i]['tipo'] == "INSTRUMENTOS") {
-                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['marca'] + " - " + data[2][i]['modelo'] +
-                            " - " + data[2][i]['garantia'];
+                        nombre = data[2][i]['nombre'] + " - marca:" + data[2][i]['marca'] +
+                            " - modelo:" + data[2][i]['modelo'];
                     } else if (data[2][i]['tipo'] == "GOLOSINAS") {
-                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['peso'];
+                        nombre = data[2][i]['nombre'] + " - peso:" + data[2][i]['peso'] + " gramos";
                     } else if (data[2][i]['tipo'] == "SNACKS") {
-                        nombre = data[2][i]['nombre'] + " - " + data[2][i]['tamanio'] + " - " + data[2][i]['marcasnack'] +
-                            " - " + data[2][i]['saborsnack'];
+                        nombre = data[2][i]['nombre'] + " - tamaño:" + data[2][i]['tamanio'] +
+                            " - marca:" + data[2][i]['marcasnack'] + " - sabor:" + data[2][i]['saborsnack'];
                     }
 
-                    filaDetalle = '<tr ><td>' + data[2][i]['tipo'] + 
+                    filaDetalle = '<tr ><td>' + data[2][i]['tipo'] +
                         '</td><td >' + nombre +
                         '</td><td style="text-align: center;">' + data[2][i]['cantidad'] +
                         '</td><td style="text-align: center;">S/.' + data[2][i]['preciounitariomo'] +
@@ -253,7 +258,7 @@
                 }
 
             });
-              
+
         })
 
         $('#generarfactura').click(function() {

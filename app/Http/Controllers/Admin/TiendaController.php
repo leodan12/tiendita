@@ -14,11 +14,10 @@ class TiendaController extends Controller
     //para asignar los permisos a las funciones
     function __construct()
     {
-        $this->middleware('permission:ver-empresa|editar-empresa|crear-empresa|eliminar-empresa', ['only' => ['index', 'show']]);
-        $this->middleware('permission:crear-empresa', ['only' => ['create', 'store']]);
-        $this->middleware('permission:editar-empresa', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:eliminar-empresa', ['only' => ['destroy']]);
-        $this->middleware('permission:recuperar-empresa', ['only' => ['showrestore', 'restaurar']]);
+        $this->middleware('permission:ver-tienda|editar-tienda|crear-tienda|eliminar-tienda', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-tienda', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-tienda', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-tienda', ['only' => ['destroy']]); 
     }
     use HistorialTrait;
     //vista index datos para (datatables-yajra)

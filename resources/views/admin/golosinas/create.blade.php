@@ -30,7 +30,7 @@
                                     value="{{ old('nombre') }}" />
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label is-required">PESO</label>
+                                <label class="form-label is-required">PESO(gramos)</label>
                                 <input type="number" name="peso" id="peso" min="0" step="0.01"
                                     class="form-control " required />
                             </div>

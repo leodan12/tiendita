@@ -13,7 +13,15 @@ use App\Traits\HistorialTrait;
 use App\Models\Tienda;
 
 class UtilController extends Controller
-{   use HistorialTrait;
+{   //para asignar los permisos a las funciones
+    function __construct()
+    {
+        $this->middleware('permission:ver-util|editar-util|crear-util|eliminar-util', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-util', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-util', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-util', ['only' => ['destroy']]); 
+    }
+    use HistorialTrait;
     /**
      * Display a listing of the resource.
      */

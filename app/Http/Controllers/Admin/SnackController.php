@@ -13,10 +13,16 @@ use App\Traits\HistorialTrait;
 use App\Models\Tienda;
 
 class SnackController extends Controller
-{   use HistorialTrait;
-    /**
-     * Display a listing of the resource.
-     */
+{    
+     function __construct()
+    {
+        $this->middleware('permission:ver-snack|editar-snack|crear-snack|eliminar-snack', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-snack', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-snack', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-snack', ['only' => ['destroy']]); 
+    }
+    use HistorialTrait;
+    
     public function index(Request $request)
     {
         if ($request->ajax()) {

@@ -137,17 +137,17 @@
                                             @foreach ($detalles as $detalle)
                                                 @php $nombre =""; @endphp
                                                 @if ($detalle['tipo'] == 'UTILES')
-                                                    @php $nombre=$detalle['nombre']. "-" . $detalle['marcautil']."-" . $detalle['colorutil'] ; @endphp
+                                                    @php $nombre=$detalle['nombre']. " - marca:" . $detalle['marcautil']." - color:" . $detalle['colorutil'] ; @endphp
                                                 @elseif($detalle['tipo'] == 'UNIFORMES')
-                                                    @php $nombre=$detalle['nombre']."-" . $detalle['genero']."-" . $detalle['talla']. "-" . $detalle['tela']."-" . $detalle['color'] ; @endphp
+                                                    @php $nombre=$detalle['nombre']." - " . $detalle['genero']." - talla:" . $detalle['talla']. " - tela:" . $detalle['tela']." - color:" . $detalle['color'] ; @endphp
                                                 @elseif($detalle['tipo'] == 'LIBROS')
-                                                    @php $nombre=$detalle['nombre']."-" . $detalle['autor']."-" . $detalle['anio']. "-" . $detalle['edicion']."-" . $detalle['especializacion']. "-" . $detalle['formato']. "-" . $detalle['tipopapel']."-" . $detalle['tipopasta']. "-" . $detalle['original'] ; @endphp
+                                                    @php $nombre=$detalle['nombre']." - autor:" . $detalle['autor']." - año:" . $detalle['anio']. " - edicion:" . $detalle['edicion']." - especializacion:" . $detalle['especializacion']. " - formato:" . $detalle['formato']. " - papel:" . $detalle['tipopapel']." - pasta:" . $detalle['tipopasta']. " - " . $detalle['original'] ; @endphp
                                                 @elseif($detalle['tipo'] == 'INSTRUMENTOS')
-                                                    @php $nombre=$detalle['nombre'] . "-" . $detalle['marca'] . "-" . $detalle['modelo'] ; @endphp
+                                                    @php $nombre=$detalle['nombre'] . " - marca:" . $detalle['marca'] . " - modelo:" . $detalle['modelo'] ; @endphp
                                                 @elseif($detalle['tipo'] == 'GOLOSINAS')
-                                                    @php $nombre=$detalle['nombre'] . "-" . $detalle['peso'] ; @endphp
+                                                    @php $nombre=$detalle['nombre'] . " - peso:" . $detalle['peso']. " gramos" ; @endphp
                                                 @elseif($detalle['tipo'] == 'SNACKS')
-                                                    @php $nombre=$detalle['nombre']. "-" . $detalle['tamanio']  . "-" . $detalle['marcasnack'] . "-" . $detalle['saborsnack'] ; @endphp
+                                                    @php $nombre=$detalle['nombre']. " - tamaño:" . $detalle['tamanio']  . " - marca." . $detalle['marcasnack'] . " - sabor:" . $detalle['saborsnack'] ; @endphp
                                                 @endif
                                                 <tr style="text-align: center;" id="fila{{ $indice }}">
                                                     <td style="text-align: left;">{{ $detalle['tipo'] }}</td>
@@ -223,23 +223,24 @@
                 for (var i = 0; i < data.length; i++) {
                     var valortexto = "";
                     if (tipoproducto == "UTILES") {
-                        valortexto = data[i].nombre + " - " + data[i].marcautil + " - " + data[i].colorutil;
+                        valortexto = data[i].nombre + " - color:" + data[i].colorutil + " - marca:" + data[i]
+                            .marcautil;
                     } else if (tipoproducto == "UNIFORMES") {
-                        valortexto = data[i].nombre + " - " + data[i].genero + " - " + data[i].talla +
-                            " - " + data[i].tela + " - " + data[i].color;
+                        valortexto = data[i].nombre + " - " + data[i].genero + " - color:" + data[i].color +
+                            " - talla:" + data[i].talla +
+                            " - tela:" + data[i].tela;
                     } else if (tipoproducto == "LIBROS") {
-                        valortexto = data[i].titulo + " - " + data[i].autor + " - " + data[i].anio +
-                            " - " + data[i].original + " - " + data[i].formato + " - " + data[i].tipopapel +
-                            " - " + data[i].tipopasta + " - " + data[i].edicion + " - " + data[i]
-                            .especializacion;
+                        valortexto = data[i].titulo + " - autor:" + data[i].autor + " - año:" + data[i].anio +
+                            " - " + data[i].original + " - formato:" + data[i].formato + " - papel:" + data[i].tipopapel +
+                            " - pasta:" + data[i].tipopasta + " - edicion:" + data[i].edicion + " - especializacion:" + 
+                            data[i].especializacion;
                     } else if (tipoproducto == "INSTRUMENTOS") {
-                        valortexto = data[i].nombre + " - " + data[i].marca + " - " + data[i].modelo +
-                            " - " + data[i].garantia;
+                        valortexto = data[i].nombre + " - marca:" + data[i].marca + " - modelo:" + data[i].modelo ;
                     } else if (tipoproducto == "GOLOSINAS") {
-                        valortexto = data[i].nombre + " - " + data[i].peso;
+                        valortexto = data[i].nombre + " - peso:" + data[i].peso +' gramos';
                     } else if (tipoproducto == "SNACKS") {
-                        valortexto = data[i].nombre + " - " + data[i].tamanio + " - " + data[i].marcasnack +
-                            " - " + data[i].saborsnack;
+                        valortexto = data[i].nombre + " - tamaño:" + data[i].tamanio + " - marca:" + data[i].marcasnack +
+                            " - sabor:" + data[i].saborsnack;
                     }
 
                     producto_select += '<option id="productoxtipo' + data[i].id +

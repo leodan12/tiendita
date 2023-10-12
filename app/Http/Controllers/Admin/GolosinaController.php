@@ -15,6 +15,14 @@ use App\Models\Tienda;
 
 class GolosinaController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:ver-golosina|editar-golosina|crear-golosina|eliminar-golosina', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-golosina', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-golosina', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-golosina', ['only' => ['destroy']]); 
+    }
+
     use HistorialTrait;
     //vista index datos para (datatables-yajra)
     public function index(Request $request)

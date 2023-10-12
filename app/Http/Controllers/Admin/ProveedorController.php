@@ -15,11 +15,10 @@ class ProveedorController extends Controller
 {   //para asignar los permisos a las funciones
     function __construct()
     {
-        $this->middleware('permission:ver-cliente|editar-cliente|crear-cliente|eliminar-cliente', ['only' => ['index', 'show']]);
-        $this->middleware('permission:crear-cliente', ['only' => ['create', 'store']]);
-        $this->middleware('permission:editar-cliente', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:eliminar-cliente', ['only' => ['destroy']]);
-        $this->middleware('permission:recuperar-cliente', ['only' => ['showrestore', 'restaurar']]);
+        $this->middleware('permission:ver-proveedor|editar-proveedor|crear-proveedor|eliminar-proveedor', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-proveedor', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-proveedor', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-proveedor', ['only' => ['destroy']]); 
     }
 
     use HistorialTrait;

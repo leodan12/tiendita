@@ -14,7 +14,14 @@ use App\Traits\HistorialTrait;
 use App\Models\Tienda;
 
 class UniformeController extends Controller
-{
+{//para asignar los permisos a las funciones
+    function __construct()
+    {
+        $this->middleware('permission:ver-uniforme|editar-uniforme|crear-uniforme|eliminar-uniforme', ['only' => ['index', 'show']]);
+        $this->middleware('permission:crear-uniforme', ['only' => ['create', 'store']]);
+        $this->middleware('permission:editar-uniforme', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:eliminar-uniforme', ['only' => ['destroy']]); 
+    }
     use HistorialTrait;
     //vista index datos para (datatables-yajra)
     public function index(Request $request)

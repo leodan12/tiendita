@@ -24,41 +24,41 @@ class PermisosSeeder extends Seeder
             'crear-usuario',
             'editar-usuario',
             'eliminar-usuario',
-            //para categorias
-            'ver-categoria',
-            'crear-categoria',
-            'editar-categoria',
-            'eliminar-categoria',
-            //para productos
-            'ver-producto',
-            'crear-producto',
-            'editar-producto',
-            'eliminar-producto',
-            //para kits
-            'ver-kit',
-            'crear-kit',
-            'editar-kit',
-            'eliminar-kit',
+            //para golosinas
+            'ver-golosina',
+            'crear-golosina',
+            'editar-golosina',
+            'eliminar-golosina',
+            //para instrumentos
+            'ver-instrumento',
+            'crear-instrumento',
+            'editar-instrumento',
+            'eliminar-instrumento',
+            //para libros
+            'ver-libro',
+            'crear-libro',
+            'editar-libro',
+            'eliminar-libro',
             //para empresas
-            'ver-empresa',
-            'crear-empresa',
-            'editar-empresa',
-            'eliminar-empresa',
+            'ver-proveedor',
+            'crear-proveedor',
+            'editar-proveedor',
+            'eliminar-proveedor',
             //para clientes
             'ver-cliente',
             'crear-cliente',
             'editar-cliente',
             'eliminar-cliente',
-            //para  inventarios
-            'ver-inventario',
-            'crear-inventario',
-            'editar-inventario',
-            'eliminar-inventario',
-            //para cotizaciones 
-            'ver-cotizacion',
-            'crear-cotizacion',
-            'editar-cotizacion',
-            'eliminar-cotizacion',
+            //para  snacks
+            'ver-snack',
+            'crear-snack',
+            'editar-snack',
+            'eliminar-snack',
+            //para tienda 
+            'ver-tienda',
+            'crear-tienda',
+            'editar-tienda',
+            'eliminar-tienda',
             //para  compras o ingresos
             'ver-ingreso',
             'crear-ingreso',
@@ -70,57 +70,20 @@ class PermisosSeeder extends Seeder
             'editar-venta',
             'eliminar-venta',
             //para  lista de precios
-            'ver-lista-precios',
-            'crear-lista-precios',
-            'editar-lista-precios',
-            'eliminar-lista-precios',
-            //para modelo de carros---------------------------------
-            'ver-modelo-carro',
-            'crear-modelo-carro',
-            'editar-modelo-carro',
-            'eliminar-modelo-carro',
+            'ver-uniforme',
+            'crear-uniforme',
+            'editar-uniforme',
+            'eliminar-uniforme', 
             //para carrocerias
-            'ver-carroceria',
-            'crear-carroceria',
-            'editar-carroceria',
-            'eliminar-carroceria',
-            //para produccion de carros
-            'ver-produccion-carro',
-            'crear-produccion-carro',
-            'editar-produccion-carro',
-            'eliminar-produccion-carro',
-            //para las ordenes de compras
-            'ver-orden-compra',
-            'crear-orden-compra',
-            'editar-orden-compra',
-            'eliminar-orden-compra',
-            //para el material electrico
-            'ver-material-electrico',
-            'crear-material-electrico',
-            'editar-material-electrico',
-            'eliminar-material-electrico',
-            //para el material electrico
-            'ver-red',
-            'crear-red',
-            'editar-red',
-            'eliminar-red',
-
-            //para reportes
-            'ver-reporte',
-            //para recuperar los registros
-            'recuperar-categoria',
-            'recuperar-producto',
-            'recuperar-kit',
-            'recuperar-empresa',
-            'recuperar-cliente',
-            'recuperar-inventario',
-            'recuperar-modelo-carro',
-            'recuperar-carroceria',
-            //para  HISTORIAL
-            'ver-historial',
-            'eliminar-historial',
+            'ver-util',
+            'crear-util',
+            'editar-util',
+            'eliminar-util',
+             
             //para  PRECIO FOB
-            'ver-preciofob',
+            'ver-reporte',
+            'ver-inventario',
+            'editar-inventario',
 
         ];
 

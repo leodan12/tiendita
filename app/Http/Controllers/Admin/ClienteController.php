@@ -22,8 +22,7 @@ class ClienteController extends Controller
         $this->middleware('permission:ver-cliente|editar-cliente|crear-cliente|eliminar-cliente', ['only' => ['index', 'show']]);
         $this->middleware('permission:crear-cliente', ['only' => ['create', 'store']]);
         $this->middleware('permission:editar-cliente', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:eliminar-cliente', ['only' => ['destroy']]);
-        $this->middleware('permission:recuperar-cliente', ['only' => ['showrestore', 'restaurar']]);
+        $this->middleware('permission:eliminar-cliente', ['only' => ['destroy']]); 
     }
 
     use HistorialTrait;
