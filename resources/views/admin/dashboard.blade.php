@@ -63,26 +63,50 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Al Contado:</h5>
+                                        <h5>Uniformes:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verIngresocontado"> </h5>
+                                        <h5 id="ingresouniformes"> </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>A Credito:</h5>
+                                        <h5>Libros:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verIngresocredito"> </h5>
+                                        <h5 id="ingresolibros"> </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Por Pagar:</h5>
+                                        <h5>Instrumentos:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verIngresoxpagar"> </h5>
+                                        <h5 id="ingresoinstrumentos"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Utiles:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="ingresoutiles"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Golosinas:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="ingresogolosinas"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Snacks:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="ingresosnacks"> </h5>
                                     </div>
                                 </div>
                             </div>
@@ -105,26 +129,50 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Al Contado:</h5>
+                                        <h5>Uniformes:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verVentacontado"> </h5>
+                                        <h5 id="salidauniformes"> </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>A Credito:</h5>
+                                        <h5>Libros:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verVentacredito"> </h5>
+                                        <h5 id="salidalibros"> </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Por Cobrar:</h5>
+                                        <h5>Instrumentos:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verVentaxpagar"> </h5>
+                                        <h5 id="salidainstrumentos"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Utiles:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="salidautiles"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Golosinas:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="salidagolosinas"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Snacks:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="salidasnacks"> </h5>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +185,7 @@
                             <div class="card-title">
                                 <div class="row">
                                     <div class="col-10" style="text-align: left">
-                                        <h6>COTIZACIONES DEL MES: </h6>
+                                        <h6>PRODUCTOS SIN STOCK: </h6>
                                     </div>
                                     <div class="col-2 centro">
                                         <h6 id="verCotizacionmes"> </h6>
@@ -147,26 +195,50 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Al Contado:</h5>
+                                        <h5>Uniformes:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verCotizacioncontado"> </h5>
+                                        <h5 id="sinstockuniformes">{{ $uniformessinstock }} </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>A Credito:</h5>
+                                        <h5>Libros:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verCotizacioncredito"> </h5>
+                                        <h5 id="sinstocklibros">{{ $librossinstock }} </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Vendidas:</h5>
+                                        <h5>Instrumentos:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verCotizacionvendida"> </h5>
+                                        <h5 id="sinstockinstrumentos">{{ $instrumentossinstock }} </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Utiles:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="sinstockutiles">{{ $utilessinstock }} </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Golosinas:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="sinstockgolosinas">{{ $golosinassinstock }} </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Snacks:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="sinstocksnacks">{{ $snackssinstock }} </h5>
                                     </div>
                                 </div>
                             </div>
@@ -190,26 +262,50 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>En Stock:</h5>
+                                        <h5>Uniformes:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verProductostock"> </h5>
+                                        <h5 id="stockuniformes"> </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>En Stock Min:</h5>
+                                        <h5>Libros:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verProductominimo"> </h5>
+                                        <h5 id="stocklibros"> </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-9" style="text-align: left">
-                                        <h5>Sin Stock:</h5>
+                                        <h5>Instrumentos:</h5>
                                     </div>
                                     <div class="col-3" style="text-align: center">
-                                        <h5 id="verProductosin"> </h5>
+                                        <h5 id="stockinstrumentos"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Utiles:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="stockutiles"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Golosinas:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="stockgolosinas"> </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-9" style="text-align: left">
+                                        <h5>Snacks:</h5>
+                                    </div>
+                                    <div class="col-3" style="text-align: center">
+                                        <h5 id="stocksnacks"> </h5>
                                     </div>
                                 </div>
                             </div>
@@ -220,7 +316,7 @@
             <br>
             <div class="row">
                 @if ($uniformessinstock > 0)
-                    <div class="col">
+                    <div class="col-md-6">
                         <div class="alert alert-danger" role="alert">
 
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
@@ -242,7 +338,7 @@
                     </div>
                 @endif
                 @if ($librossinstock > 0)
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -264,7 +360,7 @@
                 @endif
 
                 @if ($instrumentossinstock > 0)
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="alert alert-danger" role="alert">
 
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
@@ -286,7 +382,7 @@
                     </div>
                 @endif
                 @if ($utilessinstock > 0)
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -307,7 +403,7 @@
                     </div>
                 @endif
                 @if ($golosinassinstock > 0)
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -328,7 +424,7 @@
                     </div>
                 @endif
                 @if ($snackssinstock > 0)
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="alert alert-danger" role="alert">
                             <h2 class="alert-heading"><svg xmlns="http://www.w3.org/2000/svg" style="width: 40px;"
                                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16"
@@ -357,25 +453,27 @@
         $(document).ready(function() {
             var urlbalance = "{{ url('admin/reporte/balancemensualinicio') }}";
             $.get(urlbalance, function(data) {
-                document.getElementById('verIngresomes').innerHTML = (data.ingresomes);
-                document.getElementById('verIngresocredito').innerHTML = (data.ingresocredito);
-                document.getElementById('verIngresocontado').innerHTML = (data.ingresocontado);
-                document.getElementById('verIngresoxpagar').innerHTML = (data.ingresoxpagar);
+                console.log(data);
+                document.getElementById('ingresolibros').innerHTML = data['compras']['LIBROS']?? "";
+                document.getElementById('ingresoinstrumentos').innerHTML = data['compras']['INSTRUMENTOS']?? "";
+                document.getElementById('ingresouniformes').innerHTML = data['compras']['UNIFORMES']?? "";
+                document.getElementById('ingresoutiles').innerHTML = data['compras']['UTILES']?? "";
+                document.getElementById('ingresogolosinas').innerHTML = data['compras']['GOLOSINAS']?? "";
+                document.getElementById('ingresosnacks').innerHTML = data['compras']['SNACKS']?? "";
 
-                document.getElementById('verVentames').innerHTML = (data.ventames);
-                document.getElementById('verVentacredito').innerHTML = (data.ventacredito);
-                document.getElementById('verVentacontado').innerHTML = (data.ventacontado);
-                document.getElementById('verVentaxpagar').innerHTML = (data.ventaxpagar);
+                document.getElementById('salidalibros').innerHTML = data['ventas']['LIBROS']?? "";
+                document.getElementById('salidainstrumentos').innerHTML = data['ventas']['INSTRUMENTOS']?? "";
+                document.getElementById('salidauniformes').innerHTML = data['ventas']['UNIFORMES']?? "";
+                document.getElementById('salidautiles').innerHTML = data['ventas']['UTILES']?? "";
+                document.getElementById('salidagolosinas').innerHTML = data['ventas']['GOLOSINAS']?? "";
+                document.getElementById('salidasnacks').innerHTML = data['ventas']['SNACKS']?? "";
 
-                document.getElementById('verCotizacionmes').innerHTML = (data.cotizacionmes);
-                document.getElementById('verCotizacioncredito').innerHTML = (data.cotizacioncredito);
-                document.getElementById('verCotizacioncontado').innerHTML = (data.cotizacioncontado);
-                document.getElementById('verCotizacionvendida').innerHTML = (data.cotizacionvendida);
-
-                document.getElementById('verProducto').innerHTML = (data.producto);
-                document.getElementById('verProductostock').innerHTML = (data.productostock);
-                document.getElementById('verProductominimo').innerHTML = (data.productominimo);
-                document.getElementById('verProductosin').innerHTML = (data.productosin);
+                document.getElementById('stocklibros').innerHTML = data['stocks']['LIBROS']?? "";
+                document.getElementById('stockinstrumentos').innerHTML = data['stocks']['INSTRUMENTOS']?? "";
+                document.getElementById('stockuniformes').innerHTML = data['stocks']['UNIFORMES']?? "";
+                document.getElementById('stockutiles').innerHTML = data['stocks']['UTILES']?? "";
+                document.getElementById('stockgolosinas').innerHTML = data['stocks']['GOLOSINAS']?? "";
+                document.getElementById('stocksnacks').innerHTML = data['stocks']['SNACKS']?? "";
             });
         });
     </script>

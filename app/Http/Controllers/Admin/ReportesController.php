@@ -677,149 +677,72 @@ class ReportesController extends Controller
         $fecha = date('Y-m-d');
         $dia = date('d');
         $inicio =  date("Y-m-d", strtotime($fecha . "- $dia days"));
-
-        $ventames = $this->numeroventas('-1', '', $inicio);
-        $ventacontado = $this->numeroventas('contado', 'SI', $inicio);
-        $ventacredito = $ventames - $ventacontado;
-        $ventaxpagar = $this->numeroventas('credito', 'NO', '2010-01-01');
-
-        $ingresomes = $this->numeroingresos('-1', '', $inicio);
-        $ingresocontado = $this->numeroingresos('contado', 'SI', $inicio);
-        $ingresocredito = $ingresomes - $ingresocontado;
-        $ingresoxpagar = $this->numeroingresos('credito', 'NO', '2010-01-01');
-
-        $cotizacionmes = $this->numerocotizaciones('-1', '');
-        $cotizacioncontado = $this->numerocotizaciones('contado', '');
-        $cotizacioncredito = $cotizacionmes - $cotizacioncontado;
-        $cotizacionvendida = $this->numerocotizaciones('-1', 'SI');
-
-        $producto = $this->numeroproductos('');
-        $productostock = $this->numeroproductos('stock');
-        $productominimo = $this->numeroproductos('minimo');
-        $productosin = $this->numeroproductos('sin');
+        $numeroventas = $this->numeroventas($inicio);
+        $numerocompras = $this->numerocompras($inicio);
+        $sinstocks = $this->productossinstock($inicio);
 
         //return $productosin;
 
         $datos = collect();
-        $datos->put('ventames', $ventames);
-        $datos->put('ventacontado', $ventacontado);
-        $datos->put('ventacredito', $ventacredito);
-        $datos->put('ventaxpagar', $ventaxpagar);
-        $datos->put('ingresomes', $ingresomes);
-        $datos->put('ingresocontado', $ingresocontado);
-        $datos->put('ingresocredito', $ingresocredito);
-        $datos->put('ingresoxpagar', $ingresoxpagar);
-        $datos->put('cotizacionmes', $cotizacionmes);
-        $datos->put('cotizacioncontado', $cotizacioncontado);
-        $datos->put('cotizacioncredito', $cotizacioncredito);
-        $datos->put('cotizacionvendida', $cotizacionvendida);
-        $datos->put('producto', $producto);
-        $datos->put('productostock', $productostock);
-        $datos->put('productominimo', $productominimo);
-        $datos->put('productosin', $productosin);
-
+        $datos->put('ventas', $numeroventas);
+        $datos->put('compras', $numerocompras);
+        $datos->put('stocks', $sinstocks);
         return $datos;
     }
     //obtener el numero de ventas realizadas a credito y contado
-    public function numeroventas($formapago, $pagado, $inicio)
+    public function numeroventas($inicio)
     {
-        $ventas = "";
-        if ($formapago != '-1') {
-            $ventas = DB::table('ventas as v')
-                ->where('v.formapago', '=', $formapago)
-                ->where('v.fecha', '>=', $inicio)
-                ->where('v.pagada', '=', $pagado)
-                ->count();
-        } else {
-            $ventas = DB::table('ventas as v')
-                ->where('v.fecha', '>=', $inicio)
-                ->count();
+        $datos = collect();
+        $ventas = DB::table('ventas as v')
+            ->join('detalleventas as dv', 'dv.venta_id', '=', 'v.id')
+            ->select('dv.tipo', DB::raw('SUM(dv.cantidad) as cantidad'))
+            ->where('v.fecha', '>=', $inicio)
+            ->groupBy('dv.tipo')
+            ->get();
+        foreach ($ventas as $venta) {
+            $datos->put($venta->tipo, $venta->cantidad);
         }
-        return   $ventas;
+        return   $datos;
     }
-    //numero de ingresos realizados a credito y contado
-    public function numeroingresos($formapago, $pagado, $inicio)
+    public function numerocompras($inicio)
     {
-        $fecha = date('Y-m-d');
+        $datos = collect();
+        $ingresos = DB::table('ingresos as i')
+            ->join('detalleingresos as di', 'di.ingreso_id', '=', 'i.id')
+            ->select('di.tipo', DB::raw('SUM(di.cantidad) as cantidad'))
+            ->where('i.fecha', '>=', $inicio)
+            ->groupBy('di.tipo')
+            ->get();
+        foreach ($ingresos as $ingreso) {
+            $datos->put($ingreso->tipo, $ingreso->cantidad);
+        }
+        return   $datos;
+    }
+    public function productossinstock($inicio)
+    {
+        $datos = collect();
+        $registro = DB::table('utiles as r')
+            ->count();
+        $datos->put('UTILES', $registro);
+        $registro1 = DB::table('libros as r')
+            ->count();
+        $datos->put('LIBROS', $registro1);
+        $registro2 = DB::table('uniformes as r')
+            ->count();
+        $datos->put('UNIFORMES', $registro2);
+        $registro3 = DB::table('instrumentos as r')
+            ->count();
+        $datos->put('INSTRUMENTOS', $registro3);
+        $registro4 = DB::table('golosinas as r')
+            ->count();
+        $datos->put('GOLOSINAS', $registro4);
+        $registro5 = DB::table('snacks as r')
+            ->count();
+        $datos->put('SNACKS', $registro5);
 
-        $ventas = "";
-        if ($formapago != '-1') {
-            $ventas = DB::table('ingresos as i')
-                ->where('i.formapago', '=', $formapago)
-                ->where('i.fecha', '>=', $inicio)
-                ->where('i.pagada', '=', $pagado)
-                ->count();
-        } else {
-            $ventas = DB::table('ingresos as i')
-                ->where('i.fecha', '>=', $inicio)
-                ->count();
-        }
-        return   $ventas;
+        return   $datos;
     }
-    //obtener el numero de cotizaciones vendidas y sin vender
-    public function numerocotizaciones($formapago, $vendida)
-    {
-        $fecha = date('Y-m-d');
-        $dia = date('d');
-        $inicio =  date("Y-m-d", strtotime($fecha . "- $dia days"));
-        $ventas = "";
-        if ($formapago != '-1') {
-            $ventas = DB::table('cotizacions as c')
-                ->where('c.formapago', '=', $formapago)
-                ->where('c.fecha', '>=', $inicio)
-                ->count();
-        } else {
-            if ($vendida == "SI") {
-                $ventas = DB::table('cotizacions as c')
-                    ->where('c.fecha', '>=', $inicio)
-                    ->where('c.vendida', '=', $vendida)
-                    ->count();
-            } else {
-                $ventas = DB::table('cotizacions as c')
-                    ->where('c.fecha', '>=', $inicio)
-                    ->count();
-            }
-        }
-        return   $ventas;
-    }
-    //numero de productos que tienen estock minimo y sin stock
-    public function numeroproductos($stock)
-    {
-        $productos = "";
-        if ($stock == 'stock') {
-            $cont = 0;
-            $prod  = DB::table('products as p')
-                ->join('inventarios as i', 'i.product_id', '=', 'p.id')
-                ->get();
-            for ($i = 0; $i < count($prod); $i++) {
-                if ($prod[$i]->stockminimo < $prod[$i]->stocktotal) {
-                    $cont++;
-                }
-            }
-            $productos = $cont;
-        } else if ($stock == 'minimo') {
-            $cont = 0;
-            $prod  = DB::table('products as p')
-                ->join('inventarios as i', 'i.product_id', '=', 'p.id')
-                ->get();
-            for ($i = 0; $i < count($prod); $i++) {
-                if ($prod[$i]->stockminimo >= $prod[$i]->stocktotal) {
-                    $cont++;
-                }
-            }
-            $productos = $cont;
-        } else if ($stock == 'sin') {
-            $productos = DB::table('products as p')
-                ->join('inventarios as i', 'i.product_id', '=', 'p.id')
-                ->where('i.stocktotal', '=', 0)
-                ->count();
-        } else {
-            $productos = DB::table('products as p')
-                ->join('inventarios as i', 'i.product_id', '=', 'p.id')
-                ->count();
-        }
-        return   $productos;
-    }
+
     //--------------para traer datos de las ventas y compras de los productos por empresa o producto y fechas-------------------------
     //vista inicio de reporte de ventas y compras
     public function infoproductos()
