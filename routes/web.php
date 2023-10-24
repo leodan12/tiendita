@@ -27,23 +27,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
         Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'inicio']);
  
-         
-        //Rutas de las empresas
-        Route::controller(App\Http\Controllers\Admin\CompanyController::class)->group(function () {
-            Route::get('/company', 'index')->name('empresas.index');
-            Route::get('/company/create', 'create');
-            Route::post('/company', 'store');
-            Route::get('/company/{company}/edit', 'edit');
-            Route::put('/company/{company}', 'update');
-            Route::get('/company/show/{id}', 'show'); //ver   
-            Route::get('/company/{company_id}/delete', 'destroy');
-            Route::get('/company/showrestore', 'showrestore');
-            Route::get('/company/restaurar/{idregistro}', 'restaurar');
-
-            Route::get('/company/sininventario/{id}', 'sininventario');
-            
-            //--------------------------------------------------------------------
-
+           
             //rutas de los roles
             Route::controller(App\Http\Controllers\Admin\RolController::class)->group(function () {
                 Route::get('/rol', 'index')->name('rol.index');
@@ -285,6 +269,6 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::get('/proveedor/showrestore', 'showrestore');
                 Route::get('/proveedor/restaurar/{idregistro}', 'restaurar');
             });
-        });
+        
     });
 });

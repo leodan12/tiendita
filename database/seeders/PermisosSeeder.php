@@ -79,7 +79,10 @@ class PermisosSeeder extends Seeder
             'crear-util',
             'editar-util',
             'eliminar-util',
-             
+             //historial
+            'ver-historial',
+            'eliminar-historial',
+
             //para  PRECIO FOB
             'ver-reporte',
             'ver-inventario',

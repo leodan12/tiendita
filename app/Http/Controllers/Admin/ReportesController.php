@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Company;
+use App\Models\Tienda;
 use App\Models\Product;
 use App\Models\Cliente;
 
@@ -27,7 +27,8 @@ class ReportesController extends Controller
         $dias = date('d');
         $dias = $dias - 1;
         $inicio =  date("Y-m-d", strtotime($hoy . "- $dias days"));
-        $companies = Company::all();
+        $tiendas = Tienda::all();
+
         $ingresomes = $this->obteneringresos(-1, date('d'));
         $ingresosemana = $this->obteneringresos(-1, date('w'));
         $ingresodia = $this->obteneringresos(-1, 1);
@@ -36,17 +37,11 @@ class ReportesController extends Controller
         $ventasemana = $this->obtenerventas(-1, date('w'));
         $ventadia = $this->obtenerventas(-1, 1);
 
-        $cotizacionmes = $this->obtenercotizaciones(-1, date('d'));
-        $cotizacionsemana = $this->obtenercotizaciones(-1, date('w'));
-        $cotizaciondia = $this->obtenercotizaciones(-1, 1);
 
-        $productomes = $this->obtenerproductos(-1, "-1");
-        $productominimo = $this->obtenerproductos(-1, "minimo");
-        $productosinstock = $this->obtenerproductos(-1, "sin");
 
         $ventas = $this->ventasdelmes('-1', $inicio, $hoy);
         $compras = $this->comprasdelmes('-1', $inicio, $hoy);
-        $cotizacions = $this->cotizacionesdelmes('-1', $inicio, $hoy);
+
 
         $fechas = $this->todasfechas($ventas, $compras, $cotizacions);
         $datosventas = $this->misventas($fechas, $ventas);
@@ -134,102 +129,46 @@ class ReportesController extends Controller
         return $resultados;
     }
     //obtener los ingresos  de una empresa
-    public function obteneringresos($idempresa, $dia)
+    public function obteneringresos($idtienda, $dia)
     {
         $hoy = date('Y-m-d');
         $inicio =  date("Y-m-d", strtotime($hoy . "- $dia days"));
-        $ingresosmes = 0;
 
-        if ($idempresa != -1) {
+        if ($idtienda != -1) {
             $ingresos = DB::table('ingresos as i')
-                ->join('clientes as c', 'c.id', '=', 'i.cliente_id')
-                ->select('i.*')
-                ->where('i.company_id', '=', $idempresa)
+                ->where('i.tienda_id', '=', $idtienda)
                 ->where('i.fecha', '<=', $hoy)
                 ->where('i.fecha', '>', $inicio)
-                ->whereNotIn('c.ruc', function ($query) {
-                    $query->select('e.ruc')->from('companies as e');
-                })
-                ->get();
-            $ingresosmes = $this->sumarcostoventa($ingresos, 0);
+                ->sum('i.costoventa');
         } else {
             $ingresos = DB::table('ingresos as i')
-                ->join('clientes as c', 'c.id', '=', 'i.cliente_id')
-                ->select('i.*')
                 ->where('i.fecha', '<=', $hoy)
                 ->where('i.fecha', '>', $inicio)
-                ->whereNotIn('c.ruc', function ($query) {
-                    $query->select('e.ruc')->from('companies as e');
-                })
-                ->get();
-            $ingresosmes = $this->sumarcostoventa($ingresos, 0);
+                ->sum('i.costoventa');
         }
-        return   $ingresosmes;
+        return   $ingresos;
     }
     //obtener las ventas de una empresa
-    public function obtenerventas($idempresa, $dia)
+    public function obtenerventas($idtienda, $dia)
     {
         $hoy = date('Y-m-d');
         $inicio =  date("Y-m-d", strtotime($hoy . "- $dia days"));
-        $ventasmes = 0;
-        if ($idempresa != -1) {
-            $ventas = DB::table('ventas as v')
-                ->join('clientes as c', 'c.id', '=', 'v.cliente_id')
-                ->select('v.*')
-                ->where('v.company_id', '=', $idempresa)
-                ->where('v.fecha', '<=', $hoy)
-                ->where('v.fecha', '>', $inicio)
-                ->whereNotIn('c.ruc', function ($query) {
-                    $query->select('e.ruc')->from('companies as e');
-                })
-                ->get();
-            $ventasmes = $this->sumarcostoventa($ventas, 0);
+        if ($idtienda != -1) {
+            $ventas = DB::table('ventas as i')
+                ->where('i.tienda_id', '=', $idtienda)
+                ->where('i.fecha', '<=', $hoy)
+                ->where('i.fecha', '>', $inicio)
+                ->sum('i.costoventa');
         } else {
-            $ventas = DB::table('ventas as v')
-                ->join('clientes as c', 'c.id', '=', 'v.cliente_id')
-                ->select('v.*')
-                ->where('v.fecha', '<=', $hoy)
-                ->where('v.fecha', '>', $inicio)
-                ->whereNotIn('c.ruc', function ($query) {
-                    $query->select('e.ruc')->from('companies as e');
-                })
-                ->get();
-            $ventasmes = $this->sumarcostoventa($ventas, 0);
+            $ventas = DB::table('ventas as i')
+                ->where('i.fecha', '<=', $hoy)
+                ->where('i.fecha', '>', $inicio)
+                ->sum('i.costoventa');
         }
-        return   $ventasmes;
+        return   $ventas;
     }
     //obtener las cotizaciones de una empresa
-    public function obtenercotizaciones($idempresa, $dia)
-    {
-        $hoy = date('Y-m-d');
-        $inicio =  date("Y-m-d", strtotime($hoy . "- $dia days"));
-        $cotizacionmes = 0;
-        if ($idempresa != -1) {
-            $cotizaciones = DB::table('cotizacions as ct')
-                ->join('clientes as c', 'c.id', '=', 'ct.cliente_id')
-                ->select('ct.*')
-                ->where('ct.company_id', '=', $idempresa)
-                ->where('ct.fecha', '<=', $hoy)
-                ->where('ct.fecha', '>', $inicio)
-                ->whereNotIn('c.ruc', function ($query) {
-                    $query->select('e.ruc')->from('companies as e');
-                })
-                ->get();
-            $cotizacionmes = $this->sumarcostoventa($cotizaciones, 1);
-        } else {
-            $cotizaciones = DB::table('cotizacions as ct')
-                ->join('clientes as c', 'c.id', '=', 'ct.cliente_id')
-                ->select('ct.*')
-                ->where('ct.fecha', '<=', $hoy)
-                ->where('ct.fecha', '>', $inicio)
-                ->whereNotIn('c.ruc', function ($query) {
-                    $query->select('e.ruc')->from('companies as e');
-                })
-                ->get();
-            $cotizacionmes = $this->sumarcostoventa($cotizaciones, 1);
-        }
-        return   $cotizacionmes;
-    }
+
     //obtener los productos de una empresa
     public function obtenerproductos($idempresa, $stock)
     {
@@ -297,27 +236,7 @@ class ReportesController extends Controller
         }
         return $productos;
     }
-    //sumar el costo de las ventas
-    public function sumarcostoventa($ingresos, $c)
-    {
-        $costoventa = 0;
-        for ($i = 0; $i < count($ingresos); $i++) {
-            if ($ingresos[$i]->moneda == 'dolares') {
-                if ($c == 1) {
-                    $costoventa =  $costoventa + ($ingresos[$i]->costoventasinigv * $ingresos[$i]->tasacambio);
-                } else {
-                    $costoventa =  $costoventa + ($ingresos[$i]->costoventa * $ingresos[$i]->tasacambio);
-                }
-            } else {
-                if ($c == 1) {
-                    $costoventa =  $costoventa + $ingresos[$i]->costoventasinigv;
-                } else {
-                    $costoventa =  $costoventa + $ingresos[$i]->costoventa;
-                }
-            }
-        }
-        return  round($costoventa, 2);
-    }
+
     //---obtener los datos para el reporte grafico
     public function misventas($fechas, $ventas)
     {
@@ -517,7 +436,7 @@ class ReportesController extends Controller
             ->get();
         return  $productosxkit_ingreso;
     }
-    //sumar la cantidad de los productos 
+    //sumar la cantidad de los productos
     public function sumaproductos($productos)
     {
         $misproductos = collect();
@@ -748,8 +667,8 @@ class ReportesController extends Controller
     public function infoproductos()
     {
         $companies = Company::all();
-        $productos = Product::all();
-        return view('admin.reporte.infoproductos', compact('companies', 'productos'));
+        // $productos = Product::all();
+        return view('admin.reporte.infoproductos', compact('companies'));
     }
     //obtener los datos de las ventas y compras
     public function datosproductos($fechainicio, $fechafin, $empresa, $producto)
@@ -1498,7 +1417,7 @@ class ReportesController extends Controller
                     $misprod = $this->productosxdetallexkitingreso($misventas[$i]->iddetalleventa);
                 }
                 for ($x = 0; $x < count($misprod); $x++) {
-                    $newproduct = Product::find($misprod[$x]->id); //para poner los datos del producto nuevo que buscamos 
+                    $newproduct = Product::find($misprod[$x]->id); //para poner los datos del producto nuevo que buscamos
                     $costoprod = 0;
                     $costoprod =  $newproduct->NoIGV;
                     if ($misventas[$i]->moneda == $newproduct->moneda) {
@@ -2043,7 +1962,7 @@ class ReportesController extends Controller
         }
         return $resultado;
     }
-    // vista reporte de cobro de las ventas  
+    // vista reporte de cobro de las ventas
     public function cobroventas()
     {
         $companies = Company::all();
@@ -2475,7 +2394,7 @@ class ReportesController extends Controller
         return $precios;
     }
 
-    //----------------para los graficos de ventas y compras con barras y lineas ----------------- 
+    //----------------para los graficos de ventas y compras con barras y lineas -----------------
 
     public function datosgraficoventas($fechainicio, $fechafin, $empresa, $producto)
     {

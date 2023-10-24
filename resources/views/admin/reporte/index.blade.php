@@ -60,7 +60,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <div class="card ingresos borde">
                         <div class="card-body">
                             <div class="card-title">
@@ -98,7 +98,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <div class="card ventas borde">
                         <div class="card-body">
                             <div class="card-title">
@@ -136,83 +136,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3">
-                    <div class="card cotizaciones borde">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <div class="row">
-                                    <div class="col" style="text-align: left">
-                                        <h6> COTIZACIONES <br> DEL MES:</h6>
-                                    </div>
-                                    <div class="col centro">
-                                        <h6 id="verCotizacionmes">
-                                            S/.{{ number_format((float) $cotizacionmes, 2, '.', '') }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-text">
-                                <div class="row">
-                                    <div class="col" style="text-align: left">
-                                        <h5>Esta Semana:</h5>
-                                    </div>
-                                    <div class="col" style="text-align: center">
-                                        <h5 id="verCotizacionsemana">
-                                            S/.{{ number_format((float) $cotizacionsemana, 2, '.', '') }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col" style="text-align: left">
-                                        <h5>Este Día:</h5>
-                                    </div>
-                                    <div class="col" style="text-align: center">
-                                        <h5 id="verCotizaciondia">
-                                            S/.{{ number_format((float) $cotizaciondia, 2, '.', '') }}</h5>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="card productos borde">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <div class="row">
-                                    <div class="col" style="text-align: left">
-                                        <h6> TOTAL PRODUCTOS:</h6>
-                                    </div>
-                                    <div class="col centro">
-                                        <h6 id="verProductomes">{{ $productomes }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-text">
-                                <div class="row">
-                                    <div class="col" style="text-align: left">
-                                        <h5>Stock Minimo:</h5>
-                                    </div>
-                                    <div class="col" style="text-align: center">
-                                        <h5 id="verProductominimo">{{ $productominimo }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col" style="text-align: left">
-                                        <h5>Sin Stock:</h5>
-                                    </div>
-                                    <div class="col" style="text-align: center">
-                                        <h5 id="verProductosin">{{ $productosinstock }}</h5>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+ 
             </div>
             <br>
             <div class="row">
@@ -297,8 +221,8 @@
             fechainicio = fechaInicio;
             fechafin = fechaFin;
 
-            llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, titulot, midatasetV, midatasetC, midatasetT,
-                graph);
+            //llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, titulot, midatasetV, midatasetC, midatasetT,
+            //    graph);
 
 
         });
