@@ -54,6 +54,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             });
             //Ruta de la venta
             Route::controller(App\Http\Controllers\Admin\VentaController::class)->group(function () {
+                Route::get('/miventa', 'index')->name('miventa.index');
                 Route::get('/venta', 'index')->name('venta.index');
                 Route::get('/venta2', 'index2')->name('venta2.index');
                 Route::get('/venta/create', 'create');
@@ -106,25 +107,25 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
                 
 
-                Route::get('/reporte/rotacionstock', 'rotacionstock');
-                Route::get('/reporte/datosrotacionstock/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosrotacionstock');
-                Route::get('/reporte/detallecompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detallecompras');
-                Route::get('/reporte/detalleventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detalleventas');
+                // Route::get('/reporte/rotacionstock', 'rotacionstock');
+                // Route::get('/reporte/datosrotacionstock/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosrotacionstock');
+                // Route::get('/reporte/detallecompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detallecompras');
+                // Route::get('/reporte/detalleventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'detalleventas');
 
-                Route::get('/reporte/cobrovent', 'cobroventas');
-                Route::get('/reporte/datoscobroventas/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datoscobroventas');
-                Route::get('/reporte/pagocompras', 'pagocompras');
-                Route::get('/reporte/datospagocompras/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datospagocompras');
+                // Route::get('/reporte/cobrovent', 'cobroventas');
+                // Route::get('/reporte/datoscobroventas/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datoscobroventas');
+                // Route::get('/reporte/pagocompras', 'pagocompras');
+                // Route::get('/reporte/datospagocompras/{fechainicio}/{fechafin}/{empresa}/{cliente}', 'datospagocompras');
 
-                Route::get('/reporte/precioscompra', 'precioscompra');
-                Route::get('/reporte/datoslistaprecioscompra/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datoslistaprecioscompra');
+                // Route::get('/reporte/precioscompra', 'precioscompra');
+                // Route::get('/reporte/datoslistaprecioscompra/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datoslistaprecioscompra');
 
-                //ruta para los graficos de las ventas
-                Route::get('/reporte/datosgraficoventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficoventas');
-                Route::get('/reporte/datosgraficocompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficocompras');
-                //rutapara los precios especiales
-                Route::get('/reporte/precioespecial', 'precioespecial');
-                Route::get('/reporte/listapreciosespeciales/{cliente}/{producto}', 'listapreciosespeciales');
+                // //ruta para los graficos de las ventas
+                // Route::get('/reporte/datosgraficoventas/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficoventas');
+                // Route::get('/reporte/datosgraficocompras/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosgraficocompras');
+                // //rutapara los precios especiales
+                // Route::get('/reporte/precioespecial', 'precioespecial');
+                // Route::get('/reporte/listapreciosespeciales/{cliente}/{producto}', 'listapreciosespeciales');
             });
 
             //---------------------------------------------------------rutas de tiendita --------------------------------------------

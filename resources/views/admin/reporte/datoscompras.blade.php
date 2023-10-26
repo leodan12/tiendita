@@ -144,8 +144,7 @@
 
             var urldatosproductos = "{{ url('admin/reporte/datoscomprasproductos') }}";
             $.get(urldatosproductos + '/' + fechainicio + '/' + fechafin + '/' + tienda + '/' + producto, function(
-                data) {
-                    console.log(data);
+                data) { 
                 llenartabla(data);
             });
         }

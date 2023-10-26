@@ -213,7 +213,7 @@
                             auth()->user()->can('crear-venta') ||
                             auth()->user()->can('editar-venta') ||
                             auth()->user()->can('eliminar-venta'))
-                        <li class="nav-item"> <a class="nav-link" href="{{ url('admin/venta') }}">
+                        <li class="nav-item"> <a class="nav-link" href="{{ url('admin/miventa') }}">
                                 <i class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="1em"
                                         viewBox="0 0 122.43 122.88">

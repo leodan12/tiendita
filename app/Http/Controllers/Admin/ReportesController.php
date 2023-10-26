@@ -725,12 +725,11 @@ class ReportesController extends Controller
             $nombre = $producto->nombre . " marca: " . $producto->marca . " modelo: " . $producto->modelo;
             return $nombre;
         } else if ($tipo == "GOLOSINAS") {
-            $producto = DB::table('golosinas as g')
-                ->where('g.status', '=', '0')
+            $producto = DB::table('golosinas as g') 
                 ->select('g.nombre', 'g.peso')
                 ->where('g.id', '=', $idproducto)->first();
-            $nombre = $producto->nombre . " peso: " . $producto->peso . " gramos: ";
-            return $nombre;;
+            $nombre = $producto->nombre . " peso: " . $producto->peso . " gramos ";
+            return $nombre;
         } else if ($tipo == "SNACKS") {
             $producto = DB::table('snacks as s')
                 ->join('marcasnacks as ms', 's.marcasnack_id', '=', 'ms.id')
