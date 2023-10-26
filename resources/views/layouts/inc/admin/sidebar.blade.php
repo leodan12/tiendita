@@ -58,7 +58,7 @@
                                 <span class="menu-title">UTILES</span>
                             </a>
                         </li>
-                    @endif 
+                    @endif
                     @if (auth()->user()->can('ver-golosina') ||
                             auth()->user()->can('crear-golosina') ||
                             auth()->user()->can('editar-golosina') ||
@@ -69,7 +69,7 @@
                                 <span class="menu-title">GOLOSINAS</span>
                             </a>
                         </li>
-                    @endif 
+                    @endif
                     @if (auth()->user()->can('ver-snack') ||
                             auth()->user()->can('crear-snack') ||
                             auth()->user()->can('editar-snack') ||
@@ -80,7 +80,7 @@
                                 <span class="menu-title">SNACKS</span>
                             </a>
                         </li>
-                    @endif 
+                    @endif
                 </ul>
             </div>
         </li>
@@ -93,37 +93,38 @@
             </a>
             <div class="collapse" id="inventarios">
                 <ul class="flex-column sub-menu" style="list-style: none;">
-                    @if (auth()->user()->can('ver-inventario')|| auth()->user()->can('editar-inventario')   )
+                    @if (auth()->user()->can('ver-inventario') ||
+                            auth()->user()->can('editar-inventario'))
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/inventariouf') }}">
                                 <i class="mdi mdi-store menu-icon"></i>
                                 <span class="menu-title">I. UNIFORMES</span>
                             </a>
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/inventariolb') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. LIBROS</span>
                             </a>
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/inventarioit') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. INSTRUMENTOS</span>
                             </a>
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/inventariout') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. UTILES</span>
                             </a>
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/inventariogl') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
                                 <span class="menu-title">I. GOLOSINAS</span>
                             </a>
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('admin/inventariosn') }}">
                                 <i class="mdi mdi-hospital-building menu-icon"></i>
@@ -222,7 +223,7 @@
 
                                 </i>
                                 SALIDA</a></li>
-                    @endif 
+                    @endif
                 </ul>
             </div>
         </li>
@@ -240,8 +241,8 @@
                                     class="mdi mdi-chart-line menu-icon"></i>GRÁFICOS</a></li>
                         <li class="nav-item"> <a class="nav-link" href="{{ url('admin/reporte/tabladatos') }}"><i
                                     class="mdi mdi-file-excel menu-icon"></i>DATOS VENTAS</a></li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ url('admin/reporte/rotacionstock') }}"><i
-                                    class="mdi mdi-timetable menu-icon"></i>ROTACIÓN STOCK</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ url('admin/reporte/datoscompras') }}"><i
+                                    class="mdi mdi-file-excel menu-icon"></i>DATOS COMPAS</a></li>
 
                     </ul>
                 </div>

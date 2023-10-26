@@ -41,32 +41,44 @@
     <div class="row">
         <div class="col-md-12  ">
             <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label is-required">EMPRESA</label>
-                    <select class="form-select " name="company_id" id="company_id" required>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label is-required">TIENDA</label>
+                    <select class="form-select " name="tienda_id" id="tienda_id" required>
                         <option value="-1" selected>TODAS</option>
-                        @foreach ($companies as $company)
-                            <option value="{{ $company->id }}">{{ $company->nombre }}</option>
+                        @foreach ($tiendas as $tienda)
+                            <option value="{{ $tienda->id }}">{{ $tienda->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label is-required">PRODUCTO</label>
+                    <select class="form-select " name="producto_id" id="producto_id" required>
+                        <option value="-1" selected>TODOS</option>
+                        <option value="UNIFORMES">UNIFORMES</option>
+                        <option value="LIBROS">LIBROS</option>
+                        <option value="INSTRUMENTOS">INSTRUMENTOS</option>
+                        <option value="UTILES">UTILES</option>
+                        <option value="GOLOSINAS">GOLOSINAS</option>
+                        <option value="SNACKS">SNACKS</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
                     <label class="form-label is-required">FECHA INICIO</label>
                     <input type="date" class="form-control " id="fechainicio" name="fechainicio" />
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <label class="form-label is-required">FECHA FIN</label>
                     <input type="date" class="form-control " id="fechafin" name="fechafin" />
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <div class="card ingresos borde">
                         <div class="card-body">
                             <div class="card-title">
                                 <div class="row">
                                     <div class="col" style="text-align: left">
-                                        <h6> COMPRAS&nbsp; <br> DEL MES: &nbsp;</h6>
+                                        <h6> COMPRAS&nbsp; TOTALES: &nbsp;</h6>
                                     </div>
                                     <div class="col centro">
                                         <h6 id="verIngresomes"> S/.{{ number_format((float) $ingresomes, 2, '.', '') }}</h6>
@@ -77,34 +89,75 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col" style="text-align: left">
-                                        <h5>Esta Semana:</h5>
+                                        <h5>Uniformes:</h5>
                                     </div>
                                     <div class="col" style="text-align: center">
-                                        <h5 id="verIngresosemana">S/.{{ number_format((float) $ingresosemana, 2, '.', '') }}
+                                        <h5 id="verIngresouniformes">
+                                            S/.{{ number_format((float) $ingresouniformes, 2, '.', '') }}
                                         </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" style="text-align: left">
-                                        <h5>Este Día:</h5>
+                                        <h5>Libros:</h5>
                                     </div>
                                     <div class="col" style="text-align: center">
-                                        <h5 id="verIngresodia">S/.{{ number_format((float) $ingresodia, 2, '.', '') }}</h5>
+                                        <h5 id="verIngresolibros">S/.{{ number_format((float) $ingresolibros, 2, '.', '') }}
+                                        </h5>
                                     </div>
                                 </div>
-
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Instrumentos:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verIngresoinstrumentos">
+                                            S/.{{ number_format((float) $ingresoinstrumentos, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Utiles:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verIngresoutiles">
+                                            S/.{{ number_format((float) $ingresoutiles, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Golosinas:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verIngresogolosinas">
+                                            S/.{{ number_format((float) $ingresogolosinas, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Snacks:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verIngresosnacks">
+                                            S/.{{ number_format((float) $ingresosnacks, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
+                </div> 
+                <div class="col-sm-5">
                     <div class="card ventas borde">
                         <div class="card-body">
                             <div class="card-title">
                                 <div class="row">
                                     <div class="col" style="text-align: left">
-                                        <h6> VENTAS&nbsp;&nbsp; <br>DEL MES: &nbsp; </h6>
+                                        <h6> VENTAS&nbsp; TOTALES: &nbsp;</h6>
                                     </div>
                                     <div class="col centro">
                                         <h6 id="verVentames"> S/.{{ number_format((float) $ventames, 2, '.', '') }}</h6>
@@ -115,40 +168,78 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col" style="text-align: left">
-                                        <h5>Esta Semana:</h5>
+                                        <h5>Uniformes:</h5>
                                     </div>
-                                    <div class="col " style="text-align: center">
-                                        <h5 id="verVentasemana">S/.{{ number_format((float) $ventasemana, 2, '.', '') }}
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verVentauniformes">
+                                            S/.{{ number_format((float) $ventauniformes, 2, '.', '') }}
                                         </h5>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" style="text-align: left">
-                                        <h5>Este Día:</h5>
+                                        <h5>Libros:</h5>
                                     </div>
                                     <div class="col" style="text-align: center">
-                                        <h5 id="verVentadia">S/.{{ number_format((float) $ventadia, 2, '.', '') }}</h5>
+                                        <h5 id="verVentalibros">S/.{{ number_format((float) $ventalibros, 2, '.', '') }}
+                                        </h5>
                                     </div>
                                 </div>
-
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Instrumentos:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verVentainstrumentos">
+                                            S/.{{ number_format((float) $ventainstrumentos, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Utiles:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verVentautiles">S/.{{ number_format((float) $ventautiles, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Golosinas:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verVentagolosinas">
+                                            S/.{{ number_format((float) $ventagolosinas, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align: left">
+                                        <h5>Snacks:</h5>
+                                    </div>
+                                    <div class="col" style="text-align: center">
+                                        <h5 id="verVentasnacks">S/.{{ number_format((float) $ventasnacks, 2, '.', '') }}
+                                        </h5>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
- 
+
             </div>
             <br>
             <div class="row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label is-required">Reporte Grafico Sobre:</label>
                     <select class="form-select " name="reporte" id="reporte">
-                        <option value="ccv" selected>Compras, Ventas Y Cotizaciones del Mes(Soles):</option>
+                        <option value="ccv" selected>Compras y Ventas:</option>
                         <option value="pmv">Productos Mas Vendidos:</option>
-                        <option value="cmc">Clientes Con Mas Compras:</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label is-required">Tipo de grafico</label>
                     <select class="form-select " name="tipo_grafico" id="tipo_grafico">
                         <option value="line" selected>Lineas</option>
@@ -158,14 +249,7 @@
                         <option value="doughnut">Pastel</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-3" id="cantidadcosto" name="cantidadcosto">
-                    <label class="form-label is-required">Por Cantidad o Costo(S/.):</label>
-                    <select class="form-select " name="repcantidad" id="repcantidad">
-                        <option value="cantidad" selected>Cantidad</option>
-                        <option value="costo">Costo</option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3" id="divnumero" name="divnumero">
+                <div class="col-md-4 mb-3" id="divnumero" name="divnumero">
                     <label class="form-label is-required">Numero de Resultados:</label>
                     <input type="number" class="form-control " id="numero" name="numero" value="20"
                         min="1" step="1" />
@@ -182,15 +266,13 @@
 
 @push('script')
     <script type="text/javascript">
-        document.getElementById('cantidadcosto').style.display = 'none';
         document.getElementById('divnumero').style.display = 'none';
         var tipo = 'line';
         var reporte = 'ccv';
         var empresa = '-1';
-        var cantidadcosto = 'cantidad';
+        var tabla = '-1';
         var midatasetV = @json($datosventas);
         var midatasetC = @json($datoscompras);
-        var midatasetT = @json($datoscotizacions);
         var midatasetP = [];
         var midatasetCL = [];
         var traer = 20;
@@ -198,9 +280,9 @@
         var fechafin;
         titulov = "VENTAS";
         tituloc = "COMPRAS";
-        titulot = "COTIZACIONES";
+
         titulop = "PRODUCTOS MAS VENDIDOS";
-        titulocl = "CLIENTES CON MAS COMPRAS";
+
 
         var labelsF = @json($fechas);
 
@@ -221,8 +303,7 @@
             fechainicio = fechaInicio;
             fechafin = fechaFin;
 
-            //llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, titulot, midatasetV, midatasetC, midatasetT,
-            //    graph);
+            llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, midatasetV, midatasetC, graph);
 
 
         });
@@ -296,13 +377,12 @@
             window.grafica = new Chart(migraph, miconfig);
         }
         //para las compras,ventas y cotizaciones
-        function llamarydibujargraficoccv(D_labelsF, D_tipo, D_titulov, D_tituloc, D_titulot, D_midatasetV,
-            D_midatasetC,
-            D_midatasetT, D_graph) {
+        function llamarydibujargraficoccv(D_labelsF, D_tipo, D_titulov, D_tituloc, D_midatasetV,
+            D_midatasetC, D_graph) {
             const datasetV = midataset(D_tipo, D_titulov, D_midatasetV, '#53CAD4');
             const datasetC = midataset(D_tipo, D_tituloc, D_midatasetC, '#79EB68');
-            const datasetT = midataset(D_tipo, D_titulot, D_midatasetT, '#F59075');
-            const datasetx = [datasetV, datasetC, datasetT];
+
+            const datasetx = [datasetV, datasetC];
             const data = midata(D_labelsF, datasetx);
             const config = miconfig(data);
 
@@ -320,51 +400,61 @@
             migrafico(D_graph, config);
         }
 
-        $("#company_id").change(function() {
+        $("#tienda_id").change(function() {
             var company = $(this).val();
             empresa = company;
-            var urlbalance = "{{ url('admin/reporte/obtenerbalance') }}";
-            $.get(urlbalance + '/' + company, function(data) {
-                document.getElementById('verIngresomes').innerHTML = "S/." + (parseFloat(data
-                        .ingresomes)
-                    .toFixed(2));
-                document.getElementById('verIngresosemana').innerHTML = "S/." + (parseFloat(data
-                    .ingresosemana).toFixed(2));
-                document.getElementById('verIngresodia').innerHTML = "S/." + (parseFloat(data
-                        .ingresodia)
-                    .toFixed(2));
-                document.getElementById('verVentames').innerHTML = "S/." + (parseFloat(data
-                        .ventames)
-                    .toFixed(2));
-                document.getElementById('verVentasemana').innerHTML = "S/." + (parseFloat(data
-                        .ventasemana)
-                    .toFixed(2));
-                document.getElementById('verVentadia').innerHTML = "S/." + (parseFloat(data
-                        .ventadia)
-                    .toFixed(2));
-                document.getElementById('verCotizacionmes').innerHTML = "S/." + (parseFloat(data
-                    .cotizacionmes).toFixed(2));
-                document.getElementById('verCotizacionsemana').innerHTML = "S/." + (parseFloat(
-                    data
-                    .cotizacionsemana).toFixed(2));
-                document.getElementById('verCotizaciondia').innerHTML = "S/." + (parseFloat(data
-                    .cotizaciondia).toFixed(2));
-
-                document.getElementById('verProductomes').innerHTML = (data.productomes);
-                document.getElementById('verProductominimo').innerHTML = (data.productominimo);
-                document.getElementById('verProductosin').innerHTML = (data.productosinstock);
-            });
-
+            obtenerbalance();
             obtenerreporte();
         });
+
+        $("#producto_id").change(function() {
+            var producto = $(this).val();
+            tabla = producto;
+            obtenerreporte();
+        });
+
+        function obtenerbalance() {
+            var urlbalance = "{{ url('admin/reporte/obtenerbalance') }}";
+            $.get(urlbalance + '/' + empresa + '/' + fechainicio + '/' + fechafin, function(data) {
+                document.getElementById('verIngresomes').innerHTML = "S/." +
+                    (parseFloat(data.ingresomes).toFixed(2));
+                document.getElementById('verIngresouniformes').innerHTML = "S/." +
+                    (parseFloat(data.ingresouniformes).toFixed(2));
+                document.getElementById('verIngresolibros').innerHTML = "S/." +
+                    (parseFloat(data.ingresolibros).toFixed(2));
+                document.getElementById('verIngresoinstrumentos').innerHTML = "S/." +
+                    (parseFloat(data.ingresoinstrumentos).toFixed(2));
+                document.getElementById('verIngresoutiles').innerHTML = "S/." +
+                    (parseFloat(data.ingresoutiles).toFixed(2));
+                document.getElementById('verIngresogolosinas').innerHTML = "S/." +
+                    (parseFloat(data.ingresogolosinas).toFixed(2));
+                document.getElementById('verIngresosnacks').innerHTML = "S/." +
+                    (parseFloat(data.ingresosnacks).toFixed(2));
+
+                document.getElementById('verVentames').innerHTML = "S/." +
+                    (parseFloat(data.ventames).toFixed(2));
+                document.getElementById('verVentauniformes').innerHTML = "S/." +
+                    (parseFloat(data.ventauniformes).toFixed(2));
+                document.getElementById('verVentalibros').innerHTML = "S/." +
+                    (parseFloat(data.ventalibros).toFixed(2));
+                document.getElementById('verVentainstrumentos').innerHTML = "S/." +
+                    (parseFloat(data.ventainstrumentos).toFixed(2));
+                document.getElementById('verVentautiles').innerHTML = "S/." +
+                    (parseFloat(data.ventautiles).toFixed(2));
+                document.getElementById('verVentagolosinas').innerHTML = "S/." +
+                    (parseFloat(data.ventagolosinas).toFixed(2));
+                document.getElementById('verVentasnacks').innerHTML = "S/." +
+                    (parseFloat(data.ventasnacks).toFixed(2));
+
+            });
+        }
 
         $("#tipo_grafico").change(function() {
             var tipografico = $(this).val();
             tipo = tipografico;
             if (reporte == 'ccv') {
-                llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, titulot, midatasetV,
-                    midatasetC,
-                    midatasetT, graph);
+                llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, midatasetV,
+                    midatasetC, graph);
             } else if (reporte == 'pmv') {
                 llamarydibujargraficoproductos(labelsF, tipo, titulop, midatasetP, graph);
             } else if (reporte == 'cmc') {
@@ -374,25 +464,15 @@
         $("#reporte").change(function() {
             var Vreporte = $(this).val();
             reporte = Vreporte;
-            if (Vreporte == "cmc") {
-                document.getElementById('cantidadcosto').style.display = 'inline';
-                document.getElementById('divnumero').style.display = 'inline';
-            } else if (Vreporte == "pmv") {
-                document.getElementById('cantidadcosto').style.display = 'none';
+            if (Vreporte == "pmv") {
                 document.getElementById('divnumero').style.display = 'inline';
             } else {
-                document.getElementById('cantidadcosto').style.display = 'none';
                 document.getElementById('divnumero').style.display = 'none';
             }
             obtenerreporte();
 
         });
-        $("#repcantidad").change(function() {
-            var cant = $(this).val();
-            cantidadcosto = cant;
-            obtenerreporte();
-
-        });
+         
         $("#numero").change(function() {
             var cant = $(this).val();
             if (cant > 0) {
@@ -404,24 +484,21 @@
         $("#fechainicio").change(function() {
             var Finicio = $(this).val();
             fechainicio = Finicio;
+            obtenerbalance();
             obtenerreporte();
         });
         $("#fechafin").change(function() {
             var Ffin = $(this).val();
             fechafin = Ffin;
+            obtenerbalance();
             obtenerreporte();
         });
         $("#reporte").change(function() {
             var Vreporte = $(this).val();
             reporte = Vreporte;
-            if (Vreporte == "cmc") {
-                document.getElementById('cantidadcosto').style.display = 'inline';
-                document.getElementById('divnumero').style.display = 'inline';
-            } else if (Vreporte == "pmv") {
-                document.getElementById('cantidadcosto').style.display = 'none';
+            if (Vreporte == "pmv") {
                 document.getElementById('divnumero').style.display = 'inline';
             } else {
-                document.getElementById('cantidadcosto').style.display = 'none';
                 document.getElementById('divnumero').style.display = 'none';
             }
             obtenerreporte();
@@ -432,36 +509,24 @@
             //para las compras,, cotizaciones y ventas
             if (reporte == 'ccv') {
                 var urldatosgrafico = "{{ url('admin/reporte/obtenerdatosgrafico') }}";
-                $.get(urldatosgrafico + '/' + empresa + '/' + fechainicio + '/' + fechafin, function(data) {
+                $.get(urldatosgrafico + '/' + empresa + '/' + fechainicio + '/' + fechafin + '/' + tabla, function(data) {
                     labelsF = data['fechas'];
                     midatasetV = data['datosventas'];
                     midatasetC = data['datoscompras'];
                     midatasetT = data['datoscotizacions'];
 
-                    llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, titulot, midatasetV,
-                        midatasetC, midatasetT, graph);
+                    llamarydibujargraficoccv(labelsF, tipo, titulov, tituloc, midatasetV,
+                        midatasetC, graph);
                 });
             } else if (reporte == 'pmv') {
                 var urldatosgrafico = "{{ url('admin/reporte/obtenerproductosmasv') }}";
-                $.get(urldatosgrafico + '/' + empresa + '/' + traer + '/' + fechainicio + '/' + fechafin,
+                $.get(urldatosgrafico + '/' + empresa + '/' + traer + '/' + fechainicio + '/' + fechafin+'/'+tabla,
                     function(data) {
                         labelsF = data['productos'];
                         midatasetP = data['cantidades'];
 
                         llamarydibujargraficoproductos(labelsF, tipo, titulop, midatasetP, graph);
                     });
-            } else {
-                var urldatosgrafico = "{{ url('admin/reporte/obtenerclientesmasc') }}";
-                $.get(urldatosgrafico + '/' + empresa + '/' + cantidadcosto + '/' + traer + '/' +
-                    fechainicio + '/' +
-                    fechafin,
-                    function(data) {
-                        labelsF = data['clientes'];
-                        midatasetCL = data['costos'];
-
-                        llamarydibujargraficoproductos(labelsF, tipo, titulocl, midatasetCL, graph);
-                    });
-
             }
         }
 

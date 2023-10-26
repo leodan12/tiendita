@@ -88,14 +88,23 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             //Ruta de los reportes
             Route::controller(App\Http\Controllers\Admin\ReportesController::class)->group(function () {
                 Route::get('/reporte', 'index');
-                Route::get('/reporte/obtenerbalance/{idempresa}', 'obtenerbalance');
+                Route::get('/reporte/obtenerbalance/{idempresa}/{fechainicio}/{fechafin}', 'obtenerbalance');
                 Route::get('/reporte/balancemensualinicio', 'balancemensual');
-                Route::get('/reporte/obtenerdatosgrafico/{idempresa}/{fechainicio}/{fechafin}', 'obtenerdatosgrafico');
-                Route::get('/reporte/obtenerproductosmasv/{idempresa}/{traer}/{fechainicio}/{fechafin}', 'obtenerproductosmasv');
+                Route::get('/reporte/obtenerdatosgrafico/{idempresa}/{fechainicio}/{fechafin}/{tabla}', 'obtenerdatosgrafico');
+                Route::get('/reporte/obtenerproductosmasv/{idempresa}/{traer}/{fechainicio}/{fechafin}/{tabla}', 'obtenerproductosmasv');
                 Route::get('/reporte/obtenerclientesmasc/{idempresa}/{tipo}/{traer}/{fechainicio}/{fechafin}', 'obtenerclientesmasc');
 
+
+
+
                 Route::get('/reporte/tabladatos', 'infoproductos');
-                Route::get('/reporte/datosproductos/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosproductos');
+                Route::get('/reporte/datosproductos/{fechainicio}/{fechafin}/{tienda}/{producto}', 'datosproductos');
+
+                Route::get('/reporte/datoscompras', 'datoscompras');
+                Route::get('/reporte/datoscomprasproductos/{fechainicio}/{fechafin}/{tienda}/{producto}', 'datoscomprasproductos');
+
+
+                
 
                 Route::get('/reporte/rotacionstock', 'rotacionstock');
                 Route::get('/reporte/datosrotacionstock/{fechainicio}/{fechafin}/{empresa}/{producto}', 'datosrotacionstock');

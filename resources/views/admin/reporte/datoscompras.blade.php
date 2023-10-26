@@ -13,7 +13,7 @@
     <div class="row" style="text-align: center;">
         <div class="col">
             <h3>
-                REGISTROS DE VENTAS
+                REGISTROS DE COMPRAS 
             </h3>
         </div>
     </div><br>
@@ -69,7 +69,7 @@
                                 <th>CANTIDAD</th>
                                 <th>PRECIO UNITARIO S/</th>
                                 <th>PRECIO FINAL S/</th>  
-                                <th>CLIENTE</th>
+                                <th>PROVEEDOR</th>
                             </tr>
                         </thead>
                         <Tbody id="tbody-mantenimientos">
@@ -124,7 +124,7 @@
             var producto1 = document.getElementById("producto_id").value;
             var fechainicio1 = "01-01-2000";
             var fechafin1 = "31-12-2099";
-            var urldatosproductos = "{{ url('admin/reporte/datosproductos') }}";
+            var urldatosproductos = "{{ url('admin/reporte/datoscomprasproductos') }}";
             $.ajax({
                 type: "GET",
                 url: urldatosproductos + '/' + fechainicio1 + '/' + fechafin1 + '/' + empresa1 + '/' + producto1,
@@ -142,9 +142,10 @@
             var tienda = document.getElementById("tienda_id").value;
             var producto = document.getElementById("producto_id").value;
 
-            var urldatosproductos = "{{ url('admin/reporte/datosproductos') }}";
+            var urldatosproductos = "{{ url('admin/reporte/datoscomprasproductos') }}";
             $.get(urldatosproductos + '/' + fechainicio + '/' + fechafin + '/' + tienda + '/' + producto, function(
-                data) { 
+                data) {
+                    console.log(data);
                 llenartabla(data);
             });
         }
@@ -211,21 +212,23 @@
                 if (idproducto != "-1") {
                     var nametienda_id = tienda_id[tienda_id.selectedIndex].getAttribute('data-mitienda');
                     var nameproducto = producto[producto.selectedIndex].getAttribute('data-miproducto');
-                    mitituloexcel = 'Ventas_' + nametienda_id + '_' + nameproducto + ' al ' + fechainicio +
+                    mitituloexcel = 'Compras_' + nametienda_id + '_' + nameproducto + ' al ' + fechainicio +
                         '_' +
                         fechafin;
                 } else {
                     var nametienda_id = tienda_id[tienda_id.selectedIndex].getAttribute('data-mitienda');
-                    mitituloexcel = 'Ventas_' + nametienda_id + '_' + fechainicio + ' al ' + fechafin;
+                    mitituloexcel = 'Compras_' + nametienda_id + '_' + fechainicio + ' al ' + fechafin;
                 }
             } else {
                 if (idproducto != "-1") {
                     var nameproducto = producto[producto.selectedIndex].getAttribute('data-miproducto');
-                    mitituloexcel = 'Ventas_' + nameproducto + '_' + fechainicio + ' al ' + fechafin;
+                    mitituloexcel = 'Compras_' + nameproducto + '_' + fechainicio + ' al ' + fechafin;
                 } else {
-                    mitituloexcel = 'Ventas_' + fechainicio + ' al ' + fechafin;
+                    mitituloexcel = 'Compras_' + fechainicio + ' al ' + fechafin;
                 }
             }
-        } 
+        }
+      
+  
     </script>
 @endpush
